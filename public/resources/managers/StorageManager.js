@@ -12,14 +12,21 @@ export class StorageManager extends BaseResourceManager {
   }
 
   set(key, value) {
-    if (!this.isReady()) return;
+    if (!this.isReady()) { 
+      console.error("StorageManager is not ready.");
+      return;
+    }
     this.storage.setItem(key, JSON.stringify(value));
+    console.log(`Stored ${key}:`, value);
   }
 
   get(key) {
-    if (!this.isReady()) return null;
-
+    if (!this.isReady()) {
+      console.error("StorageManager is not ready.");
+      return null;
+    }
     const value = this.storage.getItem(key);
+    console.log(`Retrieved ${key}:`, value);
     return value ? JSON.parse(value) : null;
   }
 

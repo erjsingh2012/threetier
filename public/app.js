@@ -1,26 +1,49 @@
 import { StorageManager } from "./resources/managers/StorageManager.js"; 
 import { ApiManager } from "./resources/managers/ApiManager.js";
+import { AuthService } from "./service/AuthService.js";
 
 const storageManager = new StorageManager();
 const apiManager = new ApiManager('');
+const authService = new AuthService(storageManager, apiManager);
 
-async function startApp() {
+async function initApp() {
   await storageManager.init();
   await apiManager.init();
-
-  storageManager.set('welcomeMessage', 'Welcome to the Game App!');
-  console.log(storageManager.get('welcomeMessage'));
-  try {
-    const data = await apiManager.get('https://jsonplaceholder.typicode.com/posts');
-    console.log('Games data:', data);
-  } catch (error) {
-    console.error('Error fetching games:', error);
+  await authService.init();
+  if (!authService.isAuthenticated()) {
+    showSignup();
+  } else {
+    authService.deleteUser();
+    startApp();
   }
 }
-startApp().then(() => {
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-}).catch(error => {
-  console.error('Error starting app:', error);
-  document.getElementById('loading').innerText = 'Failed to load the app.';
+
+function showSignup() {
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("authPanel").style.display = "block";
+
+  document.getElementById("signupBtn").addEventListener("click", () => {
+    const username = document.getElementById("usernameInput").value.trim();
+    if (username) {
+      authService.registerUser(username);
+      document.getElementById("authPanel").style.display = "none";
+      startApp();
+    } else {
+      alert("Please enter a name.");
+    }
+  });
+}
+
+async function startApp() {
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("app").style.display = "block";
+
+  const user = authService.getUser();
+  storageManager.set('welcomeMessage', `Welcome back, ${user}!`);
+  console.log(storageManager.get('welcomeMessage'));
+};
+
+initApp().catch(err => {
+  document.getElementById("loading").textContent = "Failed to initialize app.";
+  console.error(err);
 });
