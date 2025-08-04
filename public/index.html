@@ -6,21 +6,23 @@
   <title>Game App</title>
   <link rel="icon" href="data:,">
   <style>
-    #loading {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: white;
-      font-size: 1.5rem;
-      z-index: 9999;
-    }
+    /* Style for the loading screen overlay */
+  #loading {
+    position: fixed;              /* Keep it fixed in place relative to the viewport */
+    inset: 0;                     /* Shorthand for: top: 0; right: 0; bottom: 0; left: 0; — fills the whole screen */
+    display: flex;                /* Use Flexbox to center content */
+    align-items: center;          /* Vertically center the text inside the div */
+    justify-content: center;      /* Horizontally center the text */
+    background: rgb(185, 238, 246);            /* White background to cover the whole page while loading */
+    font-size: 1.5rem;            /* Slightly larger font for better visibility */
+    z-index: 9999;                /* High z-index to appear above all other content */
+  }
 
-    #app {
-      display: none;
-      padding: 2rem;
-    }
+  /* Main app container — initially hidden until app is fully initialized */
+  #app {
+    display: none;                /* Hidden by default — will be shown via JS after loading */
+    padding: 2rem;                /* Add padding for visual spacing around the content */
+  }
   </style>
 </head>
 <body>
