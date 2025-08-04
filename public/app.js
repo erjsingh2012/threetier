@@ -17,4 +17,10 @@ async function startApp() {
     console.error('Error fetching games:', error);
   }
 }
-startApp();
+startApp().then(() => {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}).catch(error => {
+  console.error('Error starting app:', error);
+  document.getElementById('loading').innerText = 'Failed to load the app.';
+});
