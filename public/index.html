@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +8,10 @@
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <div id="loading">Loading App...</div>
-  
+
   <!-- Signup Panel -->
   <div id="authPanel" style="display: none; padding: 2rem;">
     <h2>Sign Up</h2>
@@ -18,20 +20,17 @@
   </div>
 
   <div id="app">
-    <div id="profile" class="profile">
-    <img
-      src="Assets/images/avatar.png"
-      alt="Example Image"
-      class="avatar-img"
-    />
-    <div class="user-info">
-      <div id="user-name" class="name"></div>
-      <div id="user-level" class="level"></div>
+    <div id="profile">
+      <img class="avatar-img" />
+      <div class="user-info">
+        <div id="user-name" class="name"></div>
+        <div id="user-level" class="level"></div>
+      </div>
     </div>
-  </div>
     <h1>Welcome to the Game App</h1>
     <p>Enjoy playing your favorite games!</p>
   </div>
   <script type="module" src="./app.js"></script>
 </body>
+
 </html>

@@ -1,93 +1,135 @@
+/* ================================
+   ✅ Base Styles
+   ================================ */
 body {
-  margin: 0;                           /* Removes default margin around the page for edge-to-edge layout */
-  font-family: system-ui, sans-serif; /* Uses system font for native feel, with sans-serif fallback */
-  background: #f0f4f8;                 /* Light background color for soft, modern look */
-  color: #333;                         /* Dark gray text color, easier on eyes than pure black */
-  padding: 0rem;                       /* Adds spacing inside the body — useful for mobile padding */
+  margin: 0;                             /* Remove default browser margin */
+  font-family: system-ui, sans-serif;   /* Native system font for speed & clarity */
+  background: #f0f4f8;                   /* Light gray-blue background */
+  color: #333;                           /* Neutral dark text color */
 }
 
+/* ================================
+   ✅ Loading Overlay
+   ================================ */
 #loading {
-  position: fixed;              /* Sticks to the viewport (doesn’t scroll with content) */
-  inset: 0;                     /* Shorthand: top, right, bottom, left = 0; fills entire screen */
-  display: flex;                /* Enables Flexbox for alignment */
-  align-items: center;          /* Vertically centers the content */
-  justify-content: center;      /* Horizontally centers the content */
-  background: rgb(185, 238, 246); /* Background overlay color during loading */
-  font-size: 1.5rem;            /* Makes the loading text more visible */
-  z-index: 9999;                /* Ensures this appears above all other elements */
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgb(185, 238, 246);
+  font-size: 1.5rem;
+  z-index: 9999;
+  text-align: center;
 }
 
+/* ================================
+   ✅ App Container
+   ================================ */
 #app {
-  max-width: 100%;              /* Stretches full width on small screens */
-  background: white;            /* White background for the app container */
-  padding: 1.5rem;              /* Inner spacing between content and edges */
-  border-radius: 8px;           /* Rounded corners for a soft, modern UI look */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  display: none;                /* Hidden initially — shown via JS after loading completes */
+  max-width: 100%;
+  background: white;
+  padding: 1.5rem;
+  margin: 1rem auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: none; /* hidden until JS shows it */
 }
 
+/* ================================
+   ✅ Typography
+   ================================ */
 h1 {
-  font-size: 2rem;              /* Large, bold heading for mobile readability */
-  margin-bottom: 0rem;          /* Spacing below the heading */
-  color: #333;                  /* Matches body text color */
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #333;
 }
 
 p {
-  font-size: 1rem;              /* Base paragraph size — mobile friendly */
+  font-size: 1rem;
 }
 
-/* Media query: Styles for screens ≥600px (tablet and up) */
-@media (min-width: 600px) {
-  #app {
-    max-width: 560px;           /* Limits width for better readability on larger screens */
-    margin: 0rem auto;          /* Centers the app and adds vertical spacing */
-  }
-
-  h1 {
-    font-size: 2rem;            /* Can remain same or be increased further if needed */
-  }
-
-  p {
-    font-size: 1.1rem;          /* Slightly larger paragraph text on wider screens */
-  }
-}
-
+/* ================================
+   ✅ Profile Section
+   ================================ */
 #profile {
-  display: flex;                      /* Uses Flexbox to arrange children (image + info) side by side */
-  align-items: center;               /* Vertically center-aligns image and text */
-  gap: 1rem;                         /* Adds horizontal spacing between image and text */
-  background: #e0f7ff;               /* Light blue background to visually separate the profile section */
-  padding: 0.75rem 1rem;             /* Space inside the profile box: 0.75rem top/bottom, 1rem left/right */
-  border-radius: 8px;                /* Slightly rounded corners for modern UI */
-  margin-bottom: 1.5rem;             /* Space below profile section before heading starts */
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #e0f7ff;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
 }
 
+/* Avatar Image */
+.avatar-img,
 #profile img {
-  width: 48px;                       /* Fixed width for avatar image (mobile-friendly size) */
-  height: 48px;                      /* Fixed height, matches width for square aspect ratio */
-  border-radius: 50%;               /* Fully rounds the image into a circle */
-  object-fit: cover;                /* Ensures image fills the area without distortion */
-  border: 2px solid #0077cc;        /* Blue border for visual accent and focus */
+  width: 48px;
+  height: 48px;
+  max-width: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #0077cc;
+  display: block;
+  flex-shrink: 0;
 }
+
+/* User Info (name + level) */
 .user-info {
-  display: flex;                    /* Stack name and level vertically */
-  flex-direction: column;          /* Default is row, but we want vertical stacking */
+  display: flex;
+  flex-direction: column;
 }
 
 #user-name {
-  font-weight: bold;               /* Bold to emphasize player name */
-  color: #0077cc;                  /* Themed blue color for branding */
-  font-size: 1rem;                 /* Base font size for mobile, scalable for larger screens */
-}
-#user-level {
-  font-size: 0.9rem;               /* Slightly smaller than name, to show hierarchy */
-  color: #555;                     /* Medium gray for less visual priority than name */
+  font-weight: bold;
+  color: #0077cc;
+  font-size: 1rem;
 }
 
-.avatar-img {
-  width: 48px;
-  height: 48px;
-  object-fit: cover;
-  border-radius: 50%;       /* Makes it a circle */
-  border: 2px solid #0077cc; /* Optional: blue border for style */
+#user-level {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* ================================
+   ✅ Responsive Styles (Tablet+)
+   ================================ */
+@media (min-width: 600px) {
+  #app {
+    max-width: 560px;
+    margin: 2rem auto;
+  }
+
+  h1 {
+    font-size: 2.2rem;
+  }
+
+  p {
+    font-size: 1.1rem;
+  }
+}
+
+/* ================================
+   ✅ Responsive Styles (Small Mobile)
+   ================================ */
+@media (max-width: 400px) {
+  .avatar-img {
+    width: 40px;
+    height: 40px;
+  }
+
+  #user-name {
+    font-size: 0.95rem;
+  }
+
+  #user-level {
+    font-size: 0.85rem;
+  }
+
+  #app {
+    padding: 1rem;
+    margin: 0.5rem;
+  }
 }
