@@ -51,3 +51,35 @@ p {
     font-size: 1.1rem;          /* Slightly larger paragraph text on wider screens */
   }
 }
+
+#profile {
+  display: flex;                      /* Uses Flexbox to arrange children (image + info) side by side */
+  align-items: center;               /* Vertically center-aligns image and text */
+  gap: 1rem;                         /* Adds horizontal spacing between image and text */
+  background: #e0f7ff;               /* Light blue background to visually separate the profile section */
+  padding: 0.75rem 1rem;             /* Space inside the profile box: 0.75rem top/bottom, 1rem left/right */
+  border-radius: 8px;                /* Slightly rounded corners for modern UI */
+  margin-bottom: 1.5rem;             /* Space below profile section before heading starts */
+}
+
+#profile img {
+  width: 48px;                       /* Fixed width for avatar image (mobile-friendly size) */
+  height: 48px;                      /* Fixed height, matches width for square aspect ratio */
+  border-radius: 50%;               /* Fully rounds the image into a circle */
+  object-fit: cover;                /* Ensures image fills the area without distortion */
+  border: 2px solid #0077cc;        /* Blue border for visual accent and focus */
+}
+.user-info {
+  display: flex;                    /* Stack name and level vertically */
+  flex-direction: column;          /* Default is row, but we want vertical stacking */
+}
+
+#user-name {
+  font-weight: bold;               /* Bold to emphasize player name */
+  color: #0077cc;                  /* Themed blue color for branding */
+  font-size: 1rem;                 /* Base font size for mobile, scalable for larger screens */
+}
+#user-level {
+  font-size: 0.9rem;               /* Slightly smaller than name, to show hierarchy */
+  color: #555;                     /* Medium gray for less visual priority than name */
+}

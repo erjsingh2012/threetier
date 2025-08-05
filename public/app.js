@@ -1,10 +1,12 @@
 import { StorageManager } from "./resources/managers/StorageManager.js"; 
 import { ApiManager } from "./resources/managers/ApiManager.js";
 import { AuthService } from "./service/AuthService.js";
+import { LevelManager } from "./service/LevelManager.js";
 
 const storageManager = new StorageManager();
 const apiManager = new ApiManager('');
 const authService = new AuthService(storageManager, apiManager);
+const levelManager = new LevelManager(storageManager);
 
 async function initApp() {
   await storageManager.init();
@@ -39,6 +41,13 @@ async function startApp() {
   document.getElementById("app").style.display = "block";
 
   const user = authService.getUser();
+ 
+  // Set user profile in UI
+  document.getElementById("user-name").textContent = user;
+    // Init and render level
+  levelManager.init();
+  levelManager.updateUI();
+  
   storageManager.set('welcomeMessage', `Welcome back, ${user}!`);
   console.log(storageManager.get('welcomeMessage'));
 };
