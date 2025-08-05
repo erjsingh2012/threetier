@@ -83,3 +83,11 @@ p {
   font-size: 0.9rem;               /* Slightly smaller than name, to show hierarchy */
   color: #555;                     /* Medium gray for less visual priority than name */
 }
+
+.avatar-img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 50%;       /* Makes it a circle */
+  border: 2px solid #0077cc; /* Optional: blue border for style */
+}
