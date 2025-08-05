@@ -13,7 +13,7 @@ async function initApp() {
   if (!authService.isAuthenticated()) {
     showSignup();
   } else {
-    authService.deleteUser();
+    //authService.deleteUser();
     startApp();
   }
 }

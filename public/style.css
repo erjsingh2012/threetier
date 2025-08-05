@@ -1,0 +1,53 @@
+body {
+  margin: 0;                           /* Removes default margin around the page for edge-to-edge layout */
+  font-family: system-ui, sans-serif; /* Uses system font for native feel, with sans-serif fallback */
+  background: #f0f4f8;                 /* Light background color for soft, modern look */
+  color: #333;                         /* Dark gray text color, easier on eyes than pure black */
+  padding: 0rem;                       /* Adds spacing inside the body — useful for mobile padding */
+}
+
+#loading {
+  position: fixed;              /* Sticks to the viewport (doesn’t scroll with content) */
+  inset: 0;                     /* Shorthand: top, right, bottom, left = 0; fills entire screen */
+  display: flex;                /* Enables Flexbox for alignment */
+  align-items: center;          /* Vertically centers the content */
+  justify-content: center;      /* Horizontally centers the content */
+  background: rgb(185, 238, 246); /* Background overlay color during loading */
+  font-size: 1.5rem;            /* Makes the loading text more visible */
+  z-index: 9999;                /* Ensures this appears above all other elements */
+}
+
+#app {
+  max-width: 100%;              /* Stretches full width on small screens */
+  background: white;            /* White background for the app container */
+  padding: 1.5rem;              /* Inner spacing between content and edges */
+  border-radius: 8px;           /* Rounded corners for a soft, modern UI look */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  display: none;                /* Hidden initially — shown via JS after loading completes */
+}
+
+h1 {
+  font-size: 2rem;              /* Large, bold heading for mobile readability */
+  margin-bottom: 0rem;          /* Spacing below the heading */
+  color: #333;                  /* Matches body text color */
+}
+
+p {
+  font-size: 1rem;              /* Base paragraph size — mobile friendly */
+}
+
+/* Media query: Styles for screens ≥600px (tablet and up) */
+@media (min-width: 600px) {
+  #app {
+    max-width: 560px;           /* Limits width for better readability on larger screens */
+    margin: 0rem auto;          /* Centers the app and adds vertical spacing */
+  }
+
+  h1 {
+    font-size: 2rem;            /* Can remain same or be increased further if needed */
+  }
+
+  p {
+    font-size: 1.1rem;          /* Slightly larger paragraph text on wider screens */
+  }
+}
