@@ -2,25 +2,25 @@
    ✅ Base Styles
    ================================ */
 body {
-  margin: 0;                             /* Remove default browser margin */
-  font-family: system-ui, sans-serif;   /* Native system font for speed & clarity */
-  background: #f0f4f8;                   /* Light gray-blue background */
-  color: #333;                           /* Neutral dark text color */
+  margin: 0; /* Remove default browser margin for clean layout */
+  font-family: system-ui, sans-serif; /* System font for fast loading and clean UI */
+  background: #c1e0ff; /* Light blue background */
+  color: #333; /* Default text color */
 }
 
 /* ================================
    ✅ Loading Overlay
    ================================ */
 #loading {
-  position: fixed;
-  inset: 0;
-  display: flex;
+  position: fixed; /* Stay on screen regardless of scroll */
+  inset: 0; /* Cover full screen (top, right, bottom, left = 0) */
+  display: flex; /* Center content with flex */
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgb(185, 238, 246);
+  background: rgb(185, 238, 246); /* Light background for loading state */
   font-size: 1.5rem;
-  z-index: 9999;
+  z-index: 9999; /* Show above everything else */
   text-align: center;
 }
 
@@ -28,13 +28,16 @@ body {
    ✅ App Container
    ================================ */
 #app {
+  display: flex; /* Main vertical layout */
+  flex-direction: column;
+  height: 100svh; /* Fill entire small viewport height (better for mobile) */
   max-width: 100%;
   background: white;
   padding: 1.5rem;
-  margin: 1rem auto;
+  margin: 0rem auto;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: none; /* hidden until JS shows it */
+  display: none; /* Hidden until JS shows it */
 }
 
 /* ================================
@@ -63,7 +66,7 @@ p {
   margin-bottom: 1.5rem;
 }
 
-/* Avatar Image */
+/* Avatar Styling */
 .avatar-img,
 #profile img {
   width: 48px;
@@ -76,7 +79,7 @@ p {
   flex-shrink: 0;
 }
 
-/* User Info (name + level) */
+/* User info (Name and Level) */
 .user-info {
   display: flex;
   flex-direction: column;
@@ -99,7 +102,7 @@ p {
 @media (min-width: 600px) {
   #app {
     max-width: 560px;
-    margin: 2rem auto;
+    margin: 0rem auto;
   }
 
   h1 {
@@ -131,5 +134,129 @@ p {
   #app {
     padding: 1rem;
     margin: 0.5rem;
+  }
+}
+
+/* ================================
+   ✅ Bottom Navigation Bar
+   ================================ */
+.nav {
+  display: flex; /* Horizontal layout */
+  height: 60px; /* Fixed height */
+  max-width: 600px;
+  width: 100%;
+  position: fixed; /* Stay at bottom */
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%); /* Center horizontally */
+  justify-content: space-around; /* Even spacing between buttons */
+  background: linear-gradient(to right, #0050ac, #3399ff, #66ccff);
+  padding: 10px 0;
+  color: white;
+  z-index: 10;
+}
+
+.nav button {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 14px;
+  flex: 1;
+  cursor: pointer;
+}
+
+.nav .active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* ================================
+   ✅ Page System for Navigation
+   ================================ */
+.pages {
+  position: relative; /* Needed for absolutely-positioned .page children */
+  flex: 1; /* Fills available space in flex layout */
+  overflow: hidden; /* Hide overflow from animated sliding */
+}
+
+/* Each page */
+.page {
+  position: absolute; /* All pages overlap each other */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none; /* Hidden by default */
+  align-items: center; /* Center content vertically */
+  justify-content: center; /* Center content horizontally */
+  font-size: 2rem;
+}
+
+/* Active page is visible and centered */
+.page.active {
+  display: flex;
+}
+
+/* ================================
+   ✅ Page Slide Animations
+   ================================ */
+.slide-in-left {
+  animation: slideInLeft 0.3s forwards;
+}
+
+.slide-out-left {
+  animation: slideOutLeft 0.3s forwards;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.3s forwards;
+}
+
+.slide-out-right {
+  animation: slideOutRight 0.3s forwards;
+}
+
+/* Slide animations for transitions */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
   }
 }
