@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS Color Themes & Palettes Explained</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      /* === BASE COLORS === */
+      --primary-color: #4A90E2;        /* Blue */
+      --secondary-color: #D0021B;      /* Red */
+      --accent-color: #F5A623;         /* Orange */
+      --background-light: #F2F2F2;     /* Light Gray */
+      --background-dark: #1C1C1C;      /* Dark */
+      --text-light: #FFFFFF;
+      --text-dark: #333333;
+
+      /* === THEME PALETTES === */
+      --pastel-1: #A8E6CF;
+      --pastel-2: #DCEDC1;
+      --pastel-3: #FFD3B6;
+      --pastel-4: #FFAAA5;
+      --pastel-5: #FF8B94;
+
+      --material-blue: #2196F3;
+      --material-green: #4CAF50;
+      --material-yellow: #FFEB3B;
+      --material-red: #F44336;
+    }
+
+    body {
+      font-family: sans-serif;
+      background: var(--background-light);
+      color: var(--text-dark);
+      margin: 0;
+      padding: 2rem;
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    section {
+      margin-bottom: 3rem;
+      padding: 1rem;
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      background-color: #fff;
+    }
+
+    .color-box {
+      width: 120px;
+      height: 120px;
+      margin: 1rem;
+      display: inline-block;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      line-height: 120px;
+      border-radius: 8px;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .theme-dark {
+      background-color: var(--background-dark);
+      color: var(--text-light);
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    .theme-dark h2 {
+      color: var(--text-light);
+    }
+  </style>
+</head>
+<body>
+  <h1>🎨 CSS Color Themes & Palettes</h1>
+  <p style="text-align: center; max-width: 700px; margin: auto;">
+    This educational guide demonstrates how to build and apply CSS color themes, palettes, and semantic variables using <code>:root</code> custom properties.
+  </p>
+
+  <!-- Section: Base Theme Colors -->
+  <section>
+    <h2>1. Base Theme Colors</h2>
+    <div class="row">
+      <div class="color-box" style="background-color: var(--primary-color);">Primary</div>
+      <div class="color-box" style="background-color: var(--secondary-color);">Secondary</div>
+      <div class="color-box" style="background-color: var(--accent-color); color:#000">Accent</div>
+    </div>
+  </section>
+
+  <!-- Section: Text and Background -->
+  <section>
+    <h2>2. Light & Dark Backgrounds</h2>
+    <div class="row">
+      <div class="color-box" style="background-color: var(--background-light); color: black;">Light</div>
+      <div class="color-box" style="background-color: var(--background-dark);">Dark</div>
+    </div>
+  </section>
+
+  <!-- Section: Pastel Palette -->
+  <section>
+    <h2>3. Pastel Color Palette</h2>
+    <div class="row">
+      <div class="color-box" style="background-color: var(--pastel-1); color:#000">Pastel 1</div>
+      <div class="color-box" style="background-color: var(--pastel-2); color:#000">Pastel 2</div>
+      <div class="color-box" style="background-color: var(--pastel-3); color:#000">Pastel 3</div>
+      <div class="color-box" style="background-color: var(--pastel-4);">Pastel 4</div>
+      <div class="color-box" style="background-color: var(--pastel-5);">Pastel 5</div>
+    </div>
+  </section>
+
+  <!-- Section: Material Design Colors -->
+  <section>
+    <h2>4. Material Colors</h2>
+    <div class="row">
+      <div class="color-box" style="background-color: var(--material-blue);">Blue</div>
+      <div class="color-box" style="background-color: var(--material-green);">Green</div>
+      <div class="color-box" style="background-color: var(--material-yellow); color: #000">Yellow</div>
+      <div class="color-box" style="background-color: var(--material-red);">Red</div>
+    </div>
+  </section>
+
+  <!-- Section: Dark Theme Preview -->
+  <section class="theme-dark">
+    <h2>5. Dark Theme Example</h2>
+    <p>This section simulates how you might apply a dark theme using the same variables for background and text.</p>
+  </section>
+
+  <!-- Section: Semantic Colors -->
+  <section>
+    <h2>6. Semantic Color Variables</h2>
+    <p>Use descriptive names instead of raw hex codes throughout your app:</p>
+    <ul>
+      <li><strong>Primary:</strong> Main branding color</li>
+      <li><strong>Secondary:</strong> Highlights or call-outs</li>
+      <li><strong>Accent:</strong> Buttons or icons</li>
+      <li><strong>Background:</strong> Light or dark surfaces</li>
+      <li><strong>Text:</strong> Foreground readability</li>
+    </ul>
+  </section>
+
+  <!-- Section: Light/Dark Theme Switching (Basic) -->
+  <section>
+    <h2>7. Light/Dark Theme Switch (Concept)</h2>
+    <pre>
+/* Default: Light */
+:root {
+  --background: white;
+  --text: black;
+}
+
+/* Dark Theme */
+body.dark-mode {
+  --background: black;
+  --text: white;
+}</pre>
+    <p>This allows toggling themes using <code>class="dark-mode"</code>.</p>
+  </section>
+</body>
+</html>

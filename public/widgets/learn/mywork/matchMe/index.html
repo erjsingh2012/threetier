@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>__instantOpponent Simulation</title>
+  <style>
+    body { font-family: monospace; background: #111; color: #eee; padding: 2rem; }
+    button { margin: 0.5rem; padding: 0.5rem 1rem; background: #1976d2; color: white; border: none; cursor: pointer; }
+    #log { white-space: pre-wrap; background: #222; padding: 1rem; border: 1px solid #444; margin-top: 1rem; max-height: 400px; overflow-y: auto; }
+  </style>
+</head>
+<body>
+
+<h2>Simulated __instantOpponent</h2>
+
+<div>
+  <button onclick="App.__instantOpponent('none')">Happy Path</button>
+  <button onclick="App.__instantOpponent('disable')">DISABLED_PENDING</button>
+  <button onclick="App.__instantOpponent('experiment')">Experiment Error</button>
+  <button onclick="App.__instantOpponent('match')">Match Error</button>
+  <button onclick="App.__instantOpponent('players')">getPlayersAsync Error</button>
+  <button onclick="App.__instantOpponent('conversation')">Conversation Error</button>
+</div>
+
+<div id="log"></div>
+
+<script>
+const log = msg => {
+  document.getElementById('log').textContent += msg + "\n";
+  console.log(msg);
+};
+
+const s5 = {
+  Log: { info: (...args) => log("LOG: " + args.join(" ")) },
+  EventBus: {
+    emit: (...args) => log("EVENT: " + JSON.stringify(args))
+  }
+};
+
+const FBInstant = {
+  matchPlayerAsync: (tag, a, b) => new Promise((res, rej) => {
+    setTimeout(() => tag === "match" ? rej({ code: "MATCH_ERR" }) : res(), 100);
+  }),
+  context: {
+    getID: () => "mock-context-123",
+    getPlayersAsync: () => new Promise((res, rej) => {
+      setTimeout(() => {
+        window._mode === 'players' ? rej("getPlayersAsync error") : res([{ getID: () => "me" }, { getID: () => "opponent" }]);
+      }, 100);
+    })
+  },
+  player: {
+    getID: () => "me"
+  }
+};
+
+const wwf = {
+  user: { settings: { gameLocale: "en_US" }, myself: "me" },
+  Config: {
+    Dialogs: {
+      MATCHMAKING_DIALOG_PENDING: "PENDING_DIALOG",
+      MATCHMAKING_DIALOG_DELAY: "DELAY_DIALOG"
+    }
+  },
+  DIALOG_EVENTS: { DIALOG_CREATE: "DIALOG_CREATE" },
+  APP_EVENTS: {
+    TRACK: "TRACK",
+    LOG: "LOG",
+    CREATEGAME_ALLOWED: "CREATEGAME_ALLOWED"
+  },
+  LOG_CODES: {
+    INSTANT_PLAY_MATCHMAKING_FAIL: "MATCH_FAIL",
+    LOAD_EXPS_FAIL: "EXPERIMENT_FAIL"
+  },
+  utils: {
+    Shared: {
+      wait: ms => new Promise(res => setTimeout(res, ms)),
+      adjustedTime: () => Date.now()
+    }
+  }
+};
+
+const App = {
+  instantDisabledState: null,
+  __instantApi: { context: FBInstant.context },
+
+  getOfflineMatchmakingVariables: function (cb) {
+    return new Promise((res, rej) => {
+      if (window._mode === "experiment") {
+        return rej("Experiment error");
+      }
+      res({ enableOffline: false, wordScore: {} });
+    }).then(cb);
+  },
+
+  __createGameObject: function (type, id, meta) {
+    return { id: "game-123", meta };
+  },
+
+  __loadConversation: function (id, meta) {
+    return new Promise((res, rej) => {
+      setTimeout(() => window._mode === "conversation" ? rej("Conversation load error") : res({ games: [{ id: "game-123", created_at: Date.now(), player2: { id: "opponent" } }] }), 100);
+    });
+  },
+
+  __createGameForMatchedPlayers: function (players, variables, matchTag) {
+    log("✅ [Simulated] Created game for matched players.");
+    return Promise.resolve(true);
+  },
+
+  __selectGameFromConversation: function (conv) {
+    log("✅ [Simulated] Selected game from conversation.");
+    return Promise.resolve(true);
+  },
+
+  recheckInstantPlay: function () {
+    log("ℹ️ Rechecking InstantPlay...");
+  },
+
+  __instantOpponent: function (source) {
+    window._mode = source;
+    const locale = wwf.user.settings.gameLocale;
+    let matchTag = locale.split("_")[0];
+    s5.Log.info(2, "INSTANTPLAY: instantOpponent called", matchTag);
+
+    if (source === "disable") {
+      this.instantDisabledState = "DISABLED_PENDING";
+    } else {
+      this.instantDisabledState = null;
+    }
+
+    if (this.instantDisabledState === "DISABLED_PENDING" || this.instantDisabledState === "DISABLED_FB") {
+      const id = this.instantDisabledState === "DISABLED_PENDING" ? "PENDING" : "DELAY";
+      const dialogConfig = this.instantDisabledState === "DISABLED_PENDING" ?
+        wwf.Config.Dialogs.MATCHMAKING_DIALOG_PENDING :
+        wwf.Config.Dialogs.MATCHMAKING_DIALOG_DELAY;
+      s5.EventBus.emit(wwf.DIALOG_EVENTS.DIALOG_CREATE, "dialog", dialogConfig);
+      return Promise.resolve(false);
+    }
+
+    return this.getOfflineMatchmakingVariables(function (variables) {
+      s5.Log.info(2, "INSTANTPLAY: matchTag", matchTag, "enableOffline", variables.enableOffline);
+
+      return FBInstant.matchPlayerAsync(source, true, variables.enableOffline).then(function () {
+        s5.Log.info(2, "INSTANTPLAY: match success", FBInstant.context.getID());
+        this.recheckInstantPlay();
+
+        return FBInstant.context.getPlayersAsync().then(function (players) {
+          s5.Log.info(2, "INSTANTPLAY: players found", players.length);
+          return wwf.utils.Shared.wait(100).then(function () {
+            const conversationId = this.__instantApi.context.getID();
+            const knownMeta = {
+              source: 'instant_play',
+              games: [this.__createGameObject('InstantPlay', conversationId, { source: 'instant_play' })]
+            };
+            return this.__loadConversation(conversationId, knownMeta).then(function (conversation) {
+              return this.__selectGameFromConversation(conversation);
+            }.bind(this));
+          }.bind(this));
+        }.bind(this));
+      }.bind(this)).catch(function (e) {
+        s5.Log.info(2, "INSTANTPLAY: matchPlayerAsync fail", e);
+        if (!variables.enableOffline) {
+          s5.Log.info(2, "INSTANTPLAY: fallback to fake players");
+          const players = [
+            { getID: () => wwf.user.myself },
+            { getID: () => "mock-opponent" }
+          ];
+          return this.__createGameForMatchedPlayers(players, variables, matchTag);
+        }
+        s5.EventBus.emit(wwf.APP_EVENTS.LOG, { base: wwf.LOG_CODES.INSTANT_PLAY_MATCHMAKING_FAIL, error: e });
+        return false;
+      }.bind(this));
+    }.bind(this)).catch(function (e) {
+      s5.Log.info(2, "INSTANTPLAY: failure in experiment", e);
+      s5.EventBus.emit(wwf.APP_EVENTS.LOG, { base: wwf.LOG_CODES.LOAD_EXPS_FAIL, error: e });
+      return false;
+    }.bind(this));
+  }
+};
+</script>
+
+</body>
+</html>

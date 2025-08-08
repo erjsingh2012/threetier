@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CSS Visual Demos – Learning Playground</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f6f8;
+      color: #333;
+    }
+    header {
+      background: linear-gradient(to right, #00b4db, #0083b0);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.4rem;
+    }
+    .container {
+      max-width: 960px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    .topic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+    }
+    .card h3 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      color: #333;
+    }
+    .card p {
+      font-size: 0.95rem;
+      margin: 0.5rem 0 1rem;
+      color: #666;
+    }
+    .card a {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      background: #0083b0;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+    .card a:hover {
+      background: #006c91;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>CSS Visual Demos</h1>
+    <p>Interactive Playground to Learn CSS Visually</p>
+  </header>
+
+  <div class="container">
+    <div class="topic-grid">
+
+      <div class="card">
+        <h3>1. Box Model</h3>
+        <p>Explore content, padding, border, and margin with real boxes.</p>
+        <a href="box-model.html">View Demo</a>
+      </div>
+
+      <div class="card">
+        <h3>2. Font Properties</h3>
+        <p>Understand font families, size units, weights, styles, and spacing.</p>
+        <a href="fonts-explained.html">View Demo</a>
+      </div>
+
+      <div class="card">
+        <h3>3. Color Themes & Palettes</h3>
+        <p>Build and visualize color systems with CSS variables and utilities.</p>
+        <a href="color-themes.html">View Demo</a>
+      </div>
+
+      <div class="card">
+        <h3>4. Flexbox</h3>
+        <p>Learn how flex layouts arrange items in rows/columns.</p>
+        <a href="flexbox.html">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>5. CSS Grid</h3>
+        <p>Powerful 2D layout system for rows and columns.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>6. Display & Position</h3>
+        <p>Inline, block, absolute, relative, fixed, sticky – all demystified.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>7. Margin vs Padding</h3>
+        <p>What's the difference? Learn with side-by-side blocks.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>8. Borders & Outlines</h3>
+        <p>Types, thickness, radius, and outline vs border effects.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>9. Shadows (Box/Text)</h3>
+        <p>Visualize drop shadows, elevation, glow, and soft effects.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>10. Transitions & Animations</h3>
+        <p>Hover, fade, slide, scale – smooth effects with keyframes.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>11. CSS Units</h3>
+        <p>Compare px, %, em, rem, vh, vw with resizing examples.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>12. z-index</h3>
+        <p>Understand stacking order, overlap, and how to debug it.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>13. Pseudo-classes & Elements</h3>
+        <p>Use ::before, ::after, :hover, :nth-child(), and more.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>14. CSS Variables</h3>
+        <p>Reusable values for colors, sizes, themes, and consistency.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>15. Media Queries</h3>
+        <p>Responsive design demos with live resizing effects.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>16. Overflow & Scroll</h3>
+        <p>Scrollbars, hidden content, and horizontal scrolling tricks.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>17. Backgrounds & Gradients</h3>
+        <p>Layer backgrounds, gradients, patterns, and positions.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>18. Visibility & Opacity</h3>
+        <p>Hide elements the right way – visible vs display vs opacity.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>19. Custom Cursors</h3>
+        <p>Change mouse pointers for interactions and accessibility.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+      <div class="card">
+        <h3>20. Dark/Light Theme Switcher</h3>
+        <p>Build a theme toggle with CSS variables and media queries.</p>
+        <a href="#">Coming Soon</a>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 CSS Visual Learning Hub. All rights reserved.
+  </footer>
+
+</body>
+</html>

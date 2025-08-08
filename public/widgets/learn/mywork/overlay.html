@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FBInstant Overlay View Demo</title>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
+    }
+    #status {
+      margin-top: 20px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Overlay View Example</h1>
+  <button onclick="showOverlay()">Show Player Overlay</button>
+  <div id="status">Initializing...</div>
+
+  <script src="https://connect.facebook.net/en_US/fbinstant.8.0.js"></script>
+  <script>
+    FBInstant.initializeAsync().then(() => {
+      document.getElementById("status").innerText = "Game Initialized";
+      return FBInstant.startGameAsync();
+    }).then(() => {
+      document.getElementById("status").innerText = "Game Started";
+    }).catch((err) => {
+      document.getElementById("status").innerText = "Init failed: " + err.message;
+    });
+
+    function showOverlay() {
+      if (
+        FBInstant.overlayViews &&
+        typeof FBInstant.overlayViews.createOverlay === "function"
+      ) {
+        FBInstant.overlayViews
+          .createOverlay({
+            name: "PlayerInfo",
+            frameParams: {
+              style: {
+                width: "300px",
+                height: "150px",
+              }
+            },
+            data: {}
+          })
+          .then(() => {
+            console.log("Overlay shown successfully");
+          })
+          .catch((err) => {
+            console.error("Error showing overlay:", err);
+          });
+      } else {
+        alert("Overlay views not available. This must be run in Instant Games runtime.");
+      }
+    }
+  </script>
+</body>
+</html>
