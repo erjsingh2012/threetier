@@ -108,6 +108,65 @@ html, body {
       <div class="horizontal-container">
         <div class="top-box" id="topBox">
           <h3>Editor Area</h3>
+          <div class="top-box dev-notes" id="topBox">
+  <h2>📘 Dev Notes: Layout Overview</h2>
+  <pre>
+<strong>📦 Layout:</strong> Flexbox + Resizers + Panels + Floating Window
+
+.container {
+  display: flex;           // row layout
+}
+
+.main {
+  display: flex;
+  flex-direction: column;  // for vertical split (editor/output)
+}
+
+.sidebar-left, .sidebar-right {
+  width: adjustable;
+  min-width: 100px;
+}
+
+.floating-window {
+  position: absolute;      // draggable
+}
+  </pre>
+
+  <h3>🧩 Components:</h3>
+  <ul>
+    <li><strong>Left Sidebar</strong>: Watchlist / Navigation</li>
+    <li><strong>Main Area</strong>: Editor + Output (split)</li>
+    <li><strong>Right Sidebar</strong>: Tools / Console</li>
+    <li><strong>Floating Window</strong>: Draggable popup / summary panel</li>
+  </ul>
+
+  <h3>⚙️ Interactions:</h3>
+  <ul>
+    <li><code>mousedown</code> + <code>mousemove</code> → Resize Panels</li>
+    <li><code>position: absolute</code> + JS → Floating Drag</li>
+    <li><code>flex-grow</code> + <code>min-width</code> → Responsive layout</li>
+  </ul>
+
+  <h3>📁 Files:</h3>
+  <ul>
+    <li><strong>index.html</strong> → layout skeleton</li>
+    <li><strong>styles.css</strong> → visuals + layout</li>
+    <li><strong>script.js</strong> → resize + drag logic</li>
+  </ul>
+
+  <h3>💡 Ideas to Extend:</h3>
+  <ul>
+    <li>[ ] Save panel sizes in <code>localStorage</code></li>
+    <li>[ ] Add tabs to Editor Area</li>
+    <li>[ ] Load Monaco editor in center</li>
+    <li>[ ] Add dark mode toggle</li>
+  </ul>
+
+  <p style="margin-top: 10px; font-style: italic; color: #666;">
+    🚀 Use this as a skeleton for IDEs, dashboards, or sandboxed tools.
+  </p>
+</div>
+
         </div>
         <div class="h-resizer" id="horizontalResizer"></div>
         <div class="bottom-box" id="bottomBox">
