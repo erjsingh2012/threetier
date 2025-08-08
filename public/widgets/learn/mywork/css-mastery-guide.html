@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My CSS Learning Page</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f2f5f9;
+      margin: 0;
+      padding: 2rem;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    h1, h2 {
+      color: #1e88e5;
+    }
+
+    .topic {
+      background: white;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .topic-header {
+      background: #e3f2fd;
+      padding: 1rem;
+      cursor: pointer;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .topic-content {
+      display: none;
+      padding: 1rem;
+      border-top: 1px solid #ccc;
+    }
+
+    .checkbox-list input {
+      margin-right: 0.5rem;
+    }
+
+    pre {
+      background: #282c34;
+      color: #fff;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+
+    .preview {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      margin-top: 0.5rem;
+      border-radius: 4px;
+      background: #fff;
+    }
+
+    .footer {
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .expanded::after {
+      content: "▼";
+    }
+
+    .collapsed::after {
+      content: "▶";
+    }
+  </style>
+</head>
+<body>
+  <h1>📘 My CSS Learning Tracker</h1>
+  <p>Track and explore the most important CSS concepts. Check off what you've learned!</p>
+
+  <!-- Template for Topic -->
+  <div class="topic" data-topic="box-model">
+    <div class="topic-header collapsed">1. Box Model</div>
+    <div class="topic-content">
+      <div class="checkbox-list">
+        <label><input type="checkbox" data-check="content"/> Understand content-box vs border-box</label><br>
+        <label><input type="checkbox" data-check="padding"/> Learned padding, border, margin differences</label><br>
+        <label><input type="checkbox" data-check="box-debug"/> Used browser dev tools to debug box sizes</label>
+      </div>
+      <h4>Example:</h4>
+      <pre><code>div {
+  box-sizing: border-box;
+  padding: 10px;
+  border: 2px solid #333;
+  margin: 20px;
+}</code></pre>
+      <div class="preview">
+        <div style="box-sizing:border-box; padding:10px; border:2px solid #333; margin:20px;">
+          This box uses <code>border-box</code>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic" data-topic="flexbox">
+    <div class="topic-header collapsed">2. Flexbox</div>
+    <div class="topic-content">
+      <div class="checkbox-list">
+        <label><input type="checkbox" data-check="flex-start"/> Mastered justify-content and align-items</label><br>
+        <label><input type="checkbox" data-check="flex-wrap"/> Used flex-wrap and direction properly</label><br>
+        <label><input type="checkbox" data-check="flex-center"/> Built a centered flex layout</label>
+      </div>
+      <h4>Example:</h4>
+      <pre><code>.flex-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}</code></pre>
+      <div class="preview">
+        <div style="display:flex; justify-content:center; align-items:center; height:80px; background:#e0f7fa;">
+          Centered with Flexbox!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic" data-topic="grid">
+    <div class="topic-header collapsed">3. CSS Grid</div>
+    <div class="topic-content">
+      <div class="checkbox-list">
+        <label><input type="checkbox" data-check="grid-template"/> Understand grid-template-columns/rows</label><br>
+        <label><input type="checkbox" data-check="grid-gap"/> Used gap, auto-fit, repeat</label><br>
+        <label><input type="checkbox" data-check="grid-layouts"/> Built a 2D layout with grid</label>
+      </div>
+      <h4>Example:</h4>
+      <pre><code>.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 10px;
+}</code></pre>
+      <div class="preview grid-container" style="display:grid; grid-template-columns:1fr 2fr; gap:10px;">
+        <div style="background:#ffe082; padding:10px;">1fr</div>
+        <div style="background:#ffcc80; padding:10px;">2fr</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic" data-topic="position">
+    <div class="topic-header collapsed">4. Positioning</div>
+    <div class="topic-content">
+      <div class="checkbox-list">
+        <label><input type="checkbox" data-check="relative"/> Understood relative vs absolute</label><br>
+        <label><input type="checkbox" data-check="fixed"/> Used fixed headers and footers</label><br>
+        <label><input type="checkbox" data-check="z-index"/> Used z-index for stacking</label>
+      </div>
+      <h4>Example:</h4>
+      <pre><code>.box {
+  position: relative;
+  top: 10px;
+  left: 20px;
+}</code></pre>
+      <div class="preview">
+        <div style="position:relative; top:10px; left:20px; background:#dcedc8; padding:10px;">
+          This box is moved 10px down and 20px right.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- More topics? Just copy the .topic block -->
+
+  <div class="footer">Made with 💙 to master CSS. Your progress is stored in your browser.</div>
+
+  <script>
+    // Expand/collapse sections
+    document.querySelectorAll('.topic-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const content = header.nextElementSibling;
+        const isOpen = content.style.display === 'block';
+        content.style.display = isOpen ? 'none' : 'block';
+        header.classList.toggle('collapsed', isOpen);
+        header.classList.toggle('expanded', !isOpen);
+      });
+    });
+
+    // Save and restore checklist progress
+    const saveProgress = () => {
+      const data = {};
+      document.querySelectorAll('.topic').forEach(topic => {
+        const topicKey = topic.dataset.topic;
+        data[topicKey] = {};
+        topic.querySelectorAll('input[type="checkbox"]').forEach(box => {
+          data[topicKey][box.dataset.check] = box.checked;
+        });
+      });
+      localStorage.setItem('cssLearningProgress', JSON.stringify(data));
+    };
+
+    const loadProgress = () => {
+      const data = JSON.parse(localStorage.getItem('cssLearningProgress') || '{}');
+      document.querySelectorAll('.topic').forEach(topic => {
+        const topicKey = topic.dataset.topic;
+        const topicData = data[topicKey] || {};
+        topic.querySelectorAll('input[type="checkbox"]').forEach(box => {
+          box.checked = !!topicData[box.dataset.check];
+        });
+      });
+    };
+
+    document.querySelectorAll('input[type="checkbox"]').forEach(box => {
+      box.addEventListener('change', saveProgress);
+    });
+
+    loadProgress();
+  </script>
+</body>
+</html>

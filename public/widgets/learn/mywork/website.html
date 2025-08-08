@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CSS Essentials Cheat Sheet</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f7fafc;
+      color: #2d3748;
+    }
+    header, section {
+      padding: 20px;
+      margin: 10px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    h1, h2 {
+      color: #2b6cb0;
+    }
+    code {
+      background: #edf2f7;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    .demo {
+      background: #e2e8f0;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 4px;
+    }
+    .flex-demo, .grid-demo {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .grid-demo {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .box {
+      background: #4299e1;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-radius: 4px;
+      flex: 1;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      color: #718096;
+    }
+    @media (max-width: 600px) {
+      .grid-demo {
+        grid-template-columns: 1fr;
+      }
+      .flex-demo {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>CSS Essentials Cheat Sheet</h1>
+    <p>Learn the 80% most-used CSS concepts with examples and best practices.</p>
+  </header>
+
+  <section>
+    <h2>1. Selectors & Specificity</h2>
+    <p>Use classes (<code>.box</code>), IDs (<code>#main</code>), and element selectors wisely.</p>
+    <div class="demo">
+      <code>p { color: black; }<br>.highlight { color: red; }</code>
+    </div>
+  </section>
+
+  <section>
+    <h2>2. Box Model</h2>
+    <p>Every element is a box: <code>content + padding + border + margin</code></p>
+    <div class="demo">
+      <code>box-sizing: border-box;</code>
+    </div>
+  </section>
+
+  <section>
+    <h2>3. Flexbox (1D Layout)</h2>
+    <p>Use for rows or columns. Automatically handles spacing and alignment.</p>
+    <div class="flex-demo">
+      <div class="box">A</div>
+      <div class="box">B</div>
+      <div class="box">C</div>
+    </div>
+    <div class="demo">
+      <code>display: flex; justify-content: space-between; align-items: center;</code>
+    </div>
+  </section>
+
+  <section>
+    <h2>4. Grid (2D Layout)</h2>
+    <p>Create columns and rows easily.</p>
+    <div class="grid-demo">
+      <div class="box">1</div>
+      <div class="box">2</div>
+      <div class="box">3</div>
+    </div>
+    <div class="demo">
+      <code>display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;</code>
+    </div>
+  </section>
+
+  <section>
+    <h2>5. Positioning</h2>
+    <p>Use <code>static</code>, <code>relative</code>, <code>absolute</code>, <code>fixed</code>, and <code>sticky</code> to control element position.</p>
+    <div class="demo">
+      <code>position: absolute; top: 10px; left: 10px;</code>
+    </div>
+  </section>
+
+  <section>
+    <h2>6. Typography</h2>
+    <p>Control font-family, size, line-height, and weight.</p>
+    <div class="demo">
+      <code>font-size: 16px; line-height: 1.5; font-weight: bold;</code>
+    </div>
+  </section>
+
+  <section>
+    <h2>7. Colors & Backgrounds</h2>
+    <p>Use named colors, HEX, RGB, or HSL.</p>
+    <div class="demo">
+      <code>background-color: #f0f0f0; color: #333;</code>
+    </div>
+  </section>
+
+  <section>
+    <h2>8. Spacing: Margin, Padding, Border</h2>
+    <p>These control element spacing and separation.</p>
+    <div class="demo">
+      <code>margin: 10px; padding: 15px; border: 1px solid #ccc;</code>
+    </div>
+  </section>
+
+  <section>
+    <h2>9. Display & Visibility</h2>
+    <p>Control if elements are shown, hidden, or inline/block.</p>
+    <div class="demo">
+      <code>display: none; visibility: hidden; display: inline-block;</code>
+    </div>
+  </section>
+
+  <section>
+    <h2>10. Responsive Design (Media Queries)</h2>
+    <p>Change layout based on screen size.</p>
+    <div class="demo">
+      <code>@media (max-width: 600px) { ... }</code>
+    </div>
+  </section>
+
+  <section>
+    <h2>11. Transitions & Hover Effects</h2>
+    <p>Animate changes smoothly.</p>
+    <div class="demo">
+      <code>transition: all 0.3s ease;<br>
+      .box:hover { background: #2b6cb0; }</code>
+    </div>
+  </section>
+
+  <footer>
+    Created to teach the most important CSS concepts. © 2025
+  </footer>
+
+</body>
+</html>

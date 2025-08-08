@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CSS Flexbox Visual Guide</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f5f5fa;
+      color: #333;
+      padding-bottom: 4rem;
+    }
+    header {
+      background: linear-gradient(to right, #4a90e2, #007aff);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+    h2 {
+      margin-top: 2rem;
+      font-size: 1.4rem;
+      color: #222;
+    }
+    .section {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .section p {
+      line-height: 1.6;
+    }
+    .demo {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: #fdfdfd;
+    }
+    .flex-container {
+      display: flex;
+      gap: 10px;
+      border: 2px dashed #007aff;
+      padding: 1rem;
+      min-height: 100px;
+      border-radius: 8px;
+    }
+    .item {
+      flex: 0 0 auto;
+      background: #007aff;
+      color: white;
+      padding: 10px;
+      border-radius: 4px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .code-block {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 0.9rem;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Flexbox Explained Visually</h1>
+    <p>Learn layout with live examples and simple explanations</p>
+  </header>
+
+  <div class="section">
+    <h2>What is Flexbox?</h2>
+    <p>Flexbox is a one-dimensional layout system in CSS that makes it easy to align and distribute space among items in a container, even when their size is unknown or dynamic.</p>
+  </div>
+
+  <div class="section">
+    <h2>Display: flex</h2>
+    <p>We start by turning a container into a flex container using:</p>
+    <div class="code-block">
+      .container { display: flex; }
+    </div>
+    <div class="demo">
+      <div class="flex-container">
+        <div class="item">A</div>
+        <div class="item">B</div>
+        <div class="item">C</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Flex Direction</h2>
+    <p>The <code>flex-direction</code> property defines the direction of the main axis. You can use <code>row</code>, <code>row-reverse</code>, <code>column</code>, or <code>column-reverse</code>.</p>
+    <div class="code-block">
+      .container { display: flex; flex-direction: row | column; }
+    </div>
+    <div class="demo">
+      <div class="flex-container" style="flex-direction: row;">
+        <div class="item">Row</div>
+        <div class="item">Layout</div>
+      </div>
+      <div class="flex-container" style="flex-direction: column; margin-top: 1rem;">
+        <div class="item">Column</div>
+        <div class="item">Layout</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Justify Content</h2>
+    <p>This aligns items along the main axis (horizontally for <code>flex-direction: row</code>).</p>
+    <div class="code-block">
+      .container {
+        justify-content: flex-start | center | space-between | space-around | space-evenly;
+      }
+    </div>
+    <div class="demo">
+      <div class="flex-container" style="justify-content: space-between;">
+        <div class="item">One</div>
+        <div class="item">Two</div>
+        <div class="item">Three</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Align Items</h2>
+    <p>This aligns items along the cross axis (perpendicular to the main axis).</p>
+    <div class="code-block">
+      .container {
+        align-items: flex-start | center | flex-end | stretch | baseline;
+      }
+    </div>
+    <div class="demo">
+      <div class="flex-container" style="align-items: flex-end; height: 120px;">
+        <div class="item" style="height: 40px;">Short</div>
+        <div class="item" style="height: 70px;">Tall</div>
+        <div class="item" style="height: 60px;">Mid</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Wrap Flex Items</h2>
+    <p>Use <code>flex-wrap</code> to allow items to wrap into multiple lines.</p>
+    <div class="code-block">
+      .container {
+        flex-wrap: wrap;
+      }
+    </div>
+    <div class="demo">
+      <div class="flex-container" style="flex-wrap: wrap;">
+        <div class="item" style="width: 150px;">Box 1</div>
+        <div class="item" style="width: 150px;">Box 2</div>
+        <div class="item" style="width: 150px;">Box 3</div>
+        <div class="item" style="width: 150px;">Box 4</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Flexible Item Sizing</h2>
+    <p>Use <code>flex: 1</code> or combinations of <code>flex-grow</code>, <code>flex-shrink</code>, and <code>flex-basis</code>.</p>
+    <div class="code-block">
+      .item {
+        flex: 1; /* or flex: 2, etc. */
+      }
+    </div>
+    <div class="demo">
+      <div class="flex-container">
+        <div class="item" style="flex: 1;">1</div>
+        <div class="item" style="flex: 2;">2</div>
+        <div class="item" style="flex: 1;">1</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Flexbox Visual Guide &mdash; Made for learners ✨
+  </footer>
+
+</body>
+</html>
