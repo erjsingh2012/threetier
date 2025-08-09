@@ -1,275 +1,313 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Word Wheel with Drag Path</title>
-<style>
-  body {
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    background: linear-gradient(135deg, #dfe9f3, #ffffff);
-    text-align: center;
-    margin: 0;
-    padding: 20px;
-  }
-  h1 {
-    color: #333;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-  }
-  #gameArea {
-    position: relative;
-    display: inline-block;
-    margin-top: 20px;
-  }
-  #wordWheel {
-    position: relative;
-    width: 250px;
-    height: 250px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(8px);
-    border: 2px solid rgba(255,255,255,0.4);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-  }
-  svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-  }
-  #pathLine {
-    stroke: #ff9800;
-    stroke-width: 5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    filter: drop-shadow(0 0 6px rgba(255,152,0,0.8));
-  }
-  .letter {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(145deg, #4a90e2, #357ABD);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    cursor: pointer;
-    border: 2px solid rgba(0,0,0,0.2);
-    user-select: none;
-    font-size: 24px;
-    font-weight: bold;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transition: transform 0.15s ease, background 0.15s ease;
-  }
-  .letter:hover {
-    transform: scale(1.15);
-  }
-  .letter.selected {
-    background: linear-gradient(145deg, #2C5A8A, #1f3f63);
-    transform: scale(1.1);
-  }
-  #currentWord {
-    margin-top: 15px;
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
-  }
-  #wordList {
-    margin-top: 15px;
-    background: rgba(255,255,255,0.8);
-    padding: 12px 18px;
-    border-radius: 8px;
-    min-height: 40px;
-    display: inline-block;
-    font-size: 16px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-  button {
-    margin: 5px;
-    padding: 8px 16px;
-    font-size: 15px;
-    cursor: pointer;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(145deg, #4a90e2, #357ABD);
-    color: white;
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    transition: background 0.2s ease, transform 0.15s ease;
-  }
-  button:hover {
-    background: linear-gradient(145deg, #5AA0F2, #4685C2);
-    transform: translateY(-2px);
-  }
-</style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Word Wheel Component Demo</title>
+  </head>
 
-<h1>Word Wheel with Drag Path</h1>
-<div id="gameArea">
-  <div id="wordWheel"></div>
-  <svg id="pathOverlay" width="250" height="250">
-    <polyline id="pathLine" fill="none"/>
-  </svg>
-</div>
+  <body>
+    <div id="gameContainer"></div>
 
-<div id="currentWord">_</div>
-
-<div>
-  <button onclick="clearSelection()">Clear Selection</button>
-  <button onclick="addToList()">Add to List</button>
-  <button onclick="clearList()">Clear List</button>
-  <button onclick="submitList()">Submit</button>
-</div>
-
-<div id="wordList"></div>
-
-<script>
-  let rack = ['A','B','C','D','E','F','G'];
-  let selectedLetters = [];
-  let selectedPositions = [];
-  let isDragging = false;
-  let lastMousePos = null;
-  let wordList = [];
-
-  function renderWheel() {
-    const wheel = document.getElementById("wordWheel");
-    wheel.innerHTML = '';
-
-    const total = rack.length;
-    const radius = 100;
-    const centerX = 125;
-    const centerY = 125;
-
-    rack.forEach((letter, index) => {
-      const angle = (index / total) * (2 * Math.PI);
-      const x = Math.cos(angle) * radius + centerX - 25;
-      const y = Math.sin(angle) * radius + centerY - 25;
-
-      const div = document.createElement("div");
-      div.className = "letter";
-      div.textContent = letter;
-      div.style.left = `${x}px`;
-      div.style.top = `${y}px`;
-
-      div.addEventListener("mousedown", (e) => {
-        startSelection(letter, div, x+25, y+25);
-        e.preventDefault();
-      });
-
-      div.addEventListener("mouseenter", () => {
-        if (isDragging) selectLetter(letter, div, x+25, y+25);
-      });
-
-      div.addEventListener("touchstart", (e) => {
-        startSelection(letter, div, x+25, y+25);
-        e.preventDefault();
-      });
-
-      div.addEventListener("touchmove", (e) => {
-        const touch = e.touches[0];
-        const target = document.elementFromPoint(touch.clientX, touch.clientY);
-        if (target && target.classList.contains("letter")) {
-          const rect = target.getBoundingClientRect();
-          const posX = rect.left + rect.width/2 - wheel.getBoundingClientRect().left;
-          const posY = rect.top + rect.height/2 - wheel.getBoundingClientRect().top;
-          selectLetter(target.textContent, target, posX, posY);
-        } else {
-          updateLiveDrag(touch.clientX, touch.clientY);
+    <script>
+      class WordWheel {
+        constructor(container, letters, options = {}) {
+          this.container = container;
+          this.letters = letters;
+          this.onWordSubmit = options.onWordSubmit || function () {};
+          this.onSelectionChange = options.onSelectionChange || function () {};
+          this.wordList = [];
+          this.selectedLetters = [];
+          this.selectedPositions = [];
+          this.isDragging = false;
+          this.lastMousePos = null;
+          this._render();
+          this._attachEvents();
         }
-      });
 
-      wheel.appendChild(div);
-    });
-  }
+        _render() {
+          this.container.innerHTML = `
+      <style>
+        .ww-container {
+          font-family: 'Segoe UI', Tahoma, sans-serif;
+          text-align: center;
+          padding: 20px;
+        }
+        .ww-wheel {
+          position: relative;
+          width: 250px;
+          height: 250px;
+          border-radius: 50%;
+          background: radial-gradient(circle at 50% 50%,
+              rgba(255,255,255,0.95) 0%,
+              rgba(173, 216, 230, 0.8) 40%,
+              rgba(70, 130, 180, 0.7) 100%);
+          box-shadow:
+          0 8px 20px rgba(0, 0, 0, 0.25),   /* drop shadow */
+          inset 0 4px 15px rgba(255,255,255,0.8), /* top light */
+          inset 0 -4px 15px rgba(0,0,0,0.1); /* bottom shading */
+          border: 2px solid rgba(255,255,255,0.4);
+        }
+        .ww-svg {
+          position: absolute;
+          top: 0;
+          left: 0;
+          pointer-events: none;
+        }
+        .ww-path {
+          stroke: #ff9800;
+          stroke-width: 5;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          filter: drop-shadow(0 0 6px rgba(255,152,0,0.8));
+        }
+        .ww-letter {
+          position: absolute;
+          width: 50px;
+          height: 50px;
+          
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 12px;
+          cursor: pointer;
+          border: 2px solid rgba(0,0,0,0.2);
+          font-size: 24px;
+          font-weight: bold;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+          user-select: none;
+          transition: transform 0.15s ease;
+            background: linear-gradient(145deg, #4a90e2, #357ABD);
 
-  function startSelection(letter, element, px, py) {
-    selectedLetters = [];
-    selectedPositions = [];
-    clearSelection();
-    isDragging = true;
-    selectLetter(letter, element, px, py);
-  }
+  font-weight: bold;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+        }
+        .ww-letter:hover {
+          transform: scale(1.15);
+        }
+        .ww-letter.selected {
+          background: linear-gradient(145deg, #2C5A8A, #1f3f63);
+          transform: scale(1.1);
+        }
+        .ww-current {
+          font-size: 20px;
+          font-weight: bold;
+          margin-top: 15px;
+        }
+        .ww-list {
+          margin-top: 15px;
+          background: rgba(255,255,255,0.8);
+          padding: 12px 18px;
+          border-radius: 8px;
+          min-height: 40px;
+          display: inline-block;
+          font-size: 16px;
+        }
+        .ww-btn {
+          margin: 5px;
+          padding: 8px 16px;
+          font-size: 15px;
+          border: none;
+          border-radius: 8px;
+          background: linear-gradient(145deg, #4a90e2, #357ABD);
+          color: white;
+          font-weight: bold;
+          cursor: pointer;
+        }
+        .ww-btn:hover {
+          background: linear-gradient(145deg, #5AA0F2, #4685C2);
+        }
+      </style>
+      <div class="ww-container">
+        <div style="position:relative; display:inline-block;">
+          <div class="ww-wheel"></div>
+          <svg class="ww-svg" width="250" height="250">
+            <polyline class="ww-path" fill="none"/>
+          </svg>
+        </div>
+        <div class="ww-current">_</div>
+        <div>
+          <button class="ww-btn ww-clear">Clear Selection</button>
+          <button class="ww-btn ww-add">Add to List</button>
+          <button class="ww-btn ww-reset">Clear List</button>
+          <button class="ww-btn ww-submit">Submit</button>
+        </div>
+        <div class="ww-list">(No words yet)</div>
+      </div>
+    `;
+          this._renderWheel();
+        }
 
-  function selectLetter(letter, element, px, py) {
-    if (!element.classList.contains('selected')) {
-      selectedLetters.push(letter);
-      selectedPositions.push([px, py]);
-      element.classList.add('selected');
-      updateCurrentWord();
-      updatePath();
-    }
-  }
+        _renderWheel() {
+          const wheel = this.container.querySelector(".ww-wheel");
+          wheel.innerHTML = "";
+          const total = this.letters.length;
+          const radius = 100;
+          const centerX = 125;
+          const centerY = 125;
+          this.letters.forEach((letter, index) => {
+            const angle = (index / total) * (2 * Math.PI);
+            const x = Math.cos(angle) * radius + centerX - 25;
+            const y = Math.sin(angle) * radius + centerY - 25;
+            const div = document.createElement("div");
+            div.className = "ww-letter";
+            div.textContent = letter;
+            div.style.left = `${x}px`;
+            div.style.top = `${y}px`;
+            div.addEventListener("mousedown", (e) => {
+              this._startSelection(letter, div, x + 25, y + 25);
+              e.preventDefault();
+            });
+            div.addEventListener("mouseenter", () => {
+              if (this.isDragging)
+                this._selectLetter(letter, div, x + 25, y + 25);
+            });
+            div.addEventListener("touchstart", (e) => {
+              this._startSelection(letter, div, x + 25, y + 25);
+              e.preventDefault();
+            });
+            div.addEventListener("touchmove", (e) => {
+              const touch = e.touches[0];
+              const target = document.elementFromPoint(
+                touch.clientX,
+                touch.clientY
+              );
+              if (target && target.classList.contains("ww-letter")) {
+                const rect = target.getBoundingClientRect();
+                const posX =
+                  rect.left +
+                  rect.width / 2 -
+                  wheel.getBoundingClientRect().left;
+                const posY =
+                  rect.top +
+                  rect.height / 2 -
+                  wheel.getBoundingClientRect().top;
+                this._selectLetter(target.textContent, target, posX, posY);
+              } else {
+                this._updateLiveDrag(touch.clientX, touch.clientY);
+              }
+            });
+            wheel.appendChild(div);
+          });
+        }
 
-  function updateLiveDrag(clientX, clientY) {
-    if (!isDragging || selectedPositions.length === 0) return;
-    const wheelRect = document.getElementById("wordWheel").getBoundingClientRect();
-    const x = clientX - wheelRect.left;
-    const y = clientY - wheelRect.top;
-    lastMousePos = [x, y];
-    updatePath(true);
-  }
+        _attachEvents() {
+          document.addEventListener("mouseup", () => this._endSelection());
+          document.addEventListener("mousemove", (e) => {
+            if (this.isDragging) this._updateLiveDrag(e.clientX, e.clientY);
+          });
+          document.addEventListener("touchend", () => this._endSelection());
+          this.container
+            .querySelector(".ww-clear")
+            .addEventListener("click", () => this._clearSelection());
+          this.container
+            .querySelector(".ww-add")
+            .addEventListener("click", () => this._addToList());
+          this.container
+            .querySelector(".ww-reset")
+            .addEventListener("click", () => this._clearList());
+          this.container
+            .querySelector(".ww-submit")
+            .addEventListener("click", () => this._submitList());
+        }
 
-  function endSelection() {
-    if (isDragging && selectedLetters.length > 0) {
-      addToList();
-    }
-    isDragging = false;
-    lastMousePos = null;
-  }
+        _startSelection(letter, element, px, py) {
+          this._clearSelection();
+          this.isDragging = true;
+          this._selectLetter(letter, element, px, py);
+        }
 
-  function updateCurrentWord() {
-    document.getElementById("currentWord").textContent = selectedLetters.join('') || '_';
-  }
+        _selectLetter(letter, element, px, py) {
+          if (!element.classList.contains("selected")) {
+            this.selectedLetters.push(letter);
+            this.selectedPositions.push([px, py]);
+            element.classList.add("selected");
+            this._updateCurrentWord();
+            this._updatePath();
+            this.onSelectionChange(this.selectedLetters);
+          }
+        }
 
-  function clearSelection() {
-    document.querySelectorAll(".letter").forEach(el => el.classList.remove("selected"));
-    selectedLetters = [];
-    selectedPositions = [];
-    lastMousePos = null;
-    updatePath();
-    updateCurrentWord();
-  }
+        _updateLiveDrag(clientX, clientY) {
+          if (!this.isDragging || this.selectedPositions.length === 0) return;
+          const wheelRect = this.container
+            .querySelector(".ww-wheel")
+            .getBoundingClientRect();
+          const x = clientX - wheelRect.left;
+          const y = clientY - wheelRect.top;
+          this.lastMousePos = [x, y];
+          this._updatePath(true);
+        }
 
-  function updatePath(includeLive = false) {
-    const line = document.getElementById("pathLine");
-    let points = selectedPositions.map(p => p.join(","));
-    if (includeLive && lastMousePos) {
-      points.push(lastMousePos.join(","));
-    }
-    line.setAttribute("points", points.join(" "));
-  }
+        _endSelection() {
+          if (this.isDragging && this.selectedLetters.length > 0) {
+            this._addToList();
+          }
+          this.isDragging = false;
+          this.lastMousePos = null;
+        }
 
-  function addToList() {
-    if (selectedLetters.length > 0) {
-      const word = selectedLetters.join('');
-      wordList.push(word);
-      updateWordList();
-      clearSelection();
-    }
-  }
+        _updateCurrentWord() {
+          this.container.querySelector(".ww-current").textContent =
+            this.selectedLetters.join("") || "_";
+        }
 
-  function clearList() {
-    wordList = [];
-    updateWordList();
-  }
+        _clearSelection() {
+          this.container
+            .querySelectorAll(".ww-letter")
+            .forEach((el) => el.classList.remove("selected"));
+          this.selectedLetters = [];
+          this.selectedPositions = [];
+          this.lastMousePos = null;
+          this._updatePath();
+          this._updateCurrentWord();
+        }
 
-  function submitList() {
-    alert("Submitted words: " + wordList.join(", "));
-  }
+        _updatePath(includeLive = false) {
+          const line = this.container.querySelector(".ww-path");
+          let points = this.selectedPositions.map((p) => p.join(","));
+          if (includeLive && this.lastMousePos) {
+            points.push(this.lastMousePos.join(","));
+          }
+          line.setAttribute("points", points.join(" "));
+        }
 
-  function updateWordList() {
-    document.getElementById("wordList").textContent = wordList.join(", ") || "(No words yet)";
-  }
+        _addToList() {
+          if (this.selectedLetters.length > 0) {
+            const word = this.selectedLetters.join("");
+            this.wordList.push(word);
+            this._updateWordList();
+            this._clearSelection();
+          }
+        }
 
-  document.addEventListener("mouseup", endSelection);
-  document.addEventListener("mousemove", (e) => {
-    if (isDragging) updateLiveDrag(e.clientX, e.clientY);
-  });
-  document.addEventListener("touchend", endSelection);
+        _clearList() {
+          this.wordList = [];
+          this._updateWordList();
+        }
 
-  renderWheel();
-</script>
-</body>
+        _submitList() {
+          this.onWordSubmit(this.wordList);
+        }
+
+        _updateWordList() {
+          this.container.querySelector(".ww-list").textContent =
+            this.wordList.join(", ") || "(No words yet)";
+        }
+      }
+
+      // Example usage:
+      const container = document.getElementById("gameContainer");
+      const game = new WordWheel(
+        container,
+        ["A", "B", "C", "D", "E", "F", "G"],
+        {
+          onWordSubmit: (words) => alert("Submitted: " + words.join(", ")),
+          onSelectionChange: (letters) =>
+            console.log("Current: ", letters.join("")),
+        }
+      );
+    </script>
+  </body>
 </html>
