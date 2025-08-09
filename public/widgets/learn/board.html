@@ -3,336 +3,194 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Configurable Scrabble Board</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Board Component with placeTile & placeWord</title>
   <style>
-    :root {
-      --tile-size: 7.5vw;
-    }
-
-    html,
     body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
       margin: 0;
-      padding: 0;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      background-color: #1e4d9b;
+      background: #f0f0f0;
       font-family: sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      touch-action: none;
-    }
-
-    .scale-wrapper {
-      width: 100%;
-      max-width: 600px;
-      height: 100vh;
-      position: relative;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .game-frame {
-      flex: 1;
-      background-color: #fff;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 10px 0;
-    }
-
-    .panel {
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1rem;
-      box-sizing: border-box;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-      user-select: none;
-    }
-
-    .top-panel-1 {
-      background: linear-gradient(to right, #111111, #2c2c2c);
-      font-weight: bold;
-    }
-
-    .top-panel-2 {
-      background: linear-gradient(to right, #00c6ff, #007aff);
-    }
-
-    .bottom-panel-1 {
-      background: linear-gradient(to right, #3a8dde, #2569be);
-      font-style: italic;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 10px;
-    }
-
-    .bottom-panel-2 {
-      background: linear-gradient(to right, #ffe082, #f4a742);
-      color: #333333;
-      font-weight: bold;
-    }
-
-    .bottom-panel-3 {
-      background: linear-gradient(to right, #4facfe, #007aff);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .bottom-panel-4 {
-      background: linear-gradient(to right, #4facfe, #007aff);
-      color: #000;
-      display: none;
-      transition: transform 0.3s ease, margin-bottom 0.3s ease;
-      padding: 0 15px;
-      font-size: 0.9rem;
-      overflow-wrap: break-word;
-    }
-
-    .game-area {
-      flex: 1;
-      background: #ffffff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 10px 0;
-      overflow: auto;
     }
 
     .board {
       display: grid;
-      background: #e0e0e0;
-      border-radius: 14px;
-      padding: 10px 16px;
-      width: 100%;
-      max-width: 600px;
-      aspect-ratio: 1 / 1;
-      /* grid-template-columns set dynamically */
+      grid-template-columns: repeat(11, 1fr);
       gap: 1px;
-      box-sizing: border-box;
+      background: #e0e0e0;
+      padding: 10px 16px;
+      width: 90vw;
+      max-width: 500px;
+      aspect-ratio: 1 / 1;
+      border-radius: 14px;
+      user-select: none;
     }
 
     .tile {
       width: 100%;
       aspect-ratio: 1 / 1;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       font-weight: bold;
       color: #ffffff;
       background: linear-gradient(to bottom, #e8f4d0, #b5f9f467);
       display: flex;
       justify-content: center;
       align-items: center;
-      user-select: none;
       text-transform: uppercase;
       border-radius: 10px;
       box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2),
         0 2px 4px rgba(0, 0, 0, 0.2);
       transition: transform 0.1s ease;
-      cursor: default;
     }
 
-    .tile.TW {
+    /* Special tiles */
+    .TW {
       background: #f44336;
     }
 
-    .tile.DW {
+    .DW {
       background: #ffc107;
       color: #000;
     }
 
-    .tile.TL {
+    .TL {
       background: #2196f3;
     }
 
-    .tile.DL {
+    .DL {
       background: #9e9e9e;
     }
 
-    #fix-view-btn {
-      font-size: 12px;
-      padding: 4px 10px;
-      background-color: #007aff;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(255, 255, 255, 0.2);
-      cursor: pointer;
-      z-index: 10;
-      user-select: none;
+    /* Placed letter tile style */
+    .placed {
+      background: #4caf50 !important;
+      color: #fff !important;
+      box-shadow: 0 0 6px 2px #66bb6a;
+      font-weight: bolder;
     }
-
-    /* Size control */
-    #size-control {
-      margin-left: 10px;
-      width: 120px;
-    }
-
-    .control-panel {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 5px 0;
-      background: #007aff;
-      color: white;
-      font-weight: bold;
-      user-select: none;
-    }
-
   </style>
 </head>
 
 <body>
-  <div class="scale-wrapper" id="scale-wrapper">
-    <div class="debug-panel" id="debug-panel" style="position:absolute;top:0;left:0;right:0;background:#000a; color:#0f0; font-family: monospace; font-size:12px; padding:4px; z-index:999;"></div>
 
-    <div class="game-frame">
-      <div class="panel top-panel-1">WORDS with Friends 2</div>
-      <div class="panel top-panel-2">Player Info Panel</div>
-
-      <div class="control-panel">
-        Board Size:
-        <select id="board-size-select">
-          <option value="7">7 × 7</option>
-          <option value="9">9 × 9</option>
-          <option value="11" selected>11 × 11</option>
-          <option value="13">13 × 13</option>
-          <option value="15">15 × 15</option>
-        </select>
-        <label for="size-control" style="margin-left:20px;">Tile Size:</label>
-        <input type="range" min="5" max="12" step="0.1" value="7.5" id="size-control" />
-        <span id="size-value">7.5vw</span>
-      </div>
-
-      <div class="game-area">
-        <div class="board" id="board"></div>
-      </div>
-
-      <div class="panel bottom-panel-1" id="bottom-panel-1">
-        <span>Practice played FRIT for 14 points</span>
-        <button id="fix-view-btn">Fix View</button>
-      </div>
-
-      <div class="panel bottom-panel-2">[ T ][ D ][ K ][ N ][ A ][ A ][ I ]</div>
-      <div class="panel bottom-panel-3">More | Pass | PLAY | Swap | Shuffle</div>
-      <div class="panel bottom-panel-4" id="bottom-panel-4"></div>
-    </div>
-  </div>
+  <div id="board-container"></div>
 
   <script>
-    const board = document.getElementById("board");
-    const debugPanel = document.getElementById("debug-panel");
-    const bottomPanel4 = document.getElementById("bottom-panel-4");
-    const fixBtn = document.getElementById("fix-view-btn");
-    const sizeControl = document.getElementById("size-control");
-    const sizeValue = document.getElementById("size-value");
-    const boardSizeSelect = document.getElementById("board-size-select");
+    class BoardComponent {
+      constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        if (!this.container) throw new Error('Container not found');
 
-    // Board bonus layout samples for 11x11 and 15x15
-    const bonusBoards = {
-      7: [
-        ['TW', '', '', 'DL', '', '', 'TW'],
-        ['', 'DW', '', '', '', 'DW', ''],
-        ['', '', 'TL', '', 'TL', '', ''],
-        ['DL', '', '', '★', '', '', 'DL'],
-        ['', '', 'TL', '', 'TL', '', ''],
-        ['', 'DW', '', '', '', 'DW', ''],
-        ['TW', '', '', 'DL', '', '', 'TW']
-      ],
-      9: [
-        ['TW', '', '', 'DL', '', '', 'DL', '', 'TW'],
-        ['', 'DW', '', '', '', 'TL', '', 'DW', ''],
-        ['', '', 'DW', '', '', '', 'DW', '', ''],
-        ['DL', '', '', 'DW', '', '', '', 'DW', 'DL'],
-        ['', '', '', '', 'DW', '', '', '', ''],
-        ['', 'TL', '', '', '', '★', '', '', 'TL'],
-        ['', '', '', '', 'DW', '', '', '', ''],
-        ['DL', '', '', 'DW', '', '', '', 'DW', 'DL'],
-        ['TW', '', '', 'DL', '', '', 'DL', '', 'TW']
-      ],
-      11: [
-        ['TW', '', '', 'DL', '', '', 'DL', '', '', '', 'TW'],
-        ['', 'DW', '', '', '', 'TL', '', '', '', 'DW', ''],
-        ['', '', 'DW', '', '', '', '', '', 'DW', '', ''],
-        ['DL', '', '', 'DW', '', '', '', 'DW', '', '', 'DL'],
-        ['', '', '', '', 'DW', '', 'DW', '', '', '', ''],
-        ['', 'TL', '', '', '', '★', '', '', '', 'TL', ''],
-        ['', '', '', '', 'DW', '', 'DW', '', '', '', ''],
-        ['DL', '', '', 'DW', '', '', '', 'DW', '', '', 'DL'],
-        ['', '', 'DW', '', '', '', '', '', 'DW', '', ''],
-        ['', 'DW', '', '', '', 'TL', '', '', '', 'DW', ''],
-        ['TW', '', '', 'DL', '', '', 'DL', '', '', '', 'TW']
-      ],
-      13: [], // add if you want
-      15: []  // add if you want
-    };
+        this.boardData = [
+          ['TW', '', '', 'DL', '', '', 'DL', '', '', '', 'TW'],
+          ['', 'DW', '', '', '', 'TL', '', '', '', 'DW', ''],
+          ['', '', 'DW', '', '', '', '', '', 'DW', '', ''],
+          ['DL', '', '', 'DW', '', '', '', 'DW', '', '', 'DL'],
+          ['', '', '', '', 'DW', '', 'DW', '', '', '', ''],
+          ['', 'TL', '', '', '', '★', '', '', '', 'TL', ''],
+          ['', '', '', '', 'DW', '', 'DW', '', '', '', ''],
+          ['DL', '', '', 'DW', '', '', '', 'DW', '', '', 'DL'],
+          ['', '', 'DW', '', '', '', '', '', 'DW', '', ''],
+          ['', 'DW', '', '', '', 'TL', '', '', '', 'DW', ''],
+          ['TW', '', '', 'DL', '', '', 'DL', '', '', '', 'TW']
+        ];
 
-    // Build grid dynamically
-    function buildBoard(size) {
-      // Clear old board
-      board.innerHTML = '';
-
-      // Set grid-template-columns for square grid
-      board.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-
-      const bonuses = bonusBoards[size] || [];
-
-      for (let r = 0; r < size; r++) {
-        for (let c = 0; c < size; c++) {
-          const bonus = (bonuses[r] && bonuses[r][c]) || '';
-          const tile = document.createElement('div');
-          tile.className = 'tile ' + bonus;
-          tile.textContent = bonus === '★' ? '' : bonus;
-          tile.title = bonus || '';
-          board.appendChild(tile);
-        }
+        this.tiles = [];
+        this.createBoard();
       }
-      updateDebugPanel();
+
+      createBoard() {
+        this.container.innerHTML = '';
+        this.container.classList.add('board');
+        this.tiles = [];
+
+        this.boardData.forEach((row, rowIndex) => {
+          this.tiles[rowIndex] = [];
+          row.forEach((cell, colIndex) => {
+            const tile = document.createElement('div');
+            tile.className = 'tile ' + (cell || '');
+            tile.textContent = cell || '';
+            this.container.appendChild(tile);
+            this.tiles[rowIndex][colIndex] = tile;
+          });
+        });
+      }
+
+      placeTile(letter, row, col) {
+        if (!this.isValidPosition(row, col)) {
+          console.warn(`Invalid position (${row}, ${col})`);
+          return false;
+        }
+        const tile = this.tiles[row][col];
+        tile.textContent = letter.toUpperCase();
+        tile.className = 'tile placed'; // remove bonus classes, apply placed style
+        return true;
+      }
+
+      placeWord(word, startRow, startCol, direction = 'horizontal') {
+        if (direction !== 'horizontal' && direction !== 'vertical') {
+          console.error('Direction must be "horizontal" or "vertical"');
+          return false;
+        }
+
+        word = word.toUpperCase();
+
+        for (let i = 0; i < word.length; i++) {
+          let r = startRow;
+          let c = startCol;
+
+          if (direction === 'horizontal') c += i;
+          else r += i;
+
+          if (!this.isValidPosition(r, c)) {
+            console.warn(`Word placement out of bounds at (${r},${c})`);
+            return false;
+          }
+        }
+
+        // Place letters
+        for (let i = 0; i < word.length; i++) {
+          let r = startRow;
+          let c = startCol;
+
+          if (direction === 'horizontal') c += i;
+          else r += i;
+
+          this.placeTile(word[i], r, c);
+        }
+        return true;
+      }
+
+      isValidPosition(row, col) {
+        return (
+          row >= 0 &&
+          row < this.tiles.length &&
+          col >= 0 &&
+          col < this.tiles[0].length
+        );
+      }
     }
 
-    function updateDebugPanel() {
-      const rect = board.getBoundingClientRect();
-      debugPanel.textContent = `
-[ Debug Info Panel ]
-📱 Viewport: ${window.innerWidth} x ${window.innerHeight}
-🧩 Board: ${Math.round(rect.width)} x ${Math.round(rect.height)}
-Tiles: ${boardSizeSelect.value} × ${boardSizeSelect.value}
-Tile Size: ${sizeValue.textContent}
-      `.trim();
-    }
+    // Usage example:
+    const board = new BoardComponent('board-container');
 
-    // Initial board
-    buildBoard(parseInt(boardSizeSelect.value));
+    // Place single tile 'A' at (5,5) after 1 second
+    setTimeout(() => {
+      board.placeTile('A', 5, 5);
+    }, 1000);
 
-    // Size control update
-    sizeControl.addEventListener('input', e => {
-      const val = e.target.value;
-      sizeValue.textContent = val + 'vw';
-      document.documentElement.style.setProperty('--tile-size', val + 'vw');
-      updateDebugPanel();
-    });
+    // Place word 'HELLO' horizontally at (2,3) after 2 seconds
+    setTimeout(() => {
+      board.placeWord('HELLO', 2, 3, 'horizontal');
+    }, 2000);
 
-    // Board size change
-    boardSizeSelect.addEventListener('change', e => {
-      buildBoard(parseInt(e.target.value));
-    });
-
-    fixBtn.addEventListener('click', () => {
-      const isFixed = bottomPanel4.style.display !== "flex";
-      fixBtn.textContent = isFixed ? "Undo Fix" : "Fix View";
-      bottomPanel4.style.display = isFixed ? "flex" : "none";
-      updateDebugPanel();
-    });
-
-    window.addEventListener('resize', updateDebugPanel);
+    // Place word 'WORLD' vertically at (4,7) after 3 seconds
+    setTimeout(() => {
+      board.placeWord('WORLD', 4, 7, 'vertical');
+    }, 3000);
   </script>
 </body>
 
