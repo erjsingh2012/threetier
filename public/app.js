@@ -3,7 +3,6 @@ import { ApiManager } from "./resources/managers/ApiManager.js";
 import { AuthService } from "./service/AuthService.js";
 import { LevelManager } from "./service/LevelManager.js";
 import { WordWheel } from './ui/WordWheel.js';
-import {BoardComponent} from './ui/BoardComponent.js';
 
 // Instantiate core managers
 const storageManager = new StorageManager();
@@ -62,12 +61,9 @@ async function startApp() {
   // Initialize page navigation
   initPageScroll();
 
-  const boardContainer = document.getElementById('board-container');
-  const board = new BoardComponent(boardContainer);
-  
   // Example usage:
-  const container = document.getElementById("wheel");
-  const game = new WordWheel(
+  const container = document.getElementById("gameContainer");
+const game = new WordWheel(
   container,
   ["A", "B", "C", "D", "E", "F", "G"],
   {
