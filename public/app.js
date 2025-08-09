@@ -63,15 +63,16 @@ async function startApp() {
 
   // Example usage:
   const container = document.getElementById("gameContainer");
-  const game = new WordWheel(
-    container,
-    ["A", "B", "C", "D", "E", "F", "G"],
-    {
-      onWordSubmit: (words) => alert("Submitted: " + words.join(", ")),
-      onSelectionChange: (letters) =>
-        console.log("Current: ", letters.join("")),
-    }
-  );
+const game = new WordWheel(
+  container,
+  ["A", "B", "C", "D", "E", "F", "G"],
+  {
+    onWordSubmit: (words) => alert("Submitted: " + words.join(", ")),
+    onSelectionChange: (letters) =>
+      console.log("Current: ", letters.join("")),
+    size: 200 // optional initial size, default is 250 if omitted
+  }
+);
 }
 
 // Page scroll / swipe logic

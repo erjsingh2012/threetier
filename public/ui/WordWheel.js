@@ -9,11 +9,20 @@ class WordWheel {
     this.selectedPositions = [];
     this.isDragging = false;
     this.lastMousePos = null;
+
+    this.size = options.size || 250; // default size of the wheel in px
+    this.minSize = 150;
+    this.maxSize = 500;
+
     this._render();
     this._attachEvents();
   }
 
   _render() {
+    // Compute letter size & font size based on wheel size:
+    const letterSize = Math.max(30, Math.min(80, (this.size / 250) * 50));
+    const fontSize = Math.max(14, Math.min(36, (this.size / 250) * 24));
+
     this.container.innerHTML = `
       <style>
         .ww-container {
@@ -23,24 +32,27 @@ class WordWheel {
         }
         .ww-wheel {
           position: relative;
-          width: 250px;
-          height: 250px;
+          width: ${this.size}px;
+          height: ${this.size}px;
           border-radius: 50%;
           background: radial-gradient(circle at 50% 50%,
               rgba(255,255,255,0.95) 0%,
               rgba(173, 216, 230, 0.8) 40%,
               rgba(70, 130, 180, 0.7) 100%);
           box-shadow:
-          0 8px 20px rgba(0, 0, 0, 0.25),   /* drop shadow */
-          inset 0 4px 15px rgba(255,255,255,0.8), /* top light */
-          inset 0 -4px 15px rgba(0,0,0,0.1); /* bottom shading */
+          0 8px 20px rgba(0, 0, 0, 0.25),
+          inset 0 4px 15px rgba(255,255,255,0.8),
+          inset 0 -4px 15px rgba(0,0,0,0.1);
           border: 2px solid rgba(255,255,255,0.4);
+          margin: 0 auto;
         }
         .ww-svg {
           position: absolute;
           top: 0;
           left: 0;
           pointer-events: none;
+          width: ${this.size}px;
+          height: ${this.size}px;
         }
         .ww-path {
           stroke: #ff9800;
@@ -51,9 +63,8 @@ class WordWheel {
         }
         .ww-letter {
           position: absolute;
-          width: 50px;
-          height: 50px;
-          
+          width: ${letterSize}px;
+          height: ${letterSize}px;
           color: white;
           display: flex;
           align-items: center;
@@ -61,15 +72,12 @@ class WordWheel {
           border-radius: 12px;
           cursor: pointer;
           border: 2px solid rgba(0,0,0,0.2);
-          font-size: 24px;
+          font-size: ${fontSize}px;
           font-weight: bold;
-          box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+          box-shadow: 0 3px 8px rgba(0,0,0,0.25);
           user-select: none;
           transition: transform 0.15s ease;
-            background: linear-gradient(145deg, #4a90e2, #357ABD);
-
-  font-weight: bold;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+          background: linear-gradient(145deg, #4a90e2, #357ABD);
         }
         .ww-letter:hover {
           transform: scale(1.15);
@@ -110,49 +118,47 @@ class WordWheel {
       <div class="ww-container">
         <div style="position:relative; display:inline-block;">
           <div class="ww-wheel"></div>
-          <svg class="ww-svg" width="250" height="250">
+          <svg class="ww-svg" width="${this.size}" height="${this.size}">
             <polyline class="ww-path" fill="none"/>
           </svg>
         </div>
         <div class="ww-current">_</div>
-        <div>
-          <button class="ww-btn ww-clear">Clear Selection</button>
-          <button class="ww-btn ww-add">Add to List</button>
-          <button class="ww-btn ww-reset">Clear List</button>
-          <button class="ww-btn ww-submit">Submit</button>
-        </div>
+      
         <div class="ww-list">(No words yet)</div>
       </div>
     `;
-    this._renderWheel();
+    this._renderWheel(letterSize);
   }
 
-  _renderWheel() {
+  _renderWheel(letterSize) {
     const wheel = this.container.querySelector(".ww-wheel");
     wheel.innerHTML = "";
     const total = this.letters.length;
-    const radius = 100;
-    const centerX = 125;
-    const centerY = 125;
+    const radius = (this.size / 2) - (letterSize / 1.5);
+    const centerX = this.size / 2;
+    const centerY = this.size / 2;
     this.letters.forEach((letter, index) => {
       const angle = (index / total) * (2 * Math.PI);
-      const x = Math.cos(angle) * radius + centerX - 25;
-      const y = Math.sin(angle) * radius + centerY - 25;
+      const x = Math.cos(angle) * radius + centerX - letterSize / 2;
+      const y = Math.sin(angle) * radius + centerY - letterSize / 2;
       const div = document.createElement("div");
       div.className = "ww-letter";
       div.textContent = letter;
       div.style.left = `${x}px`;
       div.style.top = `${y}px`;
+      div.style.width = `${letterSize}px`;
+      div.style.height = `${letterSize}px`;
+      div.style.fontSize = `${Math.max(14, (letterSize / 50) * 24)}px`;
       div.addEventListener("mousedown", (e) => {
-        this._startSelection(letter, div, x + 25, y + 25);
+        this._startSelection(letter, div, x + letterSize / 2, y + letterSize / 2);
         e.preventDefault();
       });
       div.addEventListener("mouseenter", () => {
         if (this.isDragging)
-          this._selectLetter(letter, div, x + 25, y + 25);
+          this._selectLetter(letter, div, x + letterSize / 2, y + letterSize / 2);
       });
       div.addEventListener("touchstart", (e) => {
-        this._startSelection(letter, div, x + 25, y + 25);
+        this._startSelection(letter, div, x + letterSize / 2, y + letterSize / 2);
         e.preventDefault();
       });
       div.addEventListener("touchmove", (e) => {
@@ -186,20 +192,13 @@ class WordWheel {
       if (this.isDragging) this._updateLiveDrag(e.clientX, e.clientY);
     });
     document.addEventListener("touchend", () => this._endSelection());
-    
-    this.container
-      .querySelector(".ww-clear")
-      .addEventListener("click", () => this._clearSelection());
-    this.container
-      .querySelector(".ww-add")
-      .addEventListener("click", () => this._addToList());
-    this.container
-      .querySelector(".ww-reset")
-      .addEventListener("click", () => this._clearList());
-    this.container
-      .querySelector(".ww-submit")
-      .addEventListener("click", () => this._submitList());
-      
+  }
+
+  setSize(newSize) {
+    if (newSize < this.minSize) newSize = this.minSize;
+    if (newSize > this.maxSize) newSize = this.maxSize;
+    this.size = newSize;
+    this._render();
   }
 
   _startSelection(letter, element, px, py) {
@@ -286,4 +285,5 @@ class WordWheel {
       this.wordList.join(", ") || "(No words yet)";
   }
 }
+
 export { WordWheel };
