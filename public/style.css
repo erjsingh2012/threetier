@@ -33,7 +33,6 @@ body {
   height: 100svh; /* Fill entire small viewport height (better for mobile) */
   max-width: 100%;
   background: white;
-  padding: 1.5rem;
   margin: 0rem auto;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -101,7 +100,7 @@ p {
    ================================ */
 @media (min-width: 600px) {
   #app {
-    max-width: 560px;
+    max-width: 600px;
     margin: 0rem auto;
   }
 
@@ -132,8 +131,8 @@ p {
   }
 
   #app {
-    padding: 1rem;
-    margin: 0.5rem;
+    padding: 0rem;
+    margin: 0.0rem;
   }
 }
 
@@ -195,6 +194,16 @@ p {
 /* Active page is visible and centered */
 .page.active {
   display: flex;
+}
+.columnlayout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;      /* center horizontally */
+  gap: 12px;                /* vertical spacing between elements */
+  padding: 20px;
+  max-width: 400px;         /* optional, limits width */
+  margin: 0 auto;           /* centers container horizontally */
+  font-family: Arial, sans-serif;
 }
 
 /* ================================
