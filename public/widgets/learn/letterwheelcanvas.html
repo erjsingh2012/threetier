@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Wheel Canvas</title>
+<style>
+  body {
+    background: #f0f0f0;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+  }
+  canvas {
+    background: #eee;
+    border: 2px dashed #aaa;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  #wordList {
+    margin-top: 15px;
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+    min-height: 40px;
+    display: inline-block;
+  }
+  button {
+    margin: 5px;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h1>Word Wheel (Canvas)</h1>
+<canvas id="wordWheel" width="300" height="300"></canvas>
+
+<div id="currentWord">_</div>
+
+<div>
+  <button onclick="clearSelection()">Clear Selection</button>
+  <button onclick="addToList()">Add to List</button>
+  <button onclick="clearList()">Clear List</button>
+  <button onclick="submitList()">Submit</button>
+</div>
+
+<div id="wordList"></div>
+
+<script>
+const canvas = document.getElementById("wordWheel");
+const ctx = canvas.getContext("2d");
+
+let rack = ['A','B','C','D','E','F','G'];
+let letterPositions = [];
+let selectedLetters = [];
+let selectedIndexes = [];
+let isDragging = false;
+let lastMousePos = null;
+let wordList = [];
+
+// Draw the wheel and letters
+function drawWheel() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Draw background circle
+  ctx.beginPath();
+  ctx.arc(150, 150, 140, 0, Math.PI * 2);
+  ctx.fillStyle = "#eee";
+  ctx.fill();
+  ctx.strokeStyle = "#aaa";
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5, 5]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw drag path
+  if (selectedIndexes.length > 0) {
+    ctx.beginPath();
+    ctx.strokeStyle = "orange";
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    let first = letterPositions[selectedIndexes[0]];
+    ctx.moveTo(first.x, first.y);
+    for (let i = 1; i < selectedIndexes.length; i++) {
+      let pos = letterPositions[selectedIndexes[i]];
+      ctx.lineTo(pos.x, pos.y);
+    }
+    if (lastMousePos) {
+      ctx.lineTo(lastMousePos.x, lastMousePos.y);
+    }
+    ctx.stroke();
+  }
+
+  // Draw letters
+  letterPositions.forEach((pos, i) => {
+    // Highlight if selected
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, 25, 0, Math.PI * 2);
+    ctx.fillStyle = selectedIndexes.includes(i) ? "#2C5A8A" : "#4a90e2";
+    ctx.fill();
+    ctx.strokeStyle = "#333";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = "white";
+    ctx.font = "bold 24px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(rack[i], pos.x, pos.y);
+  });
+}
+
+// Calculate letter positions around the circle
+function calculatePositions() {
+  letterPositions = [];
+  const total = rack.length;
+  const radius = 100;
+  const centerX = 150;
+  const centerY = 150;
+
+  rack.forEach((letter, index) => {
+    const angle = (index / total) * (2 * Math.PI);
+    const x = Math.cos(angle) * radius + centerX;
+    const y = Math.sin(angle) * radius + centerY;
+    letterPositions.push({ x, y });
+  });
+}
+
+function startSelection(index) {
+  selectedLetters = [];
+  selectedIndexes = [];
+  clearSelection();
+  isDragging = true;
+  selectLetter(index);
+}
+
+function selectLetter(index) {
+  if (!selectedIndexes.includes(index)) {
+    selectedLetters.push(rack[index]);
+    selectedIndexes.push(index);
+    updateCurrentWord();
+    drawWheel();
+  }
+}
+
+function endSelection() {
+  if (isDragging && selectedLetters.length > 0) {
+    addToList();
+  }
+  isDragging = false;
+  lastMousePos = null;
+  drawWheel();
+}
+
+function clearSelection() {
+  selectedLetters = [];
+  selectedIndexes = [];
+  lastMousePos = null;
+  updateCurrentWord();
+  drawWheel();
+}
+
+function updateCurrentWord() {
+  document.getElementById("currentWord").textContent = selectedLetters.join('') || '_';
+}
+
+function addToList() {
+  if (selectedLetters.length > 0) {
+    const word = selectedLetters.join('');
+    wordList.push(word);
+    updateWordList();
+    clearSelection();
+  }
+}
+
+function clearList() {
+  wordList = [];
+  updateWordList();
+}
+
+function submitList() {
+  alert("Submitted words: " + wordList.join(", "));
+}
+
+function updateWordList() {
+  document.getElementById("wordList").textContent = wordList.join(", ") || "(No words yet)";
+}
+
+// Detect if mouse/touch is on a letter
+function hitTest(x, y) {
+  return letterPositions.findIndex(pos => {
+    const dx = pos.x - x;
+    const dy = pos.y - y;
+    return Math.sqrt(dx*dx + dy*dy) <= 25;
+  });
+}
+
+// Mouse/touch events
+canvas.addEventListener("mousedown", e => {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const index = hitTest(x, y);
+  if (index >= 0) startSelection(index);
+});
+
+canvas.addEventListener("mousemove", e => {
+  if (!isDragging) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const index = hitTest(x, y);
+  if (index >= 0) selectLetter(index);
+  else lastMousePos = { x, y };
+  drawWheel();
+});
+
+canvas.addEventListener("mouseup", endSelection);
+
+canvas.addEventListener("touchstart", e => {
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  const x = touch.clientX - rect.left;
+  const y = touch.clientY - rect.top;
+  const index = hitTest(x, y);
+  if (index >= 0) startSelection(index);
+  e.preventDefault();
+});
+
+canvas.addEventListener("touchmove", e => {
+  if (!isDragging) return;
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  const x = touch.clientX - rect.left;
+  const y = touch.clientY - rect.top;
+  const index = hitTest(x, y);
+  if (index >= 0) selectLetter(index);
+  else lastMousePos = { x, y };
+  drawWheel();
+  e.preventDefault();
+});
+
+canvas.addEventListener("touchend", endSelection);
+
+calculatePositions();
+drawWheel();
+</script>
+
+</body>
+</html>

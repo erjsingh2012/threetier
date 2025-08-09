@@ -6,23 +6,30 @@
 <title>Word Wheel with Drag Path</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(135deg, #dfe9f3, #ffffff);
     text-align: center;
     margin: 0;
     padding: 20px;
   }
+  h1 {
+    color: #333;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  }
   #gameArea {
     position: relative;
     display: inline-block;
+    margin-top: 20px;
   }
   #wordWheel {
     position: relative;
     width: 250px;
     height: 250px;
     border-radius: 50%;
-    background: #eee;
-    border: 2px dashed #aaa;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    border: 2px solid rgba(255,255,255,0.4);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
   }
   svg {
     position: absolute;
@@ -30,38 +37,70 @@
     left: 0;
     pointer-events: none;
   }
+  #pathLine {
+    stroke: #ff9800;
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 6px rgba(255,152,0,0.8));
+  }
   .letter {
     position: absolute;
     width: 50px;
     height: 50px;
-    background-color: #4a90e2;
+    background: linear-gradient(145deg, #4a90e2, #357ABD);
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    border: 2px solid #333;
+    border: 2px solid rgba(0,0,0,0.2);
     user-select: none;
     font-size: 24px;
     font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .letter:hover {
+    transform: scale(1.15);
   }
   .letter.selected {
-    background-color: #2C5A8A;
+    background: linear-gradient(145deg, #2C5A8A, #1f3f63);
+    transform: scale(1.1);
+  }
+  #currentWord {
+    margin-top: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
   }
   #wordList {
     margin-top: 15px;
-    background: white;
-    padding: 10px;
-    border-radius: 6px;
+    background: rgba(255,255,255,0.8);
+    padding: 12px 18px;
+    border-radius: 8px;
     min-height: 40px;
     display: inline-block;
+    font-size: 16px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   }
   button {
     margin: 5px;
-    padding: 6px 12px;
-    font-size: 14px;
+    padding: 8px 16px;
+    font-size: 15px;
     cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #4a90e2, #357ABD);
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+  button:hover {
+    background: linear-gradient(145deg, #5AA0F2, #4685C2);
+    transform: translateY(-2px);
   }
 </style>
 </head>
@@ -71,7 +110,7 @@
 <div id="gameArea">
   <div id="wordWheel"></div>
   <svg id="pathOverlay" width="250" height="250">
-    <polyline id="pathLine" fill="none" stroke="orange" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <polyline id="pathLine" fill="none"/>
   </svg>
 </div>
 
@@ -174,7 +213,7 @@
 
   function endSelection() {
     if (isDragging && selectedLetters.length > 0) {
-      console.log("Word:", selectedLetters.join(''));
+      addToList();
     }
     isDragging = false;
     lastMousePos = null;
@@ -217,7 +256,6 @@
   }
 
   function submitList() {
-    console.log("Submitting words:", wordList);
     alert("Submitted words: " + wordList.join(", "));
   }
 
@@ -230,8 +268,7 @@
     if (isDragging) updateLiveDrag(e.clientX, e.clientY);
   });
   document.addEventListener("touchend", endSelection);
-  document.addEventListener("mouseup", addToList);
-  document.addEventListener("touchend", addToList);
+
   renderWheel();
 </script>
 </body>
