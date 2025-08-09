@@ -3,26 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Word Wheel - Drag Selection (Reset Fix)</title>
+<title>Word Wheel with Drag Path</title>
 <style>
   body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
+    text-align: center;
     margin: 0;
     padding: 20px;
-    text-align: center;
   }
-
+  #gameArea {
+    position: relative;
+    display: inline-block;
+  }
   #wordWheel {
     position: relative;
     width: 250px;
     height: 250px;
-    margin: 20px auto;
     border-radius: 50%;
     background: #eee;
     border: 2px dashed #aaa;
   }
-
+  svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
   .letter {
     position: absolute;
     width: 50px;
@@ -39,57 +46,53 @@
     font-size: 24px;
     font-weight: bold;
   }
-
   .letter.selected {
     background-color: #2C5A8A;
   }
-
-  #currentWord {
-    font-size: 28px;
-    margin-top: 10px;
-    font-weight: bold;
-  }
-
-  button {
-    margin: 5px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-
   #wordList {
-    margin-top: 20px;
-    text-align: left;
+    margin-top: 15px;
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+    min-height: 40px;
     display: inline-block;
   }
-
-  #wordList li {
-    background: white;
-    padding: 5px 10px;
-    margin: 3px 0;
-    border-radius: 5px;
-    font-size: 18px;
+  button {
+    margin: 5px;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
   }
 </style>
 </head>
 <body>
 
-<h1>Word Wheel</h1>
-
-<div id="wordWheel"></div>
+<h1>Word Wheel with Drag Path</h1>
+<div id="gameArea">
+  <div id="wordWheel"></div>
+  <svg id="pathOverlay" width="250" height="250">
+    <polyline id="pathLine" fill="none" stroke="orange" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</div>
 
 <div id="currentWord">_</div>
 
-<button id="shuffleBtn">Shuffle</button>
-<button id="resetBtn">Reset</button>
-<button id="clearBtn">Clear List</button>
-<h2>Found Words</h2>
-<ul id="wordList"></ul>
+<div>
+  <button onclick="clearSelection()">Clear Selection</button>
+  <button onclick="addToList()">Add to List</button>
+  <button onclick="clearList()">Clear List</button>
+  <button onclick="submitList()">Submit</button>
+</div>
+
+<div id="wordList"></div>
 
 <script>
-  let rack = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+  let rack = ['A','B','C','D','E','F','G'];
   let selectedLetters = [];
+  let selectedPositions = [];
   let isDragging = false;
+  let lastMousePos = null;
+  let wordList = [];
 
   function renderWheel() {
     const wheel = document.getElementById("wordWheel");
@@ -111,29 +114,30 @@
       div.style.left = `${x}px`;
       div.style.top = `${y}px`;
 
-      // Mouse events
       div.addEventListener("mousedown", (e) => {
-        startSelection(letter, div);
+        startSelection(letter, div, x+25, y+25);
         e.preventDefault();
       });
 
       div.addEventListener("mouseenter", () => {
-        if (isDragging) selectLetter(letter, div);
+        if (isDragging) selectLetter(letter, div, x+25, y+25);
       });
 
-      // Touch events
       div.addEventListener("touchstart", (e) => {
-        startSelection(letter, div);
+        startSelection(letter, div, x+25, y+25);
         e.preventDefault();
       });
 
       div.addEventListener("touchmove", (e) => {
-        // prevent scrolling while dragging
-        e.preventDefault();
         const touch = e.touches[0];
         const target = document.elementFromPoint(touch.clientX, touch.clientY);
         if (target && target.classList.contains("letter")) {
-          selectLetter(target.textContent, target);
+          const rect = target.getBoundingClientRect();
+          const posX = rect.left + rect.width/2 - wheel.getBoundingClientRect().left;
+          const posY = rect.top + rect.height/2 - wheel.getBoundingClientRect().top;
+          selectLetter(target.textContent, target, posX, posY);
+        } else {
+          updateLiveDrag(touch.clientX, touch.clientY);
         }
       });
 
@@ -141,80 +145,93 @@
     });
   }
 
-  function startSelection(letter, element) {
-    // start fresh selection on each drag/click start
+  function startSelection(letter, element, px, py) {
     selectedLetters = [];
+    selectedPositions = [];
     clearSelection();
     isDragging = true;
-    selectLetter(letter, element);
+    selectLetter(letter, element, px, py);
   }
 
-  function selectLetter(letter, element) {
+  function selectLetter(letter, element, px, py) {
     if (!element.classList.contains('selected')) {
       selectedLetters.push(letter);
+      selectedPositions.push([px, py]);
       element.classList.add('selected');
       updateCurrentWord();
+      updatePath();
     }
+  }
+
+  function updateLiveDrag(clientX, clientY) {
+    if (!isDragging || selectedPositions.length === 0) return;
+    const wheelRect = document.getElementById("wordWheel").getBoundingClientRect();
+    const x = clientX - wheelRect.left;
+    const y = clientY - wheelRect.top;
+    lastMousePos = [x, y];
+    updatePath(true);
   }
 
   function endSelection() {
     if (isDragging && selectedLetters.length > 0) {
-      submitWord();
+      console.log("Word:", selectedLetters.join(''));
     }
     isDragging = false;
+    lastMousePos = null;
   }
 
   function updateCurrentWord() {
-    const word = selectedLetters.join('');
-    document.getElementById("currentWord").textContent = word || '_';
-  }
-
-  function shuffleRack() {
-    rack.sort(() => Math.random() - 0.5);
-    renderWheel();
-  }
-
-  function resetWord() {
-    // FIX: stop dragging, clear the selection array & UI, and re-render wheel
-    isDragging = false;
-    selectedLetters = [];
-    clearSelection();
-    updateCurrentWord();
-    // optional: re-render to ensure event handlers and DOM nodes are in a clean state
-    renderWheel();
+    document.getElementById("currentWord").textContent = selectedLetters.join('') || '_';
   }
 
   function clearSelection() {
-    // only remove the selected class from currently selected letters
-    document.querySelectorAll(".letter.selected").forEach(el => el.classList.remove("selected"));
+    document.querySelectorAll(".letter").forEach(el => el.classList.remove("selected"));
+    selectedLetters = [];
+    selectedPositions = [];
+    lastMousePos = null;
+    updatePath();
+    updateCurrentWord();
   }
 
-  function submitWord() {
-    const word = selectedLetters.join('');
-    if (!word) return;
-    const list = document.getElementById("wordList");
-    const li = document.createElement("li");
-    li.textContent = word;
-    list.appendChild(li);
-    resetWord();
+  function updatePath(includeLive = false) {
+    const line = document.getElementById("pathLine");
+    let points = selectedPositions.map(p => p.join(","));
+    if (includeLive && lastMousePos) {
+      points.push(lastMousePos.join(","));
+    }
+    line.setAttribute("points", points.join(" "));
+  }
+
+  function addToList() {
+    if (selectedLetters.length > 0) {
+      const word = selectedLetters.join('');
+      wordList.push(word);
+      updateWordList();
+      clearSelection();
+    }
   }
 
   function clearList() {
-    document.getElementById("wordList").innerHTML = '';
-    resetWord();
+    wordList = [];
+    updateWordList();
   }
-  document.getElementById("shuffleBtn").addEventListener("click", shuffleRack);
-  document.getElementById("resetBtn").addEventListener("click", resetWord);
-  document.getElementById("clearBtn").addEventListener("click", clearList);
-  
+
+  function submitList() {
+    console.log("Submitting words:", wordList);
+    alert("Submitted words: " + wordList.join(", "));
+  }
+
+  function updateWordList() {
+    document.getElementById("wordList").textContent = wordList.join(", ") || "(No words yet)";
+  }
 
   document.addEventListener("mouseup", endSelection);
+  document.addEventListener("mousemove", (e) => {
+    if (isDragging) updateLiveDrag(e.clientX, e.clientY);
+  });
   document.addEventListener("touchend", endSelection);
 
-  // initial
   renderWheel();
-  updateCurrentWord();
 </script>
-
 </body>
 </html>
