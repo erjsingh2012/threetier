@@ -230,7 +230,8 @@
     if (isDragging) updateLiveDrag(e.clientX, e.clientY);
   });
   document.addEventListener("touchend", endSelection);
-
+  document.addEventListener("mouseup", addToList);
+  document.addEventListener("touchend", addToList);
   renderWheel();
 </script>
 </body>
