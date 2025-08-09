@@ -1,254 +1,279 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Word Wheel Canvas</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Word Wheel Canvas Component</title>
 <style>
   body {
-    background: #f0f0f0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #f5f7fa;
     text-align: center;
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
   }
-  canvas {
-    background: #eee;
-    border: 2px dashed #aaa;
-    border-radius: 50%;
+  .controls {
+    margin-top: 15px;
+  }
+  .btn {
+    margin: 5px;
+    padding: 8px 16px;
+    font-size: 15px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #4a90e2, #357ABD);
+    color: white;
+    font-weight: bold;
     cursor: pointer;
   }
-  #wordList {
+  .btn:hover {
+    background: linear-gradient(145deg, #5AA0F2, #4685C2);
+  }
+  .word-list {
     margin-top: 15px;
-    background: white;
-    padding: 10px;
-    border-radius: 6px;
+    background: rgba(255,255,255,0.8);
+    padding: 12px 18px;
+    border-radius: 8px;
     min-height: 40px;
     display: inline-block;
-  }
-  button {
-    margin: 5px;
-    padding: 6px 12px;
-    font-size: 14px;
-    cursor: pointer;
+    font-size: 16px;
   }
 </style>
 </head>
 <body>
 
-<h1>Word Wheel (Canvas)</h1>
-<canvas id="wordWheel" width="300" height="300"></canvas>
-
+<canvas id="wordWheelCanvas" width="300" height="300"></canvas>
 <div id="currentWord">_</div>
-
-<div>
-  <button onclick="clearSelection()">Clear Selection</button>
-  <button onclick="addToList()">Add to List</button>
-  <button onclick="clearList()">Clear List</button>
-  <button onclick="submitList()">Submit</button>
+<div class="controls">
+  <button class="btn" id="clearSel">Clear Selection</button>
+  <button class="btn" id="addWord">Add to List</button>
+  <button class="btn" id="clearList">Clear List</button>
+  <button class="btn" id="submitList">Submit</button>
 </div>
-
-<div id="wordList"></div>
+<div class="word-list" id="wordList">(No words yet)</div>
 
 <script>
-const canvas = document.getElementById("wordWheel");
-const ctx = canvas.getContext("2d");
+class WordWheelCanvas {
+  constructor(canvas, letters, options = {}) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext("2d");
+    this.letters = letters;
+    this.onWordSubmit = options.onWordSubmit || (()=>{});
+    this.onSelectionChange = options.onSelectionChange || (()=>{});
 
-let rack = ['A','B','C','D','E','F','G'];
-let letterPositions = [];
-let selectedLetters = [];
-let selectedIndexes = [];
-let isDragging = false;
-let lastMousePos = null;
-let wordList = [];
+    this.centerX = canvas.width / 2;
+    this.centerY = canvas.height / 2;
+    this.radius = 100;
+    this.letterRadius = 25;
 
-// Draw the wheel and letters
-function drawWheel() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-  // Draw background circle
-  ctx.beginPath();
-  ctx.arc(150, 150, 140, 0, Math.PI * 2);
-  ctx.fillStyle = "#eee";
-  ctx.fill();
-  ctx.strokeStyle = "#aaa";
-  ctx.lineWidth = 2;
-  ctx.setLineDash([5, 5]);
-  ctx.stroke();
-  ctx.setLineDash([]);
+    this.wordList = [];
+    this.selectedLetters = [];
+    this.selectedIndices = [];
+    this.isDragging = false;
+    this.lastMousePos = null;
 
-  // Draw drag path
-  if (selectedIndexes.length > 0) {
-    ctx.beginPath();
-    ctx.strokeStyle = "orange";
-    ctx.lineWidth = 4;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    let first = letterPositions[selectedIndexes[0]];
-    ctx.moveTo(first.x, first.y);
-    for (let i = 1; i < selectedIndexes.length; i++) {
-      let pos = letterPositions[selectedIndexes[i]];
-      ctx.lineTo(pos.x, pos.y);
-    }
-    if (lastMousePos) {
-      ctx.lineTo(lastMousePos.x, lastMousePos.y);
-    }
-    ctx.stroke();
+    this._computeLetterPositions();
+    this._draw();
+    this._attachEvents();
   }
 
-  // Draw letters
-  letterPositions.forEach((pos, i) => {
-    // Highlight if selected
+  _computeLetterPositions() {
+    const total = this.letters.length;
+    this.positions = [];
+    for (let i = 0; i < total; i++) {
+      const angle = (i / total) * (2 * Math.PI);
+      const x = Math.cos(angle) * this.radius + this.centerX;
+      const y = Math.sin(angle) * this.radius + this.centerY;
+      this.positions.push({ x, y });
+    }
+  }
+
+  _draw() {
+    const ctx = this.ctx;
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // Draw wheel background
+    const grad = ctx.createRadialGradient(this.centerX, this.centerY, 0, this.centerX, this.centerY, this.radius+30);
+    grad.addColorStop(0, "rgba(255,255,255,0.95)");
+    grad.addColorStop(0.4, "rgba(173,216,230,0.8)");
+    grad.addColorStop(1, "rgba(70,130,180,0.7)");
+    ctx.fillStyle = grad;
     ctx.beginPath();
-    ctx.arc(pos.x, pos.y, 25, 0, Math.PI * 2);
-    ctx.fillStyle = selectedIndexes.includes(i) ? "#2C5A8A" : "#4a90e2";
+    ctx.arc(this.centerX, this.centerY, this.radius + 30, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = "#333";
-    ctx.lineWidth = 2;
-    ctx.stroke();
 
-    ctx.fillStyle = "white";
-    ctx.font = "bold 24px Arial";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(rack[i], pos.x, pos.y);
-  });
-}
+    // Draw path
+    if (this.selectedIndices.length > 0) {
+      ctx.strokeStyle = "#ff9800";
+      ctx.lineWidth = 5;
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      ctx.shadowColor = "rgba(255,152,0,0.8)";
+      ctx.shadowBlur = 6;
+      ctx.beginPath();
+      const first = this.positions[this.selectedIndices[0]];
+      ctx.moveTo(first.x, first.y);
+      for (let idx of this.selectedIndices.slice(1)) {
+        const p = this.positions[idx];
+        ctx.lineTo(p.x, p.y);
+      }
+      if (this.isDragging && this.lastMousePos) {
+        ctx.lineTo(this.lastMousePos.x, this.lastMousePos.y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0; // reset shadow
+    }
 
-// Calculate letter positions around the circle
-function calculatePositions() {
-  letterPositions = [];
-  const total = rack.length;
-  const radius = 100;
-  const centerX = 150;
-  const centerY = 150;
+    // Draw letters
+    for (let i = 0; i < this.letters.length; i++) {
+      const { x, y } = this.positions[i];
+      const selected = this.selectedIndices.includes(i);
+      ctx.beginPath();
+      ctx.arc(x, y, this.letterRadius, 0, Math.PI * 2);
+      const gradLetter = ctx.createLinearGradient(x - 20, y - 20, x + 20, y + 20);
+      if (selected) {
+        gradLetter.addColorStop(0, "#2C5A8A");
+        gradLetter.addColorStop(1, "#1f3f63");
+      } else {
+        gradLetter.addColorStop(0, "#4a90e2");
+        gradLetter.addColorStop(1, "#357ABD");
+      }
+      ctx.fillStyle = gradLetter;
+      ctx.fill();
+      ctx.strokeStyle = "rgba(0,0,0,0.2)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
 
-  rack.forEach((letter, index) => {
-    const angle = (index / total) * (2 * Math.PI);
-    const x = Math.cos(angle) * radius + centerX;
-    const y = Math.sin(angle) * radius + centerY;
-    letterPositions.push({ x, y });
-  });
-}
+      ctx.fillStyle = "white";
+      ctx.font = "bold 20px Segoe UI";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(this.letters[i], x, y);
+    }
+  }
 
-function startSelection(index) {
-  selectedLetters = [];
-  selectedIndexes = [];
-  clearSelection();
-  isDragging = true;
-  selectLetter(index);
-}
+  _getLetterIndexAt(x, y) {
+    for (let i = 0; i < this.positions.length; i++) {
+      const p = this.positions[i];
+      const dx = x - p.x;
+      const dy = y - p.y;
+      if (Math.sqrt(dx*dx + dy*dy) <= this.letterRadius) {
+        return i;
+      }
+    }
+    return -1;
+  }
 
-function selectLetter(index) {
-  if (!selectedIndexes.includes(index)) {
-    selectedLetters.push(rack[index]);
-    selectedIndexes.push(index);
-    updateCurrentWord();
-    drawWheel();
+  _attachEvents() {
+    const handleDown = (clientX, clientY) => {
+      const rect = this.canvas.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      const idx = this._getLetterIndexAt(x, y);
+      if (idx !== -1) {
+        this._clearSelection();
+        this.isDragging = true;
+        this._selectLetter(idx);
+      }
+    };
+
+    const handleMove = (clientX, clientY) => {
+      if (!this.isDragging) return;
+      const rect = this.canvas.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      const idx = this._getLetterIndexAt(x, y);
+      if (idx !== -1) {
+        this._selectLetter(idx);
+      } else {
+        this.lastMousePos = { x, y };
+      }
+      this._draw();
+    };
+
+    const handleUp = () => {
+      if (this.isDragging && this.selectedLetters.length > 0) {
+        this._addToList();
+      }
+      this.isDragging = false;
+      this.lastMousePos = null;
+      this._draw();
+    };
+
+    this.canvas.addEventListener("mousedown", e => handleDown(e.clientX, e.clientY));
+    this.canvas.addEventListener("mousemove", e => handleMove(e.clientX, e.clientY));
+    document.addEventListener("mouseup", handleUp);
+
+    this.canvas.addEventListener("touchstart", e => {
+      const t = e.touches[0];
+      handleDown(t.clientX, t.clientY);
+      e.preventDefault();
+    });
+    this.canvas.addEventListener("touchmove", e => {
+      const t = e.touches[0];
+      handleMove(t.clientX, t.clientY);
+      e.preventDefault();
+    });
+    document.addEventListener("touchend", handleUp);
+  }
+
+  _selectLetter(idx) {
+    if (!this.selectedIndices.includes(idx)) {
+      this.selectedIndices.push(idx);
+      this.selectedLetters.push(this.letters[idx]);
+      this.lastMousePos = null;
+      this._updateCurrentWord();
+      this.onSelectionChange(this.selectedLetters);
+    }
+  }
+
+  _updateCurrentWord() {
+    document.getElementById("currentWord").textContent = this.selectedLetters.join("") || "_";
+  }
+
+  _clearSelection() {
+    this.selectedIndices = [];
+    this.selectedLetters = [];
+    this.lastMousePos = null;
+    this._updateCurrentWord();
+    this._draw();
+  }
+
+  _addToList() {
+    if (this.selectedLetters.length > 0) {
+      const word = this.selectedLetters.join("");
+      this.wordList.push(word);
+      this._updateWordList();
+      this._clearSelection();
+    }
+  }
+
+  _clearList() {
+    this.wordList = [];
+    this._updateWordList();
+  }
+
+  _submitList() {
+    this.onWordSubmit(this.wordList);
+  }
+
+  _updateWordList() {
+    document.getElementById("wordList").textContent =
+      this.wordList.join(", ") || "(No words yet)";
   }
 }
 
-function endSelection() {
-  if (isDragging && selectedLetters.length > 0) {
-    addToList();
-  }
-  isDragging = false;
-  lastMousePos = null;
-  drawWheel();
-}
-
-function clearSelection() {
-  selectedLetters = [];
-  selectedIndexes = [];
-  lastMousePos = null;
-  updateCurrentWord();
-  drawWheel();
-}
-
-function updateCurrentWord() {
-  document.getElementById("currentWord").textContent = selectedLetters.join('') || '_';
-}
-
-function addToList() {
-  if (selectedLetters.length > 0) {
-    const word = selectedLetters.join('');
-    wordList.push(word);
-    updateWordList();
-    clearSelection();
-  }
-}
-
-function clearList() {
-  wordList = [];
-  updateWordList();
-}
-
-function submitList() {
-  alert("Submitted words: " + wordList.join(", "));
-}
-
-function updateWordList() {
-  document.getElementById("wordList").textContent = wordList.join(", ") || "(No words yet)";
-}
-
-// Detect if mouse/touch is on a letter
-function hitTest(x, y) {
-  return letterPositions.findIndex(pos => {
-    const dx = pos.x - x;
-    const dy = pos.y - y;
-    return Math.sqrt(dx*dx + dy*dy) <= 25;
-  });
-}
-
-// Mouse/touch events
-canvas.addEventListener("mousedown", e => {
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  const index = hitTest(x, y);
-  if (index >= 0) startSelection(index);
+// Usage:
+const canvas = document.getElementById("wordWheelCanvas");
+const wheel = new WordWheelCanvas(canvas, ["A", "B", "C", "D", "E", "F", "G"], {
+  onWordSubmit: words => alert("Submitted: " + words.join(", ")),
+  onSelectionChange: letters => console.log("Current: ", letters.join(""))
 });
 
-canvas.addEventListener("mousemove", e => {
-  if (!isDragging) return;
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  const index = hitTest(x, y);
-  if (index >= 0) selectLetter(index);
-  else lastMousePos = { x, y };
-  drawWheel();
-});
-
-canvas.addEventListener("mouseup", endSelection);
-
-canvas.addEventListener("touchstart", e => {
-  const rect = canvas.getBoundingClientRect();
-  const touch = e.touches[0];
-  const x = touch.clientX - rect.left;
-  const y = touch.clientY - rect.top;
-  const index = hitTest(x, y);
-  if (index >= 0) startSelection(index);
-  e.preventDefault();
-});
-
-canvas.addEventListener("touchmove", e => {
-  if (!isDragging) return;
-  const rect = canvas.getBoundingClientRect();
-  const touch = e.touches[0];
-  const x = touch.clientX - rect.left;
-  const y = touch.clientY - rect.top;
-  const index = hitTest(x, y);
-  if (index >= 0) selectLetter(index);
-  else lastMousePos = { x, y };
-  drawWheel();
-  e.preventDefault();
-});
-
-canvas.addEventListener("touchend", endSelection);
-
-calculatePositions();
-drawWheel();
+document.getElementById("clearSel").onclick = () => wheel._clearSelection();
+document.getElementById("addWord").onclick = () => wheel._addToList();
+document.getElementById("clearList").onclick = () => wheel._clearList();
+document.getElementById("submitList").onclick = () => wheel._submitList();
 </script>
 
 </body>
