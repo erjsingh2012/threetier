@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JavaScript Concepts in WWF Game Class</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f8f9fa;
+      color: #212529;
+      padding: 2rem;
+      max-width: 1000px;
+      margin: auto;
+      line-height: 1.6;
+    }
+    h1, h2 {
+      border-bottom: 2px solid #dee2e6;
+      padding-bottom: 0.3em;
+    }
+    code {
+      background: #e9ecef;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .section {
+      margin-bottom: 2rem;
+    }
+    ul {
+      padding-left: 1.2em;
+    }
+    .tag {
+      display: inline-block;
+      background: #dee2e6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85em;
+      margin-left: 0.5em;
+      color: #495057;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📘 JavaScript Concepts in <code>wwf.page.Game</code></h1>
+  <p>This page documents and explains all advanced JavaScript concepts used in the <code>wwf.page.Game</code> class implementation in the Words With Friends game architecture.</p>
+
+  <div class="section">
+    <h2>1. Class Systems</h2>
+    <ul>
+      <li><strong>Custom Class Syntax:</strong> <code>core.Class()</code> is used instead of ES6 <code>class</code>. It enables classical inheritance and mixins.</li>
+      <li><strong>Constructor Function:</strong> Defined using <code>construct: function(settings, resources) {...}</code></li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>2. Inheritance and Composition</h2>
+    <ul>
+      <li><strong>Mixins via <code>include:</code></strong> Merges behavior from multiple modules (e.g., trackers, utils). <span class="tag">Composition</span></li>
+      <li><strong>Manual Superclass Method Call:</strong> Using <code>BaseGame.prototype.defaults</code> and <code>call(this)</code> to reuse logic.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>3. Object Extension & Merging</h2>
+    <ul>
+      <li><code>s5.Common.extend({}, ...)</code>: Like <code>Object.assign</code> – merges default settings, handlers, and widgets.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>4. Scoping & Binding</h2>
+    <ul>
+      <li><code>bind(this)</code>: Used with async functions and callbacks to ensure correct instance context.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>5. Asynchronous Programming</h2>
+    <ul>
+      <li><strong>Promises:</strong> <code>.then()</code> is used to wait for experiment data.</li>
+      <li><strong>Experiments Loading:</strong> Experiment flags are used for A/B testing. <code>getAll()</code> returns a Promise.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>6. Event System</h2>
+    <ul>
+      <li><strong>Emit/Remit:</strong> Uses <code>s5.EventBus</code> for Pub-Sub communication between components. <span class="tag">Loose coupling</span></li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>7. State & Data Handling</h2>
+    <ul>
+      <li><strong>Private Variables:</strong> Convention of <code>__varName</code> for internal use. <span class="tag">Encapsulation</span></li>
+      <li><strong>Booleans and Flags:</strong> Track availability of ad, rival, suggestions, and game state.</li>
+      <li><strong>Game Data Store:</strong> Stores previous board and rack state in <code>__previousGameData</code></li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>8. Configuration & Settings</h2>
+    <ul>
+      <li><strong>Nested Settings:</strong> e.g., <code>this.__tutor = {...}</code> groups related tutorial toggles.</li>
+      <li><strong>Timing Constants:</strong> <code>60 * 60 * 1000</code> used for timeout durations.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>9. JS Tools Integration</h2>
+    <ul>
+      <li><strong>JSHint Directives:</strong> Top comment configures syntax rules like allowing <code>==</code>, disabling strict mode, etc.</li>
+      <li><strong>Global Declaration:</strong> <code>/* global ... */</code> prevents undefined warnings in linting tools.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>10. Best Practices Demonstrated</h2>
+    <ul>
+      <li><strong>Encapsulation</strong>: Internal state is kept in underscored fields.</li>
+      <li><strong>Modularity</strong>: Handlers, trackers, and experiments are separated into reusable components.</li>
+      <li><strong>Async Safety</strong>: Uses <code>.bind(this)</code> with async handlers.</li>
+      <li><strong>Progressive Feature Enabling</strong>: Experiment flags toggle features dynamically.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>11. Concepts You Should Learn Before Using This Code</h2>
+    <ol>
+      <li>JavaScript object basics: objects, arrays, functions</li>
+      <li>How prototypal inheritance works</li>
+      <li>Function context and <code>this</code></li>
+      <li>Promises and asynchronous code</li>
+      <li>Event-driven architecture (pub-sub)</li>
+      <li>Mixins vs classical inheritance</li>
+      <li>Code organization in large JS apps</li>
+    </ol>
+  </div>
+
+  <footer>
+    <p><strong>Author:</strong> ChatGPT Technical Assistant<br />
+      <strong>Date:</strong> August 2025
+    </p>
+  </footer>
+
+</body>
+<script> 
+    /***********************************************************
+     * 1. Base Constructor and Prototype
+     ***********************************************************/
+    function BaseGame() {
+      this.defaults = {
+        soundEnabled: true,
+        theme: 'classic'
+      };
+      this.handlers = {
+        onMove: function () { console.log('BaseGame: onMove'); }
+      };
+      this.widgets = {
+        board: true
+      };
+    }
+
+    BaseGame.prototype.init = function () {
+      console.log("BaseGame initialized with defaults:", this.defaults);
+    };
+
+    /***********************************************************
+     * 2. Mixins: WordStrengthHandler & SuggestionHandler
+     ***********************************************************/
+    var WordStrengthHandler = {
+      handlers: {
+        onWordCheck: function () { console.log('WordStrength: checking...'); }
+      }
+    };
+
+    var SuggestionsHandler = {
+      handlers: {
+        onSuggest: function () { console.log('Suggestions: suggesting...'); }
+      }
+    };
+
+    /***********************************************************
+     * 3. Event Bus (Pub-Sub)
+     ***********************************************************/
+    var EventBus = {
+      events: {},
+      on: function (evt, fn) {
+        this.events[evt] = this.events[evt] || [];
+        this.events[evt].push(fn);
+      },
+      emit: function (evt, data) {
+        if (this.events[evt]) {
+          this.events[evt].forEach(fn => fn(data));
+        }
+      }
+    };
+
+    /***********************************************************
+     * 4. GamePage Constructor (inherits from BaseGame)
+     ***********************************************************/
+    function GamePage(settings) {
+      BaseGame.call(this); // inherit
+
+      // Merge settings
+      this.settings = Object.assign({}, this.defaults, settings);
+
+      // Merge handlers from mixins
+      this.handlers = Object.assign({}, 
+        this.handlers, 
+        WordStrengthHandler.handlers,
+        SuggestionsHandler.handlers
+      );
+
+      // Instance variables (private via naming)
+      this.__adReady = false;
+      this.__instantPlayAvailable = false;
+      this.__previousGameData = {};
+      this.__expLoaded = null;
+
+      // Register to EventBus
+      EventBus.on('SHOW_AD', function () {
+        console.log('GamePage received ad event');
+      });
+    }
+
+    // Inherit prototype chain
+    GamePage.prototype = Object.create(BaseGame.prototype);
+    GamePage.prototype.constructor = GamePage;
+
+    /***********************************************************
+     * 5. Async Experiment Loading (Promises)
+     ***********************************************************/
+    GamePage.prototype.loadExperiments = function () {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const experiments = {
+            wordStrength: { enabled: true, friendTimeSeconds: 300 },
+            progression: { enabled: false }
+          };
+          console.log("Experiments loaded:", experiments);
+          this.__expLoaded = experiments;
+          resolve(experiments);
+        }, 1000);
+      });
+    };
+
+    /***********************************************************
+     * 6. App Logic
+     ***********************************************************/
+    GamePage.prototype.start = function () {
+      this.init(); // from BaseGame
+      console.log("Game started with settings:", this.settings);
+
+      // Use merged handlers
+      this.handlers.onMove();
+      this.handlers.onWordCheck();
+      this.handlers.onSuggest();
+
+      // Emit custom event
+      EventBus.emit('SHOW_AD');
+
+      // Load experiments
+      this.loadExperiments().then(exps => {
+        console.log("Experiments available inside GamePage:", exps);
+      });
+    };
+
+    /***********************************************************
+     * 7. Usage Example
+     ***********************************************************/
+    var myGame = new GamePage({ theme: 'dark', soundEnabled: false });
+    myGame.start();
+
+  </script>
+</html>
