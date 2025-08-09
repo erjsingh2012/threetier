@@ -119,6 +119,7 @@ function initPageScroll() {
       goTo(index);
     }
   });
+  /*
 
   // Touch swipe support
   let startX = 0;
@@ -136,7 +137,7 @@ function initPageScroll() {
       goTo(currentIndex + 1); // swipe left
     }
   });
-
+*/
   // Initial activation
   pages[0].classList.add('active');
 }
