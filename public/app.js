@@ -120,7 +120,6 @@ function initPageScroll() {
     }
   });
   /*
-
   // Touch swipe support
   let startX = 0;
   document.querySelector('.pages').addEventListener('touchstart', (e) => {
