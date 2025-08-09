@@ -136,6 +136,23 @@ p {
   }
 }
 
+@media (max-height: 700px) and (orientation: portrait) {
+  .columnlayout {
+    gap: 2px;
+    padding: 2px;
+  }
+  
+  #board-container {
+    width: 80vw;
+    max-width: 280px;
+  }
+  
+  #wheel {
+    width: 70vw;
+    max-width: 220px;
+  }
+}
+
 /* ================================
    ✅ Bottom Navigation Bar
    ================================ */
@@ -198,12 +215,38 @@ p {
 .columnlayout {
   display: flex;
   flex-direction: column;
-  align-items: center;      /* center horizontally */
-  gap: 12px;                /* vertical spacing between elements */
-  padding: 20px;
-  max-width: 400px;         /* optional, limits width */
-  margin: 0 auto;           /* centers container horizontally */
-  font-family: Arial, sans-serif;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  height: 100%;
+  justify-content: center;
+}
+
+#board-container {
+  width: min(90vw, 350px);
+  aspect-ratio: 1;
+}
+
+#wheel {
+  width: min(80vw, 300px);
+  aspect-ratio: 1;
+}
+
+@media (max-width: 480px) and (orientation: portrait) {
+  .columnlayout {
+    gap: 4px;
+    padding: 4px;
+  }
+  
+  #board-container {
+    width: 85vw;
+    max-width: 300px;
+  }
+  
+  #wheel {
+    width: 75vw;
+    max-width: 250px;
+  }
 }
 
 /* ================================
