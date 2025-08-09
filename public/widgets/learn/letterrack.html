@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Letter Rack - Drag & Drop</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f3f3f3;
+  }
+  .rack-container {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  .letter-tile {
+    background: linear-gradient(#f6a623, #d48806);
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.3);
+    font-weight: bold;
+    font-size: 28px;
+    color: #2d2d2d;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: grab;
+  }
+  .letter-tile:active {
+    cursor: grabbing;
+  }
+  .tile-score {
+    position: absolute;
+    bottom: 4px;
+    right: 6px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .drop-target {
+    outline: 2px dashed #aaa;
+  }
+</style>
+</head>
+<body>
+
+<h2>90 letters left</h2>
+
+<div class="rack-container" id="rack">
+  <div class="letter-tile" draggable="true">E <span class="tile-score">1</span></div>
+  <div class="letter-tile" draggable="true">I <span class="tile-score">1</span></div>
+  <div class="letter-tile" draggable="true">J <span class="tile-score">10</span></div>
+  <div class="letter-tile" draggable="true">B <span class="tile-score">4</span></div>
+  <div class="letter-tile" draggable="true">E <span class="tile-score">1</span></div>
+  <div class="letter-tile" draggable="true">Y <span class="tile-score">3</span></div>
+  <div class="letter-tile" draggable="true">O <span class="tile-score">1</span></div>
+</div>
+
+<script>
+  const rack = document.getElementById("rack");
+  let draggedTile = null;
+
+  rack.addEventListener("dragstart", (e) => {
+    if (e.target.classList.contains("letter-tile")) {
+      draggedTile = e.target;
+      e.dataTransfer.effectAllowed = "move";
+    }
+  });
+
+  rack.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    const target = e.target.closest(".letter-tile");
+    if (target && target !== draggedTile) {
+      target.classList.add("drop-target");
+    }
+  });
+
+  rack.addEventListener("dragleave", (e) => {
+    const target = e.target.closest(".letter-tile");
+    if (target) {
+      target.classList.remove("drop-target");
+    }
+  });
+
+  rack.addEventListener("drop", (e) => {
+    e.preventDefault();
+    const target = e.target.closest(".letter-tile");
+    if (target && target !== draggedTile) {
+      target.classList.remove("drop-target");
+      const draggedIndex = [...rack.children].indexOf(draggedTile);
+      const targetIndex = [...rack.children].indexOf(target);
+      if (draggedIndex < targetIndex) {
+        rack.insertBefore(draggedTile, target.nextSibling);
+      } else {
+        rack.insertBefore(draggedTile, target);
+      }
+    }
+  });
+
+  rack.addEventListener("dragend", () => {
+    draggedTile = null;
+    document.querySelectorAll(".drop-target").forEach(el => el.classList.remove("drop-target"));
+  });
+</script>
+
+</body>
+</html>
