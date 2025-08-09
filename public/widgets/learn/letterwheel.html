@@ -82,7 +82,7 @@
 
 <button id="shuffleBtn">Shuffle</button>
 <button id="resetBtn">Reset</button>
-
+<button id="clearBtn">Clear List</button>
 <h2>Found Words</h2>
 <ul id="wordList"></ul>
 
@@ -199,8 +199,14 @@
     resetWord();
   }
 
+  function clearList() {
+    document.getElementById("wordList").innerHTML = '';
+    resetWord();
+  }
   document.getElementById("shuffleBtn").addEventListener("click", shuffleRack);
   document.getElementById("resetBtn").addEventListener("click", resetWord);
+  document.getElementById("clearBtn").addEventListener("click", clearList);
+  
 
   document.addEventListener("mouseup", endSelection);
   document.addEventListener("touchend", endSelection);
