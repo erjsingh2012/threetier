@@ -1,138 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Board Component with placeTile & placeWord</title>
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      background: #f0f0f0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-    }
-
-    .board {
-      display: grid;
-      grid-template-columns: repeat(11, 1fr);
-      gap: 0; /* no gap between tiles */
-      background: #e0e0e0;
-      padding: 10px 16px;
-      width: 90vw;
-      max-width: 500px;
-      aspect-ratio: 1 / 1;
-      border-radius: 14px;
-      user-select: none;
-      box-shadow: 0 3px 6px rgb(0 0 0 / 0.1);
-    }
-
-    .tile {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      font-size: 1rem;
-      font-weight: 700;
-      color: #fff;
-      background: linear-gradient(to bottom, #e8f4d0, #b5f9f467);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-transform: uppercase;
-      border-radius: 10px;
-      box-shadow:
-        inset 0 1px 2px rgba(255, 255, 255, 0.2),
-        0 2px 4px rgba(0, 0, 0, 0.1);
-      border: 1px solid #d0d0d0;
-      transition:
-        background-color 0.3s ease,
-        color 0.3s ease,
-        transform 0.1s ease;
-      cursor: default;
-      user-select: none;
-    }
-
-    /* Remove border and shadow for word tiles to form continuous block */
-    .word-tile {
-      border-radius: 0 !important;
-      box-shadow: none !important;
-      border: none !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      cursor: default;
-    }
-
-    /* Rounded corners for horizontal words */
-    .word-start {
-      border-top-left-radius: 10px !important;
-      border-bottom-left-radius: 10px !important;
-    }
-
-    .word-end {
-      border-top-right-radius: 10px !important;
-      border-bottom-right-radius: 10px !important;
-    }
-
-    /* Rounded corners for vertical words */
-    .word-start-vertical {
-      border-top-left-radius: 10px !important;
-      border-top-right-radius: 10px !important;
-    }
-
-    .word-end-vertical {
-      border-bottom-left-radius: 10px !important;
-      border-bottom-right-radius: 10px !important;
-    }
-
-    /* Bonus tile colors */
-    .TW {
-      background: #f44336;
-      color: #fff;
-      border-color: #d32f2f;
-      font-weight: 800;
-      font-size: 0.85rem;
-      user-select: none;
-    }
-
-    .DW {
-      background: #ffc107;
-      color: #000;
-      border-color: #ffa000;
-      font-weight: 800;
-      font-size: 0.85rem;
-      user-select: none;
-    }
-
-    .TL {
-      background: #2196f3;
-      border-color: #1976d2;
-      user-select: none;
-    }
-
-    .DL {
-      background: #9e9e9e;
-      border-color: #7e7e7e;
-      user-select: none;
-    }
-
-    /* Placed tile style */
-    .placed {
-      background-color: #4caf50 !important;
-      color: #fff !important;
-      font-weight: bolder;
-      box-shadow: none !important;
-      border: none !important;
-      cursor: default;
-      user-select: text;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-  </style>
+  <title>Board Component as Reusable Class</title>
 </head>
-
 <body>
   <main>
     <section id="board-container" role="grid" aria-label="Scrabble-like game board"></section>
@@ -140,11 +12,32 @@
 
   <script>
     class BoardComponent {
-      constructor(containerId) {
-        this.container = document.getElementById(containerId);
-        if (!this.container) throw new Error(`Container with id "${containerId}" not found`);
+      static injectedStyle = false;
 
-        this.boardData = [
+      constructor(container, options = {}) {
+        // Accept element or string ID for container
+        this.container = (typeof container === 'string') ? document.getElementById(container) : container;
+        if (!this.container) throw new Error('Board container element not found');
+
+        this.size = options.size || 11;
+        this.boardData = options.boardData || this.defaultBoardData();
+        this.wordColors = options.wordColors || [
+          '#4caf50', '#2196f3', '#f44336', '#ff9800',
+          '#9c27b0', '#009688', '#e91e63', '#3f51b5',
+        ];
+        this.wordCount = 0;
+
+        if (!BoardComponent.injectedStyle) {
+          this.injectStyles();
+          BoardComponent.injectedStyle = true;
+        }
+
+        this.tiles = [];
+        this.renderBoard();
+      }
+
+      defaultBoardData() {
+        return [
           ['TW', '', '', 'DL', '', '', 'DL', '', '', '', 'TW'],
           ['', 'DW', '', '', '', 'TL', '', '', '', 'DW', ''],
           ['', '', 'DW', '', '', '', '', '', 'DW', '', ''],
@@ -157,51 +50,155 @@
           ['', 'DW', '', '', '', 'TL', '', '', '', 'DW', ''],
           ['TW', '', '', 'DL', '', '', 'DL', '', '', '', 'TW']
         ];
-
-        this.tiles = [];
-        this.wordColors = [
-          '#4caf50', '#2196f3', '#f44336', '#ff9800',
-          '#9c27b0', '#009688', '#e91e63', '#3f51b5',
-        ];
-        this.wordCount = 0;
-
-        this.createBoard();
       }
 
-      createBoard() {
+      injectStyles() {
+        const style = document.createElement('style');
+        style.textContent = `
+          .board {
+            display: grid;
+            grid-template-columns: repeat(${this.size}, 1fr);
+            gap: 0;
+            background: #e0e0e0;
+            padding: 10px 16px;
+            width: 90vw;
+            max-width: 500px;
+            aspect-ratio: 1 / 1;
+            border-radius: 14px;
+            user-select: none;
+            box-shadow: 0 3px 6px rgb(0 0 0 / 0.1);
+          }
+
+          .tile {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(to bottom, #e8f4d0, #b5f9f467);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-transform: uppercase;
+            border-radius: 10px;
+            box-shadow:
+              inset 0 1px 2px rgba(255, 255, 255, 0.2),
+              0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid #d0d0d0;
+            transition:
+              background-color 0.3s ease,
+              color 0.3s ease,
+              transform 0.1s ease;
+            cursor: default;
+            user-select: none;
+          }
+
+          /* Remove border and shadow for word tiles to form continuous block */
+          .word-tile {
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            cursor: default;
+          }
+
+          /* Rounded corners for horizontal words */
+          .word-start {
+            border-top-left-radius: 10px !important;
+            border-bottom-left-radius: 10px !important;
+          }
+
+          .word-end {
+            border-top-right-radius: 10px !important;
+            border-bottom-right-radius: 10px !important;
+          }
+
+          /* Rounded corners for vertical words */
+          .word-start-vertical {
+            border-top-left-radius: 10px !important;
+            border-top-right-radius: 10px !important;
+          }
+
+          .word-end-vertical {
+            border-bottom-left-radius: 10px !important;
+            border-bottom-right-radius: 10px !important;
+          }
+
+          /* Bonus tile colors */
+          .TW {
+            background: #f44336;
+            color: #fff;
+            border-color: #d32f2f;
+            font-weight: 800;
+            font-size: 0.85rem;
+            user-select: none;
+          }
+
+          .DW {
+            background: #ffc107;
+            color: #000;
+            border-color: #ffa000;
+            font-weight: 800;
+            font-size: 0.85rem;
+            user-select: none;
+          }
+
+          .TL {
+            background: #2196f3;
+            border-color: #1976d2;
+            user-select: none;
+          }
+
+          .DL {
+            background: #9e9e9e;
+            border-color: #7e7e7e;
+            user-select: none;
+          }
+
+          /* Placed tile style */
+          .placed {
+            background-color: #4caf50 !important;
+            color: #fff !important;
+            font-weight: bolder;
+            box-shadow: none !important;
+            border: none !important;
+            cursor: default;
+            user-select: text;
+            transition: background-color 0.3s ease, color 0.3s ease;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+
+      renderBoard() {
         this.container.innerHTML = '';
         this.container.classList.add('board');
         this.container.setAttribute('tabindex', '0');
 
         this.tiles = [];
-
-        this.boardData.forEach((row, rowIndex) => {
-          this.tiles[rowIndex] = [];
-
-          row.forEach((cell, colIndex) => {
+        for (let row = 0; row < this.size; row++) {
+          this.tiles[row] = [];
+          for (let col = 0; col < this.size; col++) {
+            const cellValue = (this.boardData[row] && this.boardData[row][col]) || '';
             const tile = document.createElement('div');
             tile.className = 'tile';
-            if (cell) tile.classList.add(cell);
+            if (cellValue) tile.classList.add(cellValue);
 
-            tile.textContent = cell || '';
+            tile.textContent = cellValue || '';
             tile.setAttribute('role', 'gridcell');
-            tile.setAttribute('aria-rowindex', rowIndex + 1);
-            tile.setAttribute('aria-colindex', colIndex + 1);
+            tile.setAttribute('aria-rowindex', row + 1);
+            tile.setAttribute('aria-colindex', col + 1);
             tile.setAttribute('tabindex', '-1');
 
             this.container.appendChild(tile);
-            this.tiles[rowIndex][colIndex] = tile;
-          });
-        });
+            this.tiles[row][col] = tile;
+          }
+        }
       }
 
       isValidPosition(row, col) {
-        return (
-          row >= 0 &&
-          row < this.tiles.length &&
-          col >= 0 &&
-          col < this.tiles[0].length
-        );
+        return row >= 0 && row < this.size && col >= 0 && col < this.size;
       }
 
       clearBoard() {
@@ -212,7 +209,11 @@
             tile.style.background = '';
             tile.style.color = '';
             tile.style.borderRadius = '';
-            tile.classList.remove('word-start', 'word-end', 'word-start-vertical', 'word-end-vertical', 'placed', 'word-tile');
+            tile.classList.remove(
+              'word-start', 'word-end',
+              'word-start-vertical', 'word-end-vertical',
+              'placed', 'word-tile'
+            );
           }
         }
         this.wordCount = 0;
@@ -223,7 +224,6 @@
           console.warn(`Invalid tile position (${row}, ${col})`);
           return false;
         }
-
         const tile = this.tiles[row][col];
         tile.textContent = letter.toUpperCase();
         tile.className = 'tile placed';
@@ -273,17 +273,11 @@
 
           // Rounded corners
           if (i === 0) {
-            if (direction === 'horizontal') {
-              tile.classList.add('word-start');
-            } else {
-              tile.classList.add('word-start-vertical');
-            }
+            if (direction === 'horizontal') tile.classList.add('word-start');
+            else tile.classList.add('word-start-vertical');
           } else if (i === word.length - 1) {
-            if (direction === 'horizontal') {
-              tile.classList.add('word-end');
-            } else {
-              tile.classList.add('word-end-vertical');
-            }
+            if (direction === 'horizontal') tile.classList.add('word-end');
+            else tile.classList.add('word-end-vertical');
           }
         }
         return true;
@@ -293,18 +287,10 @@
     // Usage example:
     const board = new BoardComponent('board-container');
 
-    setTimeout(() => {
-      board.placeTile('A', 5, 5);
-    }, 1000);
-
-    setTimeout(() => {
-      board.placeWord('HELLO', 2, 3, 'horizontal');
-    }, 2000);
-
-    setTimeout(() => {
-      board.placeWord('WORLD', 4, 7, 'vertical');
-    }, 3000);
+    // Demo placements with delays
+    setTimeout(() => board.placeTile('A', 5, 5), 1000);
+    setTimeout(() => board.placeWord('HELLO', 2, 3, 'horizontal'), 2000);
+    setTimeout(() => board.placeWord('WORLD', 4, 7, 'vertical'), 3000);
   </script>
 </body>
-
 </html>
