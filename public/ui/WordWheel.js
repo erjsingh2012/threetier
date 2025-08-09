@@ -2,8 +2,8 @@ class WordWheel {
   constructor(container, letters, options = {}) {
     this.container = container;
     this.letters = letters;
-    this.onWordSubmit = options.onWordSubmit || function () { };
-    this.onSelectionChange = options.onSelectionChange || function () { };
+    this.onWordSubmit = options.onWordSubmit || function () {};
+    this.onSelectionChange = options.onSelectionChange || function () {};
     this.wordList = [];
     this.selectedLetters = [];
     this.selectedPositions = [];
@@ -27,8 +27,18 @@ class WordWheel {
       <style>
         .ww-container {
           font-family: 'Segoe UI', Tahoma, sans-serif;
-          text-align: center;
-          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          padding-top: 40vh;
+          height: 100%;       /* or fixed height if needed */
+          max-height: 100vh;  /* keep it viewport limited if you want */
+        }
+        .ww-wheel-wrapper {
+          margin-top: auto;
+          align-self: center;
+          position: relative;
+          display: inline-block;
+          margin-bottom: 10px; /* small gap above nav */
         }
         .ww-wheel {
           position: relative;
@@ -116,15 +126,14 @@ class WordWheel {
         }
       </style>
       <div class="ww-container">
+      <div class="ww-list">(No words yet)</div>
+      <div class="ww-current">_</div>
         <div style="position:relative; display:inline-block;">
           <div class="ww-wheel"></div>
           <svg class="ww-svg" width="${this.size}" height="${this.size}">
             <polyline class="ww-path" fill="none"/>
           </svg>
         </div>
-        <div class="ww-current">_</div>
-      
-        <div class="ww-list">(No words yet)</div>
       </div>
     `;
     this._renderWheel(letterSize);
@@ -134,7 +143,7 @@ class WordWheel {
     const wheel = this.container.querySelector(".ww-wheel");
     wheel.innerHTML = "";
     const total = this.letters.length;
-    const radius = (this.size / 2) - (letterSize / 1.5);
+    const radius = this.size / 2 - letterSize / 1.5;
     const centerX = this.size / 2;
     const centerY = this.size / 2;
     this.letters.forEach((letter, index) => {
@@ -150,33 +159,41 @@ class WordWheel {
       div.style.height = `${letterSize}px`;
       div.style.fontSize = `${Math.max(14, (letterSize / 50) * 24)}px`;
       div.addEventListener("mousedown", (e) => {
-        this._startSelection(letter, div, x + letterSize / 2, y + letterSize / 2);
+        this._startSelection(
+          letter,
+          div,
+          x + letterSize / 2,
+          y + letterSize / 2
+        );
         e.preventDefault();
       });
       div.addEventListener("mouseenter", () => {
         if (this.isDragging)
-          this._selectLetter(letter, div, x + letterSize / 2, y + letterSize / 2);
+          this._selectLetter(
+            letter,
+            div,
+            x + letterSize / 2,
+            y + letterSize / 2
+          );
       });
       div.addEventListener("touchstart", (e) => {
-        this._startSelection(letter, div, x + letterSize / 2, y + letterSize / 2);
+        this._startSelection(
+          letter,
+          div,
+          x + letterSize / 2,
+          y + letterSize / 2
+        );
         e.preventDefault();
       });
       div.addEventListener("touchmove", (e) => {
         const touch = e.touches[0];
-        const target = document.elementFromPoint(
-          touch.clientX,
-          touch.clientY
-        );
+        const target = document.elementFromPoint(touch.clientX, touch.clientY);
         if (target && target.classList.contains("ww-letter")) {
           const rect = target.getBoundingClientRect();
           const posX =
-            rect.left +
-            rect.width / 2 -
-            wheel.getBoundingClientRect().left;
+            rect.left + rect.width / 2 - wheel.getBoundingClientRect().left;
           const posY =
-            rect.top +
-            rect.height / 2 -
-            wheel.getBoundingClientRect().top;
+            rect.top + rect.height / 2 - wheel.getBoundingClientRect().top;
           this._selectLetter(target.textContent, target, posX, posY);
         } else {
           this._updateLiveDrag(touch.clientX, touch.clientY);
