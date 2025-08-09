@@ -119,24 +119,6 @@ function initPageScroll() {
       goTo(index);
     }
   });
-  /*
-  // Touch swipe support
-  let startX = 0;
-  document.querySelector('.pages').addEventListener('touchstart', (e) => {
-    startX = e.touches[0].clientX;
-  });
-
-  document.querySelector('.pages').addEventListener('touchend', (e) => {
-    const endX = e.changedTouches[0].clientX;
-    const diff = endX - startX;
-
-    if (diff > 50 && currentIndex > 0) {
-      goTo(currentIndex - 1); // swipe right
-    } else if (diff < -50 && currentIndex < pages.length - 1) {
-      goTo(currentIndex + 1); // swipe left
-    }
-  });
-*/
   // Initial activation
   pages[0].classList.add('active');
 }
