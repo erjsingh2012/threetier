@@ -29,7 +29,7 @@ class WordWheel {
           font-family: 'Segoe UI', Tahoma, sans-serif;
           display: flex;
           flex-direction: column;
-          padding-top: 40vh;
+          padding-top: 30vh;
           height: 100%;       /* or fixed height if needed */
           max-height: 100vh;  /* keep it viewport limited if you want */
         }
