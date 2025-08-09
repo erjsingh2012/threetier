@@ -3,15 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Letter Rack - Drag & Drop</title>
+<title>Letter Rack + Board - Drag & Drop</title>
 <style>
   body {
     font-family: Arial, sans-serif;
     text-align: center;
     background: #f3f3f3;
   }
+  h2 {
+    margin-top: 20px;
+  }
   .rack-container {
-    margin-top: 50px;
+    margin-top: 20px;
     display: flex;
     justify-content: center;
     gap: 10px;
@@ -45,6 +48,24 @@
   .drop-target {
     outline: 2px dashed #aaa;
   }
+  /* Board styling */
+  .board {
+    margin: 40px auto;
+    display: grid;
+    grid-template-columns: repeat(7, 50px);
+    grid-template-rows: repeat(7, 50px);
+    gap: 4px;
+    justify-content: center;
+  }
+  .board-cell {
+    background: #fff;
+    border: 1px solid #ccc;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    position: relative;
+  }
+  .board-cell.highlight {
+    background: #e0ffe0;
+  }
 </style>
 </head>
 <body>
@@ -61,50 +82,69 @@
   <div class="letter-tile" draggable="true">O <span class="tile-score">1</span></div>
 </div>
 
+<!-- Dummy Board -->
+<div class="board" id="board">
+  <!-- 7×7 cells -->
+</div>
+
 <script>
   const rack = document.getElementById("rack");
+  const board = document.getElementById("board");
   let draggedTile = null;
 
-  rack.addEventListener("dragstart", (e) => {
+  // Create 7×7 board cells dynamically
+  for (let i = 0; i < 49; i++) {
+    const cell = document.createElement("div");
+    cell.className = "board-cell";
+    cell.setAttribute("draggable", "false");
+    board.appendChild(cell);
+  }
+
+  // Handle drag start
+  document.addEventListener("dragstart", (e) => {
     if (e.target.classList.contains("letter-tile")) {
       draggedTile = e.target;
       e.dataTransfer.effectAllowed = "move";
     }
   });
 
+  // Rack dragover / drop
   rack.addEventListener("dragover", (e) => {
     e.preventDefault();
-    const target = e.target.closest(".letter-tile");
-    if (target && target !== draggedTile) {
-      target.classList.add("drop-target");
-    }
   });
-
-  rack.addEventListener("dragleave", (e) => {
-    const target = e.target.closest(".letter-tile");
-    if (target) {
-      target.classList.remove("drop-target");
-    }
-  });
-
   rack.addEventListener("drop", (e) => {
     e.preventDefault();
-    const target = e.target.closest(".letter-tile");
-    if (target && target !== draggedTile) {
-      target.classList.remove("drop-target");
-      const draggedIndex = [...rack.children].indexOf(draggedTile);
-      const targetIndex = [...rack.children].indexOf(target);
-      if (draggedIndex < targetIndex) {
-        rack.insertBefore(draggedTile, target.nextSibling);
-      } else {
-        rack.insertBefore(draggedTile, target);
-      }
+    if (draggedTile) {
+      rack.appendChild(draggedTile);
     }
   });
 
-  rack.addEventListener("dragend", () => {
+  // Board dragover / drop
+  board.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    const cell = e.target.closest(".board-cell");
+    if (cell && (!cell.firstChild || cell.firstChild === draggedTile)) {
+      cell.classList.add("highlight");
+    }
+  });
+  board.addEventListener("dragleave", (e) => {
+    const cell = e.target.closest(".board-cell");
+    if (cell) {
+      cell.classList.remove("highlight");
+    }
+  });
+  board.addEventListener("drop", (e) => {
+    e.preventDefault();
+    const cell = e.target.closest(".board-cell");
+    if (cell && (!cell.firstChild || cell.firstChild === draggedTile)) {
+      cell.classList.remove("highlight");
+      cell.appendChild(draggedTile);
+    }
+  });
+
+  document.addEventListener("dragend", () => {
     draggedTile = null;
-    document.querySelectorAll(".drop-target").forEach(el => el.classList.remove("drop-target"));
+    document.querySelectorAll(".highlight").forEach(c => c.classList.remove("highlight"));
   });
 </script>
 
