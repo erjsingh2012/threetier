@@ -109,14 +109,16 @@
     /* Buttons stacked vertically */
     .ww-buttons {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       gap: 10px;
       width: 100%;
+      justify-content: center; /* optional, centers buttons horizontally */
     }
     .ww-btn {
-      width: 100%;
-      margin: 5px 0;
-      padding: 8px 16px;
+      flex: 1;               /* make all buttons share equal width */
+      min-width: 0;          /* allows flex shrinking properly */
+      margin: 0;             /* remove vertical margins */
+      padding: 8px 0;        /* vertical padding, no horizontal so buttons don't get too wide */
       font-size: 15px;
       border: none;
       border-radius: 8px;
@@ -125,7 +127,7 @@
       font-weight: bold;
       cursor: pointer;
       user-select: none;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease; 
     }
     .ww-btn:hover {
       background: linear-gradient(145deg, #5AA0F2, #4685C2);
@@ -164,9 +166,9 @@
             </div>
             <div class="ww-current">_</div>
             <div class="ww-buttons">
-              <button class="ww-btn ww-clear">Clear Selection</button>
-              <button class="ww-btn ww-add">Add to List</button>
-              <button class="ww-btn ww-reset">Clear List</button>
+              <button class="ww-btn ww-clear">Clear</button>
+              <button class="ww-btn ww-add">Add</button>
+              <button class="ww-btn ww-reset">Reset</button>
               <button class="ww-btn ww-submit">Submit</button>
             </div>
           </div>
