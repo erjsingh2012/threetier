@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -24,7 +25,7 @@
     .ww-list {
       min-height: 40px;
       width: 100%;
-      background: rgba(255,255,255,0.8);
+      background: rgba(255, 255, 255, 0.8);
       padding: 12px 18px;
       border-radius: 8px;
       font-size: 16px;
@@ -45,14 +46,14 @@
       height: 250px;
       border-radius: 50%;
       background: radial-gradient(circle at 50% 50%,
-          rgba(255,255,255,0.95) 0%,
+          rgba(255, 255, 255, 0.95) 0%,
           rgba(173, 216, 230, 0.8) 40%,
           rgba(70, 130, 180, 0.7) 100%);
       box-shadow:
         0 8px 20px rgba(0, 0, 0, 0.25),
-        inset 0 4px 15px rgba(255,255,255,0.8),
-        inset 0 -4px 15px rgba(0,0,0,0.1);
-      border: 2px solid rgba(255,255,255,0.4);
+        inset 0 4px 15px rgba(255, 255, 255, 0.8),
+        inset 0 -4px 15px rgba(0, 0, 0, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.4);
       margin: 0 auto;
     }
 
@@ -63,12 +64,13 @@
       left: 0;
       pointer-events: none;
     }
+
     .ww-path {
       stroke: #ff9800;
       stroke-width: 5;
       stroke-linecap: round;
       stroke-linejoin: round;
-      filter: drop-shadow(0 0 6px rgba(255,152,0,0.8));
+      filter: drop-shadow(0 0 6px rgba(255, 152, 0, 0.8));
     }
 
     /* Letter styling */
@@ -82,17 +84,19 @@
       justify-content: center;
       border-radius: 12px;
       cursor: pointer;
-      border: 2px solid rgba(0,0,0,0.2);
+      border: 2px solid rgba(0, 0, 0, 0.2);
       font-size: 24px;
       font-weight: bold;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
       background: linear-gradient(145deg, #4a90e2, #357ABD);
       transition: transform 0.15s ease;
       user-select: none;
     }
+
     .ww-letter:hover {
       transform: scale(1.15);
     }
+
     .ww-letter.selected {
       background: linear-gradient(145deg, #2C5A8A, #1f3f63);
       transform: scale(1.1);
@@ -112,13 +116,19 @@
       flex-direction: row;
       gap: 10px;
       width: 100%;
-      justify-content: center; /* optional, centers buttons horizontally */
+      justify-content: center;
+      /* optional, centers buttons horizontally */
     }
+
     .ww-btn {
-      flex: 1;               /* make all buttons share equal width */
-      min-width: 0;          /* allows flex shrinking properly */
-      margin: 0;             /* remove vertical margins */
-      padding: 8px 0;        /* vertical padding, no horizontal so buttons don't get too wide */
+      flex: 1;
+      /* make all buttons share equal width */
+      min-width: 0;
+      /* allows flex shrinking properly */
+      margin: 0;
+      /* remove vertical margins */
+      padding: 8px 0;
+      /* vertical padding, no horizontal so buttons don't get too wide */
       font-size: 15px;
       border: none;
       border-radius: 8px;
@@ -127,23 +137,50 @@
       font-weight: bold;
       cursor: pointer;
       user-select: none;
-      transition: background 0.3s ease; 
+      transition: background 0.3s ease;
     }
+
     .ww-btn:hover {
       background: linear-gradient(145deg, #5AA0F2, #4685C2);
     }
+
+    /* Dev console styles */
+    #devConsole {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-height: 150px;
+      background: rgba(30, 30, 30, 0.9);
+      color: #eee;
+      font-family: monospace;
+      font-size: 12px;
+      overflow-y: auto;
+      padding: 8px;
+      box-sizing: border-box;
+      z-index: 9999;
+      user-select: text;
+    }
+
+    #devConsole .log-entry {
+      margin-bottom: 4px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
   </style>
 </head>
+
 <body>
   <div id="gameContainer"></div>
-
+  <!-- Dev console panel -->
+  <div id="devConsole"></div>
   <script>
     class WordWheel {
       constructor(container, letters, options = {}) {
         this.container = container;
         this.letters = letters;
-        this.onWordSubmit = options.onWordSubmit || (() => {});
-        this.onSelectionChange = options.onSelectionChange || (() => {});
+        this.onWordSubmit = options.onWordSubmit || (() => { });
+        this.onSelectionChange = options.onSelectionChange || (() => { });
         this.wordList = [];
         this.selectedLetters = [];
         this.selectedPositions = [];
@@ -323,6 +360,106 @@
         this.onWordSubmit(this.wordList);
       }
     }
+    // Create dev console div and add to body
+    const devConsole = document.createElement("div");
+    devConsole.id = "devConsole";
+    Object.assign(devConsole.style, {
+      position: "fixed",
+      bottom: "0",
+      left: "0",
+      right: "0",
+      maxHeight: "500px",
+      background: "rgba(30,30,30,0.9)",
+      color: "#eee",
+      fontFamily: "monospace",
+      fontSize: "12px",
+      overflowY: "auto",
+      padding: "8px",
+      boxSizing: "border-box",
+      zIndex: "9999",
+      userSelect: "text",
+    });
+    document.body.appendChild(devConsole);
+
+    function logToConsole(msg) {
+      const time = new Date().toLocaleTimeString();
+      const entry = document.createElement("div");
+      entry.className = "log-entry";
+      entry.textContent = `[${time}] ${msg}`;
+      devConsole.appendChild(entry);
+      devConsole.scrollTop = devConsole.scrollHeight;
+    }
+
+    // Attach event logging to given element(s)
+    function attachEventLogging(elements) {
+      const events = [
+        "mousedown",
+        "mouseup",
+        "mousemove",
+        "mouseenter",
+        "mouseleave",
+        "touchstart",
+        "touchmove",
+        "touchend",
+      ];
+
+      elements.forEach((el) => {
+        events.forEach((ev) => {
+          el.addEventListener(
+            ev,
+            (e) => {
+              const type = e.type;
+              const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+              const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
+              const target = e.target;
+              const tag = target.tagName.toLowerCase();
+              const classes = target.className || "";
+              const text = (target.textContent || "").trim().slice(0, 15).replace(/\s+/g, " ");
+
+              let msg = `${type} - x:${clientX}, y:${clientY} - target: <${tag} class="${classes}"> "${text}"`;
+              if (target.classList?.contains("ww-letter")) {
+                msg += ` (Letter: "${target.textContent.trim()}")`;
+              }
+              logToConsole(msg);
+            },
+            { passive: true }
+          );
+        });
+      });
+    }
+
+    // Wait until your WordWheel is rendered so these elements exist
+    window.addEventListener("load", () => {
+      // Query the main wheel container and all letter elements
+      const wheel = document.querySelector(".ww-wheel");
+      const letters = Array.from(document.querySelectorAll(".ww-letter"));
+
+      if (wheel) {
+        attachEventLogging([wheel]);
+      }
+      if (letters.length) {
+        attachEventLogging(letters);
+      }
+
+      // Also attach some global event logging on document for mousemove and mouseup
+      ["mousemove", "mouseup"].forEach((ev) => {
+        document.addEventListener(ev, (e) => {
+          const type = e.type;
+          const clientX = e.clientX;
+          const clientY = e.clientY;
+          const target = e.target;
+          const tag = target.tagName.toLowerCase();
+          const classes = target.className || "";
+          const text = (target.textContent || "").trim().slice(0, 15).replace(/\s+/g, " ");
+
+          let msg = `${type} - x:${clientX}, y:${clientY} - target: <${tag} class="${classes}"> "${text}"`;
+          if (target.classList?.contains("ww-letter")) {
+            msg += ` (Letter: "${target.textContent.trim()}")`;
+          }
+          logToConsole(msg);
+        }, { passive: true });
+      });
+    });
 
     const container = document.getElementById("gameContainer");
     const game = new WordWheel(container, ["A", "B", "C", "D", "E", "F", "G"], {
@@ -331,4 +468,5 @@
     });
   </script>
 </body>
+
 </html>
