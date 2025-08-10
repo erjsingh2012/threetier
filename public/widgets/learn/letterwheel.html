@@ -186,7 +186,7 @@
         this.selectedPositions = [];
         this.isDragging = false;
         this.lastMousePos = null;
-
+        this.letterPositions = new Map(); 
         this._render();
         this._attachEvents();
       }
@@ -216,9 +216,9 @@
       _renderWheel() {
         const wheel = this.container.querySelector(".ww-wheel");
         wheel.innerHTML = "";
-
+        this.letterPositions.clear();  // <--- Clear old positions
         const total = this.letters.length;
-        const radius = 100;
+        const radius = 90;
         const centerX = 125;
         const centerY = 125;
 
@@ -232,7 +232,7 @@
           div.textContent = letter;
           div.style.left = `${x}px`;
           div.style.top = `${y}px`;
-
+          this.letterPositions.set(letter, [x + 25, y + 25]); 
           // Mouse events
           div.addEventListener("mousedown", (e) => {
             this._startSelection(letter, div, x + 25, y + 25);
@@ -252,10 +252,11 @@
             const touch = e.touches[0];
             const target = document.elementFromPoint(touch.clientX, touch.clientY);
             if (target && target.classList.contains("ww-letter")) {
-              const rect = target.getBoundingClientRect();
-              const posX = rect.left + rect.width / 2 - wheel.getBoundingClientRect().left;
-              const posY = rect.top + rect.height / 2 - wheel.getBoundingClientRect().top;
-              this._selectLetter(target.textContent, target, posX, posY);
+              const letter = target.textContent;
+              const pos = this.letterPositions.get(letter);
+              if (pos) {
+                this._selectLetter(letter, target, pos[0], pos[1]);
+              }
             } else {
               this._updateLiveDrag(touch.clientX, touch.clientY);
             }
@@ -287,7 +288,12 @@
       _selectLetter(letter, element, px, py) {
         if (!element.classList.contains("selected")) {
           this.selectedLetters.push(letter);
-          this.selectedPositions.push([px, py]);
+          const pos = this.letterPositions.get(letter);  // <--- Get stored position
+          if (pos) {
+            this.selectedPositions.push(pos);            // <--- Use stored position
+          } else {
+            this.selectedPositions.push([px, py]);       // fallback to passed coords
+          }
           element.classList.add("selected");
           this._updateCurrentWord();
           this._updatePath();
