@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Mobile App — Home (SVG UI)</title>
+  <style>
+    :root{--bg:#f6f8fb;--card:#ffffff;--muted:#8b96a5;--accent:#0b78d1;--glass:rgba(255,255,255,0.7)}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;color:#15202b;background:var(--bg);display:flex;align-items:flex-start;justify-content:center;padding:18px}
+    .app{width:100%;max-width:420px;background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);border-radius:18px;box-shadow:0 10px 30px rgba(16,24,40,0.08);overflow:hidden;border:1px solid rgba(11,120,209,0.04)}
+    header{display:flex;align-items:center;gap:12px;padding:14px 16px;background:transparent}
+    .logo{display:flex;align-items:center;gap:10px}
+    .logo svg{width:42px;height:42px}
+    h1{font-size:16px;margin:0}
+    p.subtitle{margin:0;color:var(--muted);font-size:12px}
+    .content{padding:12px}
+    .search{display:flex;gap:8px;align-items:center;padding:8px;background:var(--card);border-radius:12px;border:1px solid rgba(16,24,40,0.04)}
+    .search input{border:0;outline:none;background:transparent;font-size:14px;width:100%}
+    .carousel{margin-top:12px;display:flex;gap:12px;overflow:auto;padding-bottom:8px}
+    .card{min-width:190px;background:linear-gradient(180deg, #fff, #fbfdff);border-radius:14px;padding:12px;box-shadow:0 6px 18px rgba(11,120,209,0.06);border:1px solid rgba(11,120,209,0.04)}
+    .card h3{margin:6px 0 4px;font-size:14px}
+    .card p{margin:0;color:var(--muted);font-size:12px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+    .tile{background:var(--card);padding:12px;border-radius:12px;border:1px solid rgba(16,24,40,0.03);display:flex;gap:10px;align-items:center}
+    .tile svg{width:36px;height:36px;flex:0 0 36px}
+    .tile .meta{font-size:13px}
+    .fab{position:fixed;right:22px;bottom:86px;width:58px;height:58px;border-radius:14px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 12px 30px rgba(11,120,209,0.18);border:none}
+    nav.bottom{height:68px;background:linear-gradient(180deg, #fff, #f7fbff);display:flex;align-items:center;justify-content:space-around;border-top:1px solid rgba(16,24,40,0.03)}
+    nav.bottom a{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;color:var(--muted);text-decoration:none;font-size:11px}
+    nav.bottom a.active{color:var(--accent)}
+    footer.small{font-size:11px;color:var(--muted);padding:8px;text-align:center}
+    /* small scrollbar for carousel */
+    .carousel::-webkit-scrollbar{height:8px}
+    .carousel::-webkit-scrollbar-thumb{background:rgba(11,120,209,0.12);border-radius:8px}
+    @media (max-width:360px){.app{border-radius:12px}}
+  </style>
+</head>
+<body>
+  <div class="app" role="application" aria-label="Demo mobile home page">
+
+    <header>
+      <div class="logo">
+        <!-- simple SVG logo -->
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <defs>
+            <linearGradient id="lg1" x1="0" x2="1">
+              <stop offset="0" stop-color="#0b78d1" />
+              <stop offset="1" stop-color="#5fb0ff" />
+            </linearGradient>
+          </defs>
+          <rect x="4" y="4" width="40" height="40" rx="10" fill="url(#lg1)" />
+          <path d="M14 28 L22 18 L34 30" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <div>
+        <h1>MyApp</h1>
+        <p class="subtitle">Welcome back — good to see you</p>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="search" role="search" aria-label="Search">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4a7 7 0 1 1 0 14 7 7 0 0 1 0-14zm8.5 15.5L18 16" fill="none" stroke="#8b96a5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <input id="q" placeholder="Search items, tips or people" />
+        <button aria-label="voice search" title="Voice" style="background:transparent;border:0;padding:6px"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1v10a3 3 0 0 0 6 0V1" fill="none" stroke="#8b96a5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+
+      <div class="carousel" aria-hidden="false">
+        <div class="card" role="article" aria-label="New feature">
+          <svg viewBox="0 0 80 48" width="80" height="48"><rect x="2" y="2" width="76" height="44" rx="8" fill="#f2fbff" stroke="#d7f0ff"/></svg>
+          <h3>New: Quick Actions</h3>
+          <p>Tap to create items or start a session in one tap.</p>
+        </div>
+        <div class="card" role="article" aria-label="Pro tips">
+          <svg viewBox="0 0 80 48" width="80" height="48"><circle cx="40" cy="24" r="16" fill="#fff6e6" stroke="#ffe9b8"/></svg>
+          <h3>Pro Tips</h3>
+          <p>Optimize your workflow with smart shortcuts.</p>
+        </div>
+      </div>
+
+      <div class="grid" role="list">
+        <div class="tile" role="listitem" tabindex="0">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18" stroke="#0b78d1" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <div class="meta"><strong>Tasks</strong><div style="color:var(--muted);font-size:12px">12 open</div></div>
+        </div>
+        <div class="tile" role="listitem" tabindex="0">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v6l4 4" stroke="#0b78d1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          <div class="meta"><strong>Timeline</strong><div style="color:var(--muted);font-size:12px">Today</div></div>
+        </div>
+        <div class="tile" role="listitem" tabindex="0">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3" stroke="#0b78d1" stroke-width="1.6" fill="none"/><path d="M6 20c1.2-3 6-3 12 0" stroke="#0b78d1" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+          <div class="meta"><strong>Contacts</strong><div style="color:var(--muted);font-size:12px">8 people</div></div>
+        </div>
+        <div class="tile" role="listitem" tabindex="0">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v10H4z" stroke="#0b78d1" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M8 11h8" stroke="#0b78d1" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <div class="meta"><strong>Files</strong><div style="color:var(--muted);font-size:12px">24 items</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="fab" aria-label="New Item" title="Create"> 
+      <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <nav class="bottom" role="navigation" aria-label="Bottom navigation">
+      <a href="#" class="active"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12l9-9 9 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>Home</span></a>
+      <a href="#"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3" fill="currentColor"/><path d="M6 20c1.2-3 6-3 12 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span>Contacts</span></a>
+      <a href="#"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span>Files</span></a>
+      <a href="#"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v4M6 6v2M18 6v2M8 12h8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Settings</span></a>
+    </nav>
+
+    <footer class="small">Tip: tap the + button to create something new</footer>
+
+  </div>
+
+  <script>
+    // simple interactivity: preview search input and keyboard accessibility for tiles
+    document.getElementById('q').addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter') alert('Search: ' + e.target.value);
+    });
+
+    // keyboard focus style for tiles (basic)
+    document.querySelectorAll('.tile').forEach(t=>{
+      t.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') t.click(); });
+      t.addEventListener('click', ()=>{ alert(t.querySelector('.meta strong').innerText + ' clicked'); });
+    });
+  </script>
+</body>
+</html>
