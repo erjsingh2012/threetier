@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eruda Demo</title>
+</head>
+<body>
+  <h1>Hello Eruda!</h1>
+  <p>Open the Eruda dev tools by tapping the floating button.</p>
+
+  <button onclick="console.log('Button clicked!')">
+    Click me (check console)
+  </button>
+
+  <!-- Load Eruda from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+  <script>
+    eruda.init(); // Start Eruda immediately
+    console.log('Eruda is ready!');
+  </script>
+</body>
+</html>

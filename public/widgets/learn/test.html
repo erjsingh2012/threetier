@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Converted Layout</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;900&display=swap');
+
+  /* Desktop - 1 */
+  #desktop_1 {
+    position: absolute;
+    width: 1440px;
+    height: 1024px;
+    background: linear-gradient(116deg, #FF3A3A -15.11%, #AE249A 51.46%, #081EA9 113.99%);
+    box-shadow: 50px 50px 40px rgba(0, 0, 0, 0.5);
+    border-radius: 30px;
+    overflow: hidden;
+  }
+
+  /* Common text styles for nav items */
+  .nav-item {
+    position: absolute;
+    height: 36px;
+    font-family: 'Poppins', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 36px;
+    text-align: center;
+    color: #FFFFFF;
+    user-select: none;
+  }
+
+  /* Home */
+  #home {
+    width: 74px;
+    left: 498px;
+    top: 64px;
+  }
+
+  /* Bags */
+  #bags {
+    width: 62px;
+    left: 605px;
+    top: 64px;
+  }
+
+  /* Wishlist */
+  #wishlist {
+    width: 100px;
+    left: 700px;
+    top: 64px;
+  }
+
+  /* About Us */
+  #about-us {
+    width: 111px;
+    left: 831px;
+    top: 64px;
+  }
+
+  /* Rectangles for buttons */
+  .rect-btn {
+    position: absolute;
+    width: 110px;
+    height: 36px;
+    border-radius: 30px;
+  }
+
+  #rect1 {
+    left: 1248px;
+    top: 64px;
+    background: #FFC041;
+  }
+
+  #rect2 {
+    left: 1121px;
+    top: 64px;
+    background: #081EA9;
+  }
+
+  /* Login and Register */
+  #login {
+    position: absolute;
+    width: 49px;
+    height: 27px;
+    left: 1151px;
+    top: 69px;
+    font-family: 'Poppins', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 27px;
+    text-align: center;
+    color: #FFFFFF;
+    user-select: none;
+  }
+
+  #register {
+    position: absolute;
+    width: 76px;
+    height: 27px;
+    left: 1265px;
+    top: 69px;
+    font-family: 'Poppins', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 27px;
+    text-align: center;
+    color: #000000;
+    user-select: none;
+  }
+
+  /* Rotated Rectangles */
+  .rotated-rect {
+    position: absolute;
+    background: #FFFFFF;
+    transform: rotate(35.62deg);
+  }
+
+  #rect3 {
+    width: 13.19px;
+    height: 23.26px;
+    left: 82px;
+    top: 73.47px;
+  }
+
+  #rect4 {
+    width: 13.19px;
+    height: 29.77px;
+    left: 99.42px;
+    top: 68.09px;
+  }
+
+  #rect5 {
+    width: 13.19px;
+    height: 34.8px;
+    left: 116.72px;
+    top: 64px;
+  }
+
+  /* Vector 1 */
+  #vector1 {
+    position: absolute;
+    width: 10.47px;
+    height: 25.69px;
+    left: 137.5px;
+    top: 73.9px;
+    background: #FFFFFF;
+  }
+
+  /* Sepatu 2 1 (image) */
+  #sepatu-2-1 {
+    position: absolute;
+    width: 858px;
+    height: 572px;
+    left: 552px;
+    top: 238px;
+    background: url('Sepatu 2.png') no-repeat center/contain;
+    filter: drop-shadow(4px 12px 50px rgba(0, 0, 0, 0.25));
+  }
+
+  /* Ellipses */
+  .ellipse {
+    box-sizing: border-box;
+    position: absolute;
+    border-radius: 50%;
+    border-style: solid;
+  }
+
+  #ellipse1 {
+    width: 600px;
+    height: 600px;
+    left: 1100px;
+    top: 828px;
+    border-width: 70px;
+    border-color: #FFC041;
+  }
+
+  #ellipse2 {
+    width: 316px;
+    height: 316px;
+    left: 1242px;
+    top: 970px;
+    border-width: 70px;
+    border-color: #FFC041;
+  }
+
+  /* Small ellipses */
+  #ellipse3 {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    left: 512px;
+    top: 48px;
+    background: #FFFFFF;
+    border-radius: 50%;
+  }
+
+  #ellipse4 {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    left: 526px;
+    top: 43px;
+    background: #FFFFFF;
+    border-radius: 50%;
+  }
+
+  #ellipse5 {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    left: 536px;
+    top: 47px;
+    background: #FFFFFF;
+    border-radius: 50%;
+  }
+
+  #ellipse6 {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    left: 545px;
+    top: 54px;
+    background: #FFFFFF;
+    border-radius: 50%;
+  }
+
+  #ellipse7 {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    left: 552px;
+    top: 62px;
+    background: #FFFFFF;
+    border-radius: 50%;
+  }
+
+  /* Blur shadow */
+  #ellipse8 {
+    position: absolute;
+    width: 729px;
+    height: 58px;
+    left: 616px;
+    top: 770px;
+    background: rgba(0, 0, 0, 0.51);
+    filter: blur(11px);
+  }
+
+  /* Large Text: CHOOSE YOUR STYLE */
+  #choose-your-style {
+    position: absolute;
+    width: 612px;
+    height: 220px;
+    left: 82px;
+    top: 255px;
+    font-family: 'Poppins', sans-serif;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 100px;
+    line-height: 110px;
+    color: #FFFFFF;
+    user-select: none;
+  }
+
+  /* Subtitle */
+  #subtitle {
+    position: absolute;
+    width: 534px;
+    height: 69px;
+    left: 82px;
+    top: 515px;
+    font-family: 'Poppins', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 36px;
+    color: #FFFFFF;
+    user-select: none;
+  }
+
+  /* Article text */
+  #article-text {
+    position: absolute;
+    width: 534px;
+    height: 30px;
+    left: 82px;
+    top: 810px;
+    font-family: 'Poppins', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 36px;
+    color: #FFFFFF;
+    user-select: none;
+  }
+
+  /* Group and vector placeholder */
+  #group, #vector {
+    position: absolute;
+    left: 38.82%;
+    right: 60.35%;
+    top: 80.15%;
+    bottom: 18.36%;
+    background: #FFFFFF;
+  }
+
+</style>
+</head>
+<body>
+
+<div id="desktop_1">
+
+  <!-- Navigation Text -->
+  <div id="home" class="nav-item">Home</div>
+  <div id="bags" class="nav-item">Bags</div>
+  <div id="wishlist" class="nav-item">Wishlist</div>
+  <div id="about-us" class="nav-item">About Us</div>
+
+  <!-- Rectangles Buttons -->
+  <div id="rect2" class="rect-btn"></div>
+  <div id="login">Login</div>
+
+  <div id="rect1" class="rect-btn"></div>
+  <div id="register">Register</div>
+
+  <!-- Rotated Rectangles -->
+  <div id="rect3" class="rotated-rect"></div>
+  <div id="rect4" class="rotated-rect"></div>
+  <div id="rect5" class="rotated-rect"></div>
+
+  <!-- Vector 1 -->
+  <div id="vector1"></div>
+
+  <!-- Sepatu 2 1 Image -->
+  <div id="sepatu-2-1"></div>
+
+  <!-- Ellipses -->
+  <div id="ellipse1" class="ellipse"></div>
+  <div id="ellipse2" class="ellipse"></div>
+  <div id="ellipse3"></div>
+  <div id="ellipse4"></div>
+  <div id="ellipse5"></div>
+  <div id="ellipse6"></div>
+  <div id="ellipse7"></div>
+  <div id="ellipse8"></div>
+
+  <!-- Large Text -->
+  <div id="choose-your-style">CHOOSE<br>YOUR STYLE</div>
+  <div id="subtitle">Temukan style yang pas untuk digunakan dalam setiap event</div>
+  <div id="article-text">Baca artikel terbaru seputar sneakers</div>
+
+  <!-- Group and Vector placeholders -->
+  <div id="group"></div>
+  <div id="vector"></div>
+
+</div>
+
+</body>
+</html>
