@@ -9,14 +9,20 @@
   <link rel="icon" href="data:,">
   <style>
     /* 🎨 Mobile-first portrait styling */
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden; /* ✅ Prevent scroll */
+    }
+
+    body {
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(180deg, #fceabb, #f8b500);
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
+      justify-content: center;
     }
 
     .container {
@@ -25,7 +31,10 @@
       align-items: center;
       gap: 0.75rem;
       width: 100%;
+      height: 100%;
       max-width: 100%;
+      box-sizing: border-box;
+      padding: 0.5rem;
     }
 
     h2 {
@@ -40,6 +49,7 @@
     /* 📦 Board & Wheel Containers */
     #ScrabbleBoard,
     #LetterWheel {
+      flex: 1; /* ✅ Take available height */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -48,26 +58,21 @@
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       padding: 0.5rem;
+      box-sizing: border-box;
     }
 
-    #ScrabbleBoard {
+    #ScrabbleBoard canvas,
+    #LetterWheel canvas {
       max-width: 100%;
-      overflow-x: auto;
-    }
-
-    #LetterWheel {
-      max-width: 100%;
-      overflow-x: auto;
+      max-height: 100%;
+      object-fit: contain; /* ✅ Scale down content */
     }
 
     /* 💻 Tablet & desktop adjustments */
     @media (min-width: 768px) {
-      body {
-        padding: 2rem;
-      }
-
       .container {
         max-width: 800px;
+        padding: 1rem;
       }
 
       h2 {
@@ -79,7 +84,7 @@
 
 <body>
   <div class="container">
-    <h2>Scrabble Board v2</h2>
+    <h2>Scrabble Board v3</h2>
     <div id="ScrabbleBoard"></div>
     <div id="LetterWheel"></div>
   </div>
