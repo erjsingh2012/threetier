@@ -3,6 +3,7 @@ import { ApiManager } from "./resources/managers/ApiManager.js";
 import { AuthService } from "./service/AuthService.js";
 import { LevelManager } from "./service/LevelManager.js";
 import LetterWheel from './ui/LetterWheel.js';
+import ScrabbleBoard from './ui/ScrabbleBoard.js';
 
 // Instantiate core managers
 const storageManager = new StorageManager();
@@ -60,12 +61,38 @@ async function startApp() {
 
   // Initialize page navigation
   initPageScroll();
-    new LetterWheel(document.getElementById("LetterWheel"), ["A", "B", "C", "D", "E", "F", "G"], {
+  let letterWeel = new LetterWheel(document.getElementById("LetterWheel"), ["A", "B", "C", "D", "E", "F", "G"], {
     size: 180,
     letterSize: 36,
     onWordSubmit: words => alert("Game1 submitted: " + words.join(", ")),
     onSelectionChange: letters => console.log("Game1 current:", letters.join(""))
   });
+
+  let scrabbleBoard = new ScrabbleBoard(
+  document.getElementById("ScrabbleBoard"),
+  [
+    ["TW", "", "", "DL", "", "", "", "DL", "", "", "TW"],
+    ["", "DW", "", "", "", "TL", "", "", "", "DW", ""],
+    ["", "", "DW", "", "", "", "", "", "DW", "", ""],
+    ["DL", "", "", "DW", "", "", "", "DW", "", "", "DL"],
+    ["", "", "", "", "DW", "", "DW", "", "", "", ""],
+    ["", "TL", "", "", "", "★", "", "", "", "TL", ""],
+    ["", "", "", "", "DW", "", "DW", "", "", "", ""],
+    ["DL", "", "", "DW", "", "", "", "DW", "", "", "DL"],
+    ["", "", "DW", "", "", "", "", "", "DW", "", ""],
+    ["", "DW", "", "", "", "TL", "", "", "", "DW", ""],
+    ["TW", "", "", "DL", "", "", "", "DL", "", "", "TW"]
+  ],
+  {
+    boardWidth: 12000,  // Max board width in px
+    tileWidth: "95%", // Tile width relative to cell
+    boardBg: "#9fa2a7ff", // Board background color
+    tileBg: "linear-gradient(to bottom, #e8f4d0, #b5f9f467)", // Default tile background
+    tileClick: (tile, cell) => {
+      
+    }
+  }
+);
 
 }
 
