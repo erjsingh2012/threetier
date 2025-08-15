@@ -41,6 +41,7 @@ function initApp() {
       }
     }
   );
+  
 }
 
 // Start app

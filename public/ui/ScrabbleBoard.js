@@ -26,6 +26,7 @@ export default class ScrabbleBoard {
     const style = document.createElement("style");
     style.textContent = `
     #ScrabbleBoard {
+      display: none;
       position: relative;
       width: 100%;
       height: 100%;
@@ -33,7 +34,7 @@ export default class ScrabbleBoard {
       padding-top: 80px; 
       justify-content: center; /* center horizontally */
       align-items:flex-start;     /* center vertically */
-     box-sizing: border-box;  /* include padding in total size */
+      box-sizing: border-box;  /* include padding in total size */
       }
       .board {
         display: grid;
