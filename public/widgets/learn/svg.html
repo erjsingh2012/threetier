@@ -3,540 +3,204 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SVG — 80% Explained (Interactive Guide)</title>
+  <title>SVG Words & Letters — Interactive Playground</title>
   <style>
-    :root{--accent:#0b78d1;--muted:#666;--bg:#fafafa}
-    body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;line-height:1.45;margin:0;background:var(--bg);color:#111}
-    header{background:#fff;padding:18px 22px;border-bottom:1px solid #e6e6e6}
-    .wrap{max-width:980px;margin:20px auto;padding:0 18px}
-    h1{margin:.25rem 0 6px;font-size:20px}
-    p.lead{color:var(--muted);margin:0 0 12px}
-    section.card{background:#fff;border:1px solid #e9e9e9;border-radius:10px;padding:16px;margin:16px 0}
-    .example{display:flex;gap:18px;align-items:flex-start}
-    .ex-left{min-width:280px}
-    .code{background:#0f1720;color:#e6f1ff;padding:12px;border-radius:6px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;font-size:13px;white-space:pre;overflow:auto;max-height:220px}
-    svg{max-width:100%;height:auto;border-radius:6px;background:linear-gradient(180deg, rgba(0,0,0,0.01), transparent)}
-    .note{color:var(--muted);font-size:13px}
-    .grid{display:grid;grid-template-columns:1fr 340px;gap:18px}
-    .small{font-size:13px;color:var(--muted)}
-    footer{padding:18px;text-align:center;color:var(--muted)}
-    summary{cursor:pointer}
-    .kbd{background:#eef2f7;padding:2px 6px;border-radius:4px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco}
-    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    .btn{background:var(--accent);color:#fff;padding:6px 10px;border-radius:6px;border:none;cursor:pointer}
+    body{font-family:Inter,system-ui,Arial;margin:0;background:#fafafa;color:#111}
+    .wrap{max-width:980px;margin:20px auto;padding:18px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    h1{margin:0;font-size:18px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .controls input[type=text]{padding:8px;border-radius:8px;border:1px solid #ddd;width:220px}
+    .controls select, .controls button{padding:8px;border-radius:8px;border:1px solid #ddd;background:#fff}
+    .card{background:#fff;border:1px solid #eee;padding:12px;border-radius:10px;margin-top:14px}
+    .row{display:flex;gap:12px;align-items:center}
+    svg{width:100%;height:280px;border-radius:8px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid #f0f4f8}
+    .small{font-size:13px;color:#666}
+    .examples{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+    button.primary{background:#0b78d1;color:#fff;border:none}
+    .code{font-family:monospace;white-space:pre;padding:8px;background:#0f1720;color:#e6f1ff;border-radius:6px}
   </style>
 </head>
 <body>
-  <header>
-    <div class="wrap">
-      <h1>SVG — 80% Explained (Interactive Guide)</h1>
-      <p class="lead">A compact, hands-on reference that covers the most commonly used parts of SVG: shapes, paths, styling, viewBox, transforms, grouping, gradients, masks, filters, text, symbols, and simple animation. Try the live examples and tweak attributes in the code boxes.</p>
-    </div>
-  </header>
-
-  <main class="wrap">
-
-    <!-- Quick reference -->
-    <section class="card">
-      <h2>Quick reference (cheat sheet)</h2>
-      <div class="row" style="margin-top:8px">
-        <div class="small">Coordinate system: x to the right, y down. Use viewBox="minX minY width height" to scale.</div>
-        <div class="small">Common elements: <span class="kbd">&lt;rect&gt;</span> <span class="kbd">&lt;circle&gt;</span> <span class="kbd">&lt;ellipse&gt;</span> <span class="kbd">&lt;line&gt;</span> <span class="kbd">&lt;polyline&gt;</span> <span class="kbd">&lt;polygon&gt;</span> <span class="kbd">&lt;path&gt;</span></div>
-        <div class="small">Styling: <span class="kbd">fill</span>, <span class="kbd">stroke</span>, <span class="kbd">stroke-width</span>, <span class="kbd">opacity</span>, CSS works directly on SVG shapes.</div>
+  <div class="wrap">
+    <header>
+      <h1>SVG Words & Letters — Interactive Playground</h1>
+      <div class="controls">
+        <input id="wordInput" type="text" value="HELLO" aria-label="word input" />
+        <select id="mode">
+          <option value="fill">Fill text</option>
+          <option value="stroke">Stroke outline</option>
+          <option value="stroke-animate">Stroke draw animation</option>
+          <option value="textpath">Text on path</option>
+          <option value="letters">Per-letter transform</option>
+        </select>
+        <button id="renderBtn" class="primary">Render</button>
+        <button id="downloadBtn">Download SVG</button>
       </div>
-    </section>
-
-    <!-- Basics shapes -->
-    <section class="card" id="shapes">
-      <h2>Basic shapes</h2>
-      <p class="note">Rectangles, circles, ellipses, lines, polylines, polygons are the building blocks. Use them for UI, icons, charts.</p>
-      <div class="example">
-        <div class="ex-left">
-          <svg viewBox="0 0 520 140" width="520" height="140" aria-hidden="true">
-            <rect x="8" y="8" width="120" height="56" rx="10" fill="#0b78d1" fill-opacity="0.14" stroke="#0b78d1" stroke-width="2" />
-            <circle cx="200" cy="36" r="28" fill="#0b78d1" fill-opacity="0.12" stroke="#0b78d1" stroke-width="2" />
-            <ellipse cx="320" cy="36" rx="46" ry="22" fill="#0b78d1" fill-opacity="0.12" stroke="#0b78d1" stroke-width="2" />
-            <line x1="8" y1="96" x2="140" y2="96" stroke="#111" stroke-width="3" stroke-linecap="round" />
-            <polyline points="180,76 220,96 260,56 300,96" fill="none" stroke="#0b78d1" stroke-width="4" stroke-linejoin="round" />
-            <polygon points="360,96 400,56 440,96" fill="#0b78d1" stroke="#0b78d1" stroke-width="2" />
-            <text x="8" y="136" font-size="12" fill="#444">rect · circle · ellipse · line · polyline · polygon</text>
-          </svg>
-        </div>
-        <div class="ex-right">
-          <div class="code">&lt;rect x="8" y="8" width="120" height="56" rx="10" fill="#0b78d1" stroke="#0b78d1"/&gt;
-
-&lt;circle cx="200" cy="36" r="28" /&gt;
-
-&lt;ellipse cx="320" cy="36" rx="46" ry="22" /&gt;
-
-&lt;line x1="8" y1="96" x2="140" y2="96" /&gt;
-
-&lt;polyline points="180,76 220,96 260,56" /&gt;
-
-&lt;polygon points="360,96 400,56 440,96" /&gt;</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PATH -->
-    <section class="card" id="path">
-      <h2>Paths (the swiss army knife)</h2>
-      <p class="note">Paths describe arbitrary shapes using commands (M, L, H, V, C, S, Q, T, A, Z). Use paths for icons, complex shapes and strokes.</p>
-      <div class="grid">
-        <div>
-          <svg viewBox="0 0 520 120" width="100%" height="120" role="img" aria-label="Path examples">
-            <path d="M12 20 L120 20 L120 80 L12 80 Z" fill="#0b78d1" fill-opacity="0.08" stroke="#0b78d1" stroke-width="2"/>
-
-            <!-- cubic bezier -->
-            <path d="M160 60 C 180 0, 260 0, 280 60 S 340 120, 380 60" fill="none" stroke="#0b78d1" stroke-width="3" />
-
-            <!-- quadratic -->
-            <path d="M20 100 Q 80 40, 140 100 T 260 100" fill="none" stroke="#333" stroke-width="2" />
-
-            <!-- arc -->
-            <path d="M320 40 A 40 40 0 0 1 420 40" fill="none" stroke="#0b78d1" stroke-width="3" />
-
-            <text x="8" y="118" font-size="11" fill="#444">Commands: M=move L=line H/V horizontal/vertical C cubic Q quadratic A arc Z close</text>
-          </svg>
-        </div>
-        <div>
-          <div class="code">&lt;path d="M160 60 C 180 0, 260 0, 280 60 S 340 120, 380 60" /&gt;
-
-&lt;path d="M20 100 Q 80 40, 140 100" /&gt;
-
-&lt;path d="M320 40 A 40 40 0 0 1 420 40" /&gt;</div>
-        </div>
-      </div>
-
-      <details style="margin-top:12px"><summary>Quick path tips</summary>
-        <ul>
-          <li class="note">Lowercase commands use relative coordinates; uppercase use absolute.</li>
-          <li class="note">Use <span class="kbd">stroke-linecap</span> and <span class="kbd">stroke-linejoin</span> to control stroke ends and corners.</li>
-          <li class="note">To draw smooth joins, try using <span class="kbd">S</span> and <span class="kbd">T</span> which continue control points.</li>
-        </ul>
-      </details>
-    </section>
-
-    <!-- viewBox and preserveAspectRatio -->
-    <section class="card" id="viewbox">
-      <h2>viewBox & coordinate-system scaling</h2>
-      <p class="note">viewBox="minX minY width height" defines the internal SVG coordinate system. It allows the SVG to scale responsively. preserveAspectRatio controls alignment and scaling behavior.</p>
-      <div class="example">
-        <div class="ex-left">
-          <svg width="320" height="160" viewBox="0 0 200 100" style="border:1px solid #eee">
-            <rect x="0" y="0" width="200" height="100" fill="#fff" />
-            <circle cx="50" cy="50" r="30" fill="#0b78d1" />
-            <rect x="120" y="20" width="60" height="60" fill="#0b78d1" />
-          </svg>
-          <div class="small" style="margin-top:8px">viewBox="0 0 200 100" maps SVG coords 0..200 horizontally and 0..100 vertically into the rendered area</div>
-        </div>
-        <div class="ex-right">
-          <div class="code">&lt;svg viewBox="0 0 200 100" width="320" height="160"&gt;
-  &lt;circle cx="50" cy="50" r="30"/&gt;
-  &lt;rect x="120" y="20" width="60" height="60"/&gt;
-&lt;/svg&gt;
-
-// preserveAspectRatio example
-&lt;svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"&gt; ... &lt;/svg&gt;</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- transforms -->
-    <section class="card" id="transforms">
-      <h2>Transforms</h2>
-      <p class="note">Use transform attributes: translate(x,y), rotate(angle [cx cy]), scale(sx [,sy]), skewX(), skewY(), matrix(). Can be applied to individual shapes or groups (&lt;g&gt;).</p>
-      <div class="example">
-        <div class="ex-left">
-          <svg viewBox="0 0 420 120" width="420" height="120">
-            <g transform="translate(20,14)">
-              <rect x="0" y="0" width="80" height="40" fill="#0b78d1"/>
-              <rect x="100" y="0" width="80" height="40" fill="#0b78d1" transform="rotate(15 140 20)"/>
-              <rect x="200" y="0" width="80" height="40" fill="#0b78d1" transform="scale(1.4)"/>
-              <rect x="320" y="0" width="80" height="40" fill="#0b78d1" transform="skewX(18)"/>
-            </g>
-          </svg>
-        </div>
-        <div class="ex-right">
-          <div class="code">&lt;g transform="translate(20,14)"&gt;
-  &lt;rect x="0" y="0" width="80" height="40"/&gt;
-  &lt;rect transform="rotate(15 140 20)" x="100" y="0" width="80" height="40"/&gt;
-&lt;/g&gt;</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Styling fill stroke -->
-    <section class="card" id="styling">
-      <h2>Fill, stroke & paint server (gradients/patterns)</h2>
-      <p class="note">The two most important properties: <span class="kbd">fill</span> and <span class="kbd">stroke</span>. Use <span class="kbd">opacity</span>, <span class="kbd">fill-opacity</span>, <span class="kbd">stroke-opacity</span>, <span class="kbd">stroke-dasharray</span>.</p>
-      <div class="grid">
-        <div>
-          <svg viewBox="0 0 560 120" width="100%" height="120">
-            <defs>
-              <linearGradient id="g1" x1="0" x2="1">
-                <stop offset="0%" stop-color="#0b78d1" stop-opacity="1"/>
-                <stop offset="100%" stop-color="#5fb0ff" stop-opacity="1"/>
-              </linearGradient>
-              <pattern id="p1" width="20" height="20" patternUnits="userSpaceOnUse">
-                <rect width="20" height="20" fill="#f6fbff"/>
-                <circle cx="10" cy="10" r="4" fill="#dceeff"/>
-              </pattern>
-            </defs>
-
-            <rect x="8" y="8" width="120" height="96" fill="url(#g1)" rx="8" />
-            <rect x="148" y="8" width="120" height="96" fill="url(#p1)" rx="8" stroke="#0b78d1" stroke-width="2" />
-            <circle cx="420" cy="56" r="44" fill="#fff" stroke="#0b78d1" stroke-width="8" stroke-opacity="0.18" />
-          </svg>
-        </div>
-        <div>
-          <div class="code">&lt;linearGradient id="g1" x1="0" x2="1"&gt;
-  &lt;stop offset="0%" stop-color="#0b78d1"/&gt;
-&lt;/linearGradient&gt;
-
-&amp;lt;rect fill="url(#g1)" /&gt;
-
-&amp;lt;pattern id="p1" width="20" height="20" patternUnits="userSpaceOnUse"&gt; ...</div>
-        </div>
-      </div>
-      <details style="margin-top:12px"><summary>When to use patterns vs gradients</summary>
-        <p class="note">Use gradients for smooth color transitions, patterns for repeated textures or tiled graphics. SVG patterns can include nested shapes and even images (via &lt;image&gt;).</p>
-      </details>
-    </section>
-
-    <!-- groups and symbols -->
-    <section class="card" id="groups">
-      <h2>Grouping, defs, symbols and &lt;use&gt;</h2>
-      <p class="note">Group with &lt;g&gt; to apply transforms or styles to multiple elements. Put reusable markup in &lt;symbol&gt; or &lt;defs&gt; and instantiate with &lt;use href="#id" x=".." y=".."/&gt; to avoid duplication.</p>
-
-      <div class="example">
-        <div class="ex-left">
-          <svg viewBox="0 0 420 120" width="420" height="120">
-            <defs>
-              <symbol id="btn" viewBox="0 0 100 40">
-                <rect x="0" y="0" width="100" height="40" rx="8"/>
-                <text x="50" y="24" font-size="14" text-anchor="middle" fill="#fff">Button</text>
-              </symbol>
-            </defs>
-            <use href="#btn" x="10" y="10" width="140" height="56" fill="#0b78d1"/>
-            <use href="#btn" x="170" y="10" width="140" height="56" fill="#5fb0ff"/>
-          </svg>
-        </div>
-        <div class="ex-right">
-          <div class="code">&lt;symbol id="btn" viewBox="0 0 100 40"&gt; ... &lt;/symbol&gt;
-
-&lt;use href="#btn" x="10" y="10"/&gt;
-
-// &lt;use&gt; copies markup; it can be styled by the referencing element.</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- clipPath and mask -->
-    <section class="card" id="clipmask">
-      <h2>Clipping & masking</h2>
-      <p class="note">Use &lt;clipPath&gt; to limit drawing to a shape (binary). Use &lt;mask&gt; to create soft-edge transparency using luminance/alpha of the mask content.</p>
-      <div class="example">
-        <div class="ex-left">
-          <svg viewBox="0 0 420 140" width="420" height="140">
-            <defs>
-              <clipPath id="c1">
-                <circle cx="70" cy="70" r="60" />
-              </clipPath>
-              <mask id="m1">
-                <rect width="100%" height="100%" fill="#fff" />
-                <circle cx="300" cy="70" r="60" fill="#000" opacity="0.4" />
-              </mask>
-            </defs>
-
-            <image href="https://images.unsplash.com/photo-1495567720989-cebdbdd97913?w=800&q=60" x="0" y="0" width="420" height="120" clip-path="url(#c1)" preserveAspectRatio="xMidYMid slice"/>
-
-            <rect x="170" y="10" width="260" height="100" fill="#0b78d1" mask="url(#m1)"/>
-          </svg>
-        </div>
-        <div class="ex-right">
-          <div class="code">&lt;clipPath id="c1"&gt;&lt;circle cx="70" cy="70" r="60"/&gt;&lt;/clipPath&gt;
-
-&lt;image href="..." clip-path="url(#c1)"/&gt;
-
-&lt;mask id="m1"&gt; ... &lt;/mask&gt;
-
-// mask uses luminance/alpha to control final transparency.</div>
-        </div>
-      </div>
-
-      <p class="note">Note: external images in &lt;image&gt; require correct CORS headers to be used with canvas or exported.</p>
-    </section>
-
-    <!-- Filters -->
-    <section class="card" id="filters">
-      <h2>Filters (blur, drop shadow, color effects)</h2>
-      <p class="note">Filters are powerful but can be expensive. Use &lt;filter&gt; with primitives like feGaussianBlur, feOffset, feColorMatrix, feBlend to compose effects.</p>
-      <div class="example">
-        <div class="ex-left">
-          <svg viewBox="0 0 420 140" width="420" height="140">
-            <defs>
-              <filter id="f1" x="-40%" y="-40%" width="180%" height="180%">
-                <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
-                <feOffset in="blur" dx="6" dy="6" result="off"/>
-                <feFlood flood-color="#000" flood-opacity="0.2" result="flood"/>
-                <feComposite in="flood" in2="off" operator="in" result="shadow"/>
-                <feMerge>
-                  <feMergeNode in="shadow"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-
-            <rect x="20" y="20" width="120" height="80" rx="10" fill="#0b78d1" filter="url(#f1)"/>
-            <rect x="160" y="20" width="120" height="80" rx="10" fill="#5fb0ff"/>
-          </svg>
-        </div>
-        <div class="ex-right">
-          <div class="code">&lt;filter id="f1"&gt;
-  &lt;feGaussianBlur in="SourceAlpha" stdDeviation="4"/&gt;
-  &lt;feOffset dx="6" dy="6"/&gt;
-  &lt;feMerge&gt; ... &lt;/feMerge&gt;
-&lt;/filter&gt;
-
-&lt;rect filter="url(#f1)"/&gt;</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Text -->
-    <section class="card" id="text">
-      <h2>Text</h2>
-      <p class="note">Text in SVG supports <span class="kbd">&lt;text&gt;</span>, <span class="kbd">&lt;tspan&gt;</span> and textPath for following curves. Use <span class="kbd">text-anchor</span> and <span class="kbd">dominant-baseline</span> for alignment. Fonts are loaded via CSS and inherit like HTML.</p>
-      <div class="example">
-        <div class="ex-left">
-          <svg viewBox="0 0 520 120" width="520" height="120">
-            <defs>
-              <path id="curve" d="M10 80 C 120 -10, 380 170, 510 80"/>
-            </defs>
-            <text font-size="18" fill="#0b78d1">
-              <textPath href="#curve">Text following a curve with &lt;textPath&gt; — perfect for logos.</textPath>
-            </text>
-          </svg>
-        </div>
-        <div class="ex-right">
-          <div class="code">&lt;text x="10" y="20"&gt;Simple text&lt;/text&gt;
-
-&lt;textPath href="#curve"&gt;...&lt;/textPath&gt;</div>
-        </div>
-      </div>
-
-      <p class="note">Accessibility: include <span class="kbd">role="img"</span> and <span class="kbd">aria-label</span> when SVG conveys meaning. Provide fallback text with &lt;title&gt; and &lt;desc&gt; inside the SVG.</p>
-    </section>
-
-    <!-- animation -->
-    <section class="card" id="animation">
-      <h2>Animation basics</h2>
-      <p class="note">You can animate SVG with SMIL (<span class="kbd">&lt;animate&gt;</span>), CSS animations/transitions, or JavaScript. SMIL animation still works in most modern browsers; for complex sequences consider JS libraries (GreenSock, anime.js).</p>
-      <div class="example">
-        <div class="ex-left">
-          <svg viewBox="0 0 260 80" width="260" height="80">
-            <circle cx="40" cy="40" r="18" fill="#0b78d1">
-              <animate attributeName="cx" from="40" to="220" dur="1.2s" repeatCount="indefinite"/>
-            </circle>
-          </svg>
-        </div>
-        <div class="ex-right">
-          <div class="code">&lt;circle cx="40" cy="40" r="18"&gt;
-  &lt;animate attributeName="cx" from="40" to="220" dur="1.2s" repeatCount="indefinite"/&gt;
-&lt;/circle&gt;
-
-// CSS anim example:
-// svg circle { transition: transform .3s }
-// circle:hover { transform: translateX(8px) scale(1.02); }</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Accessibility, performance, export -->
-    <section class="card" id="practical">
-      <h2>Accessibility, performance & exporting</h2>
-      <ul>
-        <li class="note">Accessibility: add &lt;title&gt; and &lt;desc&gt; tags, role="img" and aria-label attributes, and ensure focus order if interactive.</li>
-        <li class="note">Performance: avoid overly complex filters, reduce node count (use &lt;use&gt;), rasterize complex shadows in bitmap form when possible, prefer CSS for hover effects.</li>
-        <li class="note">Exporting: external images need CORS to render in canvas. To export SVG as PNG, inline fonts or use web fonts available to the rendering environment.</li>
-      </ul>
-    </section>
+    </header>
 
     <section class="card">
-      <h2>Small reference — common attributes</h2>
-      <div class="code">fill, stroke, stroke-width, stroke-linecap, stroke-linejoin, opacity, fill-opacity, stroke-opacity,
-transform, transform-origin, viewBox, preserveAspectRatio, mask, clip-path, filter, id, class, style, role, aria-label
-
-// Elements
-svg, g, defs, symbol, use, rect, circle, ellipse, line, polyline, polygon, path, text, tspan, textPath, image, filter, pattern, gradient, clipPath, mask</div>
-    </section>
-
-    <section class="card">
-      <h2>Helpful tips & pitfalls</h2>
-      <ol>
-        <li class="note">Remember that y axis grows downward by default — flip with transform or viewBox if you prefer math coords.</li>
-        <li class="note">Units: numbers are user units (usually px). Use percentages in attributes that accept them (like patternUnits or viewBox mapping).</li>
-        <li class="note">Use <span class="kbd">patternUnits="userSpaceOnUse"</span> when you want patterns to be fixed-size in screen pixels.</li>
-        <li class="note">When debugging sizing problems, draw a rect at 0,0 with width/height equal to viewBox to inspect how coordinates map.</li>
-      </ol>
-    </section>
-
-    <footer>
-      <div class="small">Want this file customized (more exercises, export buttons, or an icons gallery)? Tell me what to add and I’ll update the page.</div>
-    </footer>
-
-  
-
-    <!-- New additions: Exercises, Export, Icons gallery, Advanced topics -->
-    <section class="card" id="exercises">
-      <h2>Hands-on exercises & mini-quiz</h2>
-      <p class="note">Try these in the live editor above. Click any code block to copy and paste into an &lt;svg&gt; playground.</p>
-      <ol>
-        <li class="note">Draw a responsive icon: create a 64×64 viewBox icon using &lt;path&gt; only (no rect/circle). Make it scale to any size without stroke-width changes.</li>
-        <li class="note">Create a button with a gradient background and a soft drop shadow using &lt;filter&gt; and &lt;linearGradient&gt; — ensure shadow is performant.</li>
-        <li class="note">Mask an image into a complex shape (star or hex) and export it as PNG using the Export button below.</li>
-        <li class="note">Animate text along a path using &lt;textPath&gt; and JS to pause/resume animation on hover.</li>
-      </ol>
-
-      <details><summary>Mini quiz (click to reveal answers)</summary>
-        <ol>
-          <li class="note">What attribute maps internal SVG coords to the rendered size? <strong>Answer:</strong> viewBox.</li>
-          <li class="note">Which element reuses markup without duplicating nodes? <strong>Answer:</strong> &lt;use&gt; with &lt;symbol&gt; or &lt;defs&gt;.</li>
-          <li class="note">True/False: CSS transitions applied to SVG properties always animate numeric attributes like cx or r. <strong>Answer:</strong> False — CSS transforms and certain presentation attributes animate better; use SMIL/JS for attribute animation.</li>
-        </ol>
-      </details>
-    </section>
-
-    <section class="card" id="export">
-      <h2>Export to PNG / Download (one-click)</h2>
-      <p class="note">This button rasterizes the first &lt;svg&gt; on the page and downloads a PNG. Works best if external images have CORS enabled and fonts are accessible.</p>
-      <div class="row" style="margin-top:8px">
-        <button id="exportBtn" class="btn">Export first SVG as PNG</button>
-        <div class="small">Hint: make the SVG visible at desired pixel size before exporting.</div>
-      </div>
-    </section>
-
-    <section class="card" id="icons">
-      <h2>Reusable icon symbols — gallery</h2>
-      <p class="note">A small curated set of icons stored as &lt;symbol&gt; objects. Use &lt;use&gt; to place them at any size or color.</p>
-      <div class="example" style="flex-direction:column">
-        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-          <svg width="420" height="80" viewBox="0 0 420 80">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="flex:1">
+          <svg id="preview" viewBox="0 0 800 200" role="img" aria-label="SVG preview">
             <defs>
-              <symbol id="ic-heart" viewBox="0 0 24 24">
-                <path d="M12 21s-7.5-4.35-10-7.1C-0.5 10.8 2 6 6 6c2.2 0 3.5 1.2 4 2 .5-.8 1.8-2 4-2 4 0 6.5 4.8 4 7.9C19.5 16.65 12 21 12 21z"/>
-              </symbol>
-              <symbol id="ic-search" viewBox="0 0 24 24">
-                <path d="M10.5 3a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15zm8 15L20 20"/>
-              </symbol>
-              <symbol id="ic-check" viewBox="0 0 24 24">
-                <path d="M20 6L9 17l-5-5" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </symbol>
+              <path id="curve" d="M40 120 C 180 -20, 620 220, 760 80" />
             </defs>
-
-            <use href="#ic-heart" x="12" y="12" width="28" height="28" fill="#0b78d1" />
-            <use href="#ic-search" x="68" y="12" width="28" height="28" fill="#0b78d1" />
-            <use href="#ic-check" x="124" y="12" width="28" height="28" stroke="#0b78d1" fill="none"/>
+            <rect width="100%" height="100%" fill="transparent" />
           </svg>
+          <div class="small">Tip: type a word and choose a mode. The SVG uses a web-safe font fallback and basic effects.</div>
         </div>
-        <div class="small">Tip: keep icons in a hidden &lt;svg&gt; sprite and reference them with &lt;use&gt; to save DOM size.</div>
-      </div>
-    </section>
-
-    <section class="card" id="advanced">
-      <h2>Advanced topics (filters, accessibility, JS animation)</h2>
-      <h3>Complex filters — example: colored drop shadow + inner glow</h3>
-      <p class="note">This filters section shows composing multiple primitives for rich effects. Use filter region expansion when blur exceeds bounds.</p>
-      <div class="example">
-        <div class="ex-left">
-          <svg viewBox="0 0 520 140" width="520" height="140">
-            <defs>
-              <filter id="complexShadow" x="-50%" y="-50%" width="200%" height="200%">
-                <!-- colored shadow -->
-                <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="b1"/>
-                <feOffset in="b1" dx="6" dy="6" result="o1"/>
-                <feFlood flood-color="#0b78d1" flood-opacity="0.18" result="f1"/>
-                <feComposite in="f1" in2="o1" operator="in" result="shadow1"/>
-                <!-- inner glow -->
-                <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="g1"/>
-                <feComposite in="g1" in2="SourceGraphic" operator="arithmetic" k1="0" k2="1" k3="-1" k4="0" result="inner"/>
-                <feMerge>
-                  <feMergeNode in="shadow1"/>
-                  <feMergeNode in="SourceGraphic"/>
-                  <feMergeNode in="inner"/>
-                </feMerge>
-              </filter>
-            </defs>
-
-            <rect x="20" y="20" width="180" height="100" rx="12" fill="#0b78d1" filter="url(#complexShadow)"/>
-            <rect x="220" y="20" width="180" height="100" rx="12" fill="#5fb0ff"/>
-          </svg>
-        </div>
-        <div class="ex-right">
-          <div class="code">&lt;filter id="complexShadow" x="-50%" y="-50%" width="200%" height="200%"&gt; ... &lt;/filter&gt;
-
-&lt;rect filter="url(#complexShadow)"/&gt;</div>
-        </div>
-      </div>
-
-      <h3>Accessibility examples</h3>
-      <p class="note">Include &lt;title&gt; and &lt;desc&gt;, role and aria-labels. Make interactive elements keyboard-focusable (tabindex) and use &lt;rect&gt; or &lt;button&gt; with role to indicate interactivity.</p>
-      <div class="example">
-        <div class="ex-left">
-          <svg viewBox="0 0 220 80" width="220" height="80" role="img" aria-label="Blue rounded button">
-            <title>Primary action</title>
-            <desc>A primary action button that opens the editor.</desc>
-            <rect x="4" y="4" width="200" height="64" rx="10" fill="#0b78d1" tabindex="0" role="button"/>
-            <text x="110" y="44" text-anchor="middle" fill="#fff" font-size="16">Open</text>
-          </svg>
-        </div>
-        <div class="ex-right">
-          <div class="code">&lt;svg role="img" aria-label="..."&gt;
-  &lt;title&gt;...&lt;/title&gt;
-  &lt;desc&gt;...&lt;/desc&gt;
-  &lt;rect tabindex="0" role="button"/&gt;
-&lt;/svg&gt;</div>
-        </div>
-      </div>
-
-      <h3>JS-driven animation sequence (control + pause)</h3>
-      <p class="note">Use JS for precise control over animations (start, stop, seek). Example below animates a circle along a path and exposes controls.</p>
-      <div class="example">
-        <div class="ex-left">
-          <svg id="animSvg" viewBox="0 0 420 80" width="420" height="80">
-            <path id="animPath" d="M10 60 C 120 -10, 300 150, 410 60" fill="none" stroke-opacity="0.06"/>
-            <circle id="animDot" r="8" fill="#0b78d1" cx="0" cy="0"/>
-          </svg>
-          <div class="row" style="margin-top:8px">
-            <button id="playAnim" class="btn">Play</button>
-            <button id="pauseAnim" class="btn" style="background:#666">Pause</button>
-          </div>
-        </div>
-        <div class="ex-right">
-          <div class="code">// JS moves element along path using getPointAtLength
-const path = document.getElementById('animPath');
-const dot = document.getElementById('animDot');
-let raf, t0;
-function step(ts){
-  if(!t0) t0 = ts; const progress = Math.min((ts - t0)/2000, 1);
-  const p = path.getPointAtLength(progress * path.getTotalLength());
-  dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y);
-  if(progress < 1) raf = requestAnimationFrame(step); else t0 = null;
-}
-// call requestAnimationFrame(step) to start
-</div>
+        <div style="width:300px">
+          <h3 style="margin:0 0 8px 0">How it works</h3>
+          <div class="small">This playground demonstrates several ways to create words and letters with SVG:</div>
+          <ul class="small">
+            <li>&lt;text&gt; for simple text and styling</li>
+            <li>stroke with <code>stroke-dasharray</code> & <code>stroke-dashoffset</code> to animate outlines</li>
+            <li>&lt;textPath&gt; to map text onto a curve</li>
+            <li>splitting letters into individual &lt;tspan&gt; elements for per-letter transforms/animations</li>
+          </ul>
+          <div style="margin-top:10px" class="code" id="codeBlock"></div>
         </div>
       </div>
     </section>
 
-    </main>
+    <section class="card examples">
+      <div>
+        <h4 style="margin:6px 0">Example: Outline stroke animation</h4>
+        <svg viewBox="0 0 400 80" id="exStroke"><rect width="100%" height="100%" fill="transparent"/></svg>
+      </div>
+      <div>
+        <h4 style="margin:6px 0">Example: Text on path</h4>
+        <svg viewBox="0 0 400 80" id="exPath"><defs><path id="p1" d="M10 60 C 80 0, 320 120, 390 40"/></defs></svg>
+      </div>
+    </section>
+
+  </div>
 
   <script>
-    // small helper: allow clicking any code block to copy
-    document.querySelectorAll('.code').forEach(el=>{
-      el.addEventListener('click', ()=>{navigator.clipboard?.writeText(el.innerText).then(()=>{el.style.outline='3px solid rgba(11,120,209,0.12)'; setTimeout(()=>el.style.outline='',350)})})
-    })
+    const preview = document.getElementById('preview');
+    const wordInput = document.getElementById('wordInput');
+    const renderBtn = document.getElementById('renderBtn');
+    const modeSel = document.getElementById('mode');
+    const codeBlock = document.getElementById('codeBlock');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    function escapeXml(s){ return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+    function render(){
+      const word = (wordInput.value || '').toUpperCase();
+      const mode = modeSel.value;
+      // clear
+      while(preview.lastChild) preview.removeChild(preview.lastChild);
+      // defs + bg
+      const xmlns = 'http://www.w3.org/2000/svg';
+      const defs = document.createElementNS(xmlns,'defs');
+      const bg = document.createElementNS(xmlns,'rect'); bg.setAttribute('width','100%'); bg.setAttribute('height','100%'); bg.setAttribute('fill','transparent');
+      preview.appendChild(defs); preview.appendChild(bg);
+
+      if(mode === 'fill'){
+        const t = document.createElementNS(xmlns,'text');
+        t.setAttribute('x', '50%'); t.setAttribute('y','56'); t.setAttribute('text-anchor','middle');
+        t.setAttribute('font-size','64'); t.setAttribute('font-family','Arial, Helvetica, sans-serif');
+        t.setAttribute('fill','#0b78d1'); t.textContent = word;
+        preview.appendChild(t);
+        codeBlock.textContent = escapeXml(t.outerHTML);
+      }
+
+      if(mode === 'stroke'){
+        const t = document.createElementNS(xmlns,'text');
+        t.setAttribute('x', '50%'); t.setAttribute('y','56'); t.setAttribute('text-anchor','middle');
+        t.setAttribute('font-size','64'); t.setAttribute('font-family','Arial, Helvetica, sans-serif');
+        t.setAttribute('fill','none'); t.setAttribute('stroke','#0b78d1'); t.setAttribute('stroke-width','2'); t.textContent = word;
+        preview.appendChild(t);
+        codeBlock.textContent = escapeXml(t.outerHTML);
+      }
+
+      if(mode === 'stroke-animate'){
+        // create path from text by placing text then measuring getComputedTextLength (works in DOM)
+        const t = document.createElementNS(xmlns,'text');
+        t.setAttribute('x', '50%'); t.setAttribute('y','56'); t.setAttribute('text-anchor','middle');
+        t.setAttribute('font-size','64'); t.setAttribute('font-family','Arial, Helvetica, sans-serif');
+        t.setAttribute('fill','none'); t.setAttribute('stroke','#ff9f1c'); t.setAttribute('stroke-width','2');
+        t.textContent = word;
+        preview.appendChild(t);
+        // apply stroke dash animation
+        requestAnimationFrame(()=>{
+          const len = t.getComputedTextLength();
+          t.style.transition = 'stroke-dashoffset 2.5s linear';
+          t.setAttribute('stroke-dasharray', len);
+          t.setAttribute('stroke-dashoffset', len);
+          // trigger
+          setTimeout(()=>{ t.setAttribute('stroke-dashoffset', '0'); }, 40);
+        });
+        codeBlock.textContent = escapeXml(t.outerHTML) + '\n// + JS to animate stroke-dashoffset';
+      }
+
+      if(mode === 'textpath'){
+        // add path in defs
+        const p = document.createElementNS(xmlns,'path');
+        p.setAttribute('id','curve2'); p.setAttribute('d','M40 120 C 180 -20, 620 220, 760 80');
+        defs.appendChild(p);
+        const t = document.createElementNS(xmlns,'text');
+        t.setAttribute('font-size','40'); t.setAttribute('font-family','Arial, Helvetica, sans-serif');
+        const tp = document.createElementNS(xmlns,'textPath'); tp.setAttributeNS('http://www.w3.org/1999/xlink','href','#curve2'); tp.textContent = word;
+        t.appendChild(tp); preview.appendChild(t);
+        codeBlock.textContent = escapeXml(p.outerHTML + '\n' + t.outerHTML);
+      }
+
+      if(mode === 'letters'){
+        const group = document.createElementNS(xmlns,'g');
+        const startX = 60; let x = startX;
+        const size = 64; const gap = 6;
+        for(let i=0;i<word.length;i++){
+          const ch = word[i];
+          const tspan = document.createElementNS(xmlns,'text');
+          tspan.setAttribute('x', x); tspan.setAttribute('y', '100');
+          tspan.setAttribute('font-size', size); tspan.setAttribute('font-family','Arial, Helvetica, sans-serif');
+          tspan.setAttribute('text-anchor','start'); tspan.setAttribute('fill','#0b78d1');
+          tspan.textContent = ch;
+          // staggered transform animation
+          tspan.style.transition = 'transform 300ms ease';
+          tspan.addEventListener('mouseenter', ()=>{ tspan.setAttribute('transform','translate(0,-14) scale(1.06)'); });
+          tspan.addEventListener('mouseleave', ()=>{ tspan.setAttribute('transform','translate(0,0) scale(1)'); });
+          group.appendChild(tspan);
+          x += size - 10 + gap;
+        }
+        preview.appendChild(group);
+        codeBlock.textContent = 'Split letters into separate text elements (one per character) to animate individually.';
+      }
+
+    }
+
+    renderBtn.addEventListener('click', render);
+    // initial render
+    render();
+
+    // examples (static)
+    const exStroke = document.getElementById('exStroke');
+    exStroke.innerHTML += '<text x="200" y="50" text-anchor="middle" font-size="40" fill="none" stroke="#0b78d1" stroke-width="2">SVG</text>';
+    const tEx = exStroke.querySelector('text');
+    const lenEx = tEx.getComputedTextLength();
+    tEx.setAttribute('stroke-dasharray', lenEx);
+    tEx.setAttribute('stroke-dashoffset', lenEx);
+    setTimeout(()=>{ tEx.setAttribute('stroke-dashoffset', '0'); tEx.style.transition='stroke-dashoffset 2s linear'; }, 50);
+
+    const exPath = document.getElementById('exPath');
+    const p = exPath.querySelector('#p1');
+    const t2 = document.createElementNS('http://www.w3.org/2000/svg','text');
+    const tp2 = document.createElementNS('http://www.w3.org/2000/svg','textPath'); tp2.setAttributeNS('http://www.w3.org/1999/xlink','href','#p1'); tp2.textContent = 'follow-the-curve'; t2.appendChild(tp2); exPath.appendChild(t2);
+
+    // download svg
+    downloadBtn.addEventListener('click', ()=>{
+      const svgEl = preview.cloneNode(true);
+      // serialize
+      const serializer = new XMLSerializer();
+      const str = serializer.serializeToString(svgEl);
+      const blob = new Blob([str], {type:'image/svg+xml;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = (wordInput.value || 'word') + '.svg'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
   </script>
 </body>
 </html>

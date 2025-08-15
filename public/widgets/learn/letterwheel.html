@@ -6,13 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Word Wheel Component Demo</title>
   <style>
-    /* Container & layout */
     .ww-container {
       font-family: 'Segoe UI', Tahoma, sans-serif;
       text-align: center;
       padding: 20px;
       user-select: none;
-
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -21,7 +19,6 @@
       margin: auto;
     }
 
-    /* Word list on top */
     .ww-list {
       min-height: 40px;
       width: 100%;
@@ -32,14 +29,12 @@
       word-break: break-word;
     }
 
-    /* Wheel container */
     .ww-wheel-wrapper {
       position: relative;
       width: 250px;
       height: 250px;
     }
 
-    /* Wheel circle */
     .ww-wheel {
       position: relative;
       width: 250px;
@@ -54,10 +49,8 @@
         inset 0 4px 15px rgba(255, 255, 255, 0.8),
         inset 0 -4px 15px rgba(0, 0, 0, 0.1);
       border: 2px solid rgba(255, 255, 255, 0.4);
-      margin: 0 auto;
     }
 
-    /* SVG path overlay */
     .ww-svg {
       position: absolute;
       top: 0;
@@ -67,13 +60,12 @@
 
     .ww-path {
       stroke: #ff9800;
-      stroke-width: 5;
+      stroke-width: 10;
       stroke-linecap: round;
       stroke-linejoin: round;
       filter: drop-shadow(0 0 6px rgba(255, 152, 0, 0.8));
     }
 
-    /* Letter styling */
     .ww-letter {
       position: absolute;
       width: 50px;
@@ -90,7 +82,6 @@
       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
       background: linear-gradient(145deg, #4a90e2, #357ABD);
       transition: transform 0.15s ease;
-      user-select: none;
     }
 
     .ww-letter:hover {
@@ -102,33 +93,23 @@
       transform: scale(1.1);
     }
 
-    /* Current word display */
     .ww-current {
       font-size: 20px;
       font-weight: bold;
-      margin-top: 15px;
       min-height: 24px;
     }
 
-    /* Buttons stacked vertically */
     .ww-buttons {
       display: flex;
       flex-direction: row;
       gap: 10px;
       width: 100%;
       justify-content: center;
-      /* optional, centers buttons horizontally */
     }
 
     .ww-btn {
       flex: 1;
-      /* make all buttons share equal width */
-      min-width: 0;
-      /* allows flex shrinking properly */
-      margin: 0;
-      /* remove vertical margins */
       padding: 8px 0;
-      /* vertical padding, no horizontal so buttons don't get too wide */
       font-size: 15px;
       border: none;
       border-radius: 8px;
@@ -136,44 +117,17 @@
       color: white;
       font-weight: bold;
       cursor: pointer;
-      user-select: none;
-      transition: background 0.3s ease;
     }
 
     .ww-btn:hover {
       background: linear-gradient(145deg, #5AA0F2, #4685C2);
-    }
-
-    /* Dev console styles */
-    #devConsole {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      max-height: 150px;
-      background: rgba(30, 30, 30, 0.9);
-      color: #eee;
-      font-family: monospace;
-      font-size: 12px;
-      overflow-y: auto;
-      padding: 8px;
-      box-sizing: border-box;
-      z-index: 9999;
-      user-select: text;
-    }
-
-    #devConsole .log-entry {
-      margin-bottom: 4px;
-      white-space: pre-wrap;
-      word-break: break-word;
     }
   </style>
 </head>
 
 <body>
   <div id="gameContainer"></div>
-  <!-- Dev console panel -->
-  <div id="devConsole"></div>
+
   <script>
     class WordWheel {
       constructor(container, letters, options = {}) {
@@ -184,9 +138,10 @@
         this.wordList = [];
         this.selectedLetters = [];
         this.selectedPositions = [];
+        this.selectedElements = [];
         this.isDragging = false;
         this.lastMousePos = null;
-        this.letterPositions = new Map(); 
+        this.letterPositions = new Map();
         this._render();
         this._attachEvents();
       }
@@ -216,7 +171,7 @@
       _renderWheel() {
         const wheel = this.container.querySelector(".ww-wheel");
         wheel.innerHTML = "";
-        this.letterPositions.clear();  // <--- Clear old positions
+        this.letterPositions.clear();
         const total = this.letters.length;
         const radius = 90;
         const centerX = 125;
@@ -232,8 +187,8 @@
           div.textContent = letter;
           div.style.left = `${x}px`;
           div.style.top = `${y}px`;
-          this.letterPositions.set(letter, [x + 25, y + 25]); 
-          // Mouse events
+          this.letterPositions.set(letter, [x + 25, y + 25]);
+
           div.addEventListener("mousedown", (e) => {
             this._startSelection(letter, div, x + 25, y + 25);
             e.preventDefault();
@@ -242,8 +197,6 @@
             if (this.isDragging)
               this._selectLetter(letter, div, x + 25, y + 25);
           });
-
-          // Touch events
           div.addEventListener("touchstart", (e) => {
             this._startSelection(letter, div, x + 25, y + 25);
             e.preventDefault();
@@ -286,34 +239,37 @@
       }
 
       _selectLetter(letter, element, px, py) {
+        const idx = this.selectedLetters.indexOf(letter);
         if (!element.classList.contains("selected")) {
           this.selectedLetters.push(letter);
-          const pos = this.letterPositions.get(letter);  // <--- Get stored position
-          if (pos) {
-            this.selectedPositions.push(pos);            // <--- Use stored position
-          } else {
-            this.selectedPositions.push([px, py]);       // fallback to passed coords
-          }
+          this.selectedElements.push(element);
+          this.selectedPositions.push(this.letterPositions.get(letter) || [px, py]);
           element.classList.add("selected");
-          this._updateCurrentWord();
-          this._updatePath();
-          this.onSelectionChange(this.selectedLetters);
+          return this._refreshSelectionState();
+        }
+        if (this.isDragging && idx === this.selectedLetters.length - 2) {
+          this.selectedPositions.pop();
+          this.selectedLetters.pop();
+          this.selectedElements.pop().classList.remove("selected");
+          this._refreshSelectionState();
         }
       }
 
+      _refreshSelectionState() {
+        this._updateCurrentWord();
+        this._updatePath();
+        this.onSelectionChange(this.selectedLetters);
+      }
+
       _updateLiveDrag(clientX, clientY) {
-        if (!this.isDragging || this.selectedPositions.length === 0) return;
-
+        if (!this.isDragging || !this.selectedPositions.length) return;
         const wheelRect = this.container.querySelector(".ww-wheel").getBoundingClientRect();
-        const x = clientX - wheelRect.left;
-        const y = clientY - wheelRect.top;
-
-        this.lastMousePos = [x, y];
+        this.lastMousePos = [clientX - wheelRect.left, clientY - wheelRect.top];
         this._updatePath(true);
       }
 
       _endSelection() {
-        if (this.isDragging && this.selectedLetters.length > 0) {
+        if (this.isDragging && this.selectedLetters.length) {
           this._addToList();
         }
         this.isDragging = false;
@@ -335,9 +291,8 @@
       }
 
       _addToList() {
-        if (this.selectedLetters.length > 0) {
-          const word = this.selectedLetters.join("");
-          this.wordList.push(word);
+        if (this.selectedLetters.length) {
+          this.wordList.push(this.selectedLetters.join(""));
           this._updateWordList();
           this._clearSelection();
         }
@@ -347,6 +302,7 @@
         this.container.querySelectorAll(".ww-letter").forEach(el => el.classList.remove("selected"));
         this.selectedLetters = [];
         this.selectedPositions = [];
+        this.selectedElements = [];
         this.lastMousePos = null;
         this._updatePath();
         this._updateCurrentWord();
@@ -366,106 +322,6 @@
         this.onWordSubmit(this.wordList);
       }
     }
-    // Create dev console div and add to body
-    const devConsole = document.createElement("div");
-    devConsole.id = "devConsole";
-    Object.assign(devConsole.style, {
-      position: "fixed",
-      bottom: "0",
-      left: "0",
-      right: "0",
-      maxHeight: "500px",
-      background: "rgba(30,30,30,0.9)",
-      color: "#eee",
-      fontFamily: "monospace",
-      fontSize: "12px",
-      overflowY: "auto",
-      padding: "8px",
-      boxSizing: "border-box",
-      zIndex: "9999",
-      userSelect: "text",
-    });
-    document.body.appendChild(devConsole);
-
-    function logToConsole(msg) {
-      const time = new Date().toLocaleTimeString();
-      const entry = document.createElement("div");
-      entry.className = "log-entry";
-      entry.textContent = `[${time}] ${msg}`;
-      devConsole.appendChild(entry);
-      devConsole.scrollTop = devConsole.scrollHeight;
-    }
-
-    // Attach event logging to given element(s)
-    function attachEventLogging(elements) {
-      const events = [
-        "mousedown",
-        "mouseup",
-        "mousemove",
-        "mouseenter",
-        "mouseleave",
-        "touchstart",
-        "touchmove",
-        "touchend",
-      ];
-
-      elements.forEach((el) => {
-        events.forEach((ev) => {
-          el.addEventListener(
-            ev,
-            (e) => {
-              const type = e.type;
-              const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
-              const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
-              const target = e.target;
-              const tag = target.tagName.toLowerCase();
-              const classes = target.className || "";
-              const text = (target.textContent || "").trim().slice(0, 15).replace(/\s+/g, " ");
-
-              let msg = `${type} - x:${clientX}, y:${clientY} - target: <${tag} class="${classes}"> "${text}"`;
-              if (target.classList?.contains("ww-letter")) {
-                msg += ` (Letter: "${target.textContent.trim()}")`;
-              }
-              logToConsole(msg);
-            },
-            { passive: true }
-          );
-        });
-      });
-    }
-
-    // Wait until your WordWheel is rendered so these elements exist
-    window.addEventListener("load", () => {
-      // Query the main wheel container and all letter elements
-      const wheel = document.querySelector(".ww-wheel");
-      const letters = Array.from(document.querySelectorAll(".ww-letter"));
-
-      if (wheel) {
-        attachEventLogging([wheel]);
-      }
-      if (letters.length) {
-        attachEventLogging(letters);
-      }
-
-      // Also attach some global event logging on document for mousemove and mouseup
-      ["mousemove", "mouseup"].forEach((ev) => {
-        document.addEventListener(ev, (e) => {
-          const type = e.type;
-          const clientX = e.clientX;
-          const clientY = e.clientY;
-          const target = e.target;
-          const tag = target.tagName.toLowerCase();
-          const classes = target.className || "";
-          const text = (target.textContent || "").trim().slice(0, 15).replace(/\s+/g, " ");
-
-          let msg = `${type} - x:${clientX}, y:${clientY} - target: <${tag} class="${classes}"> "${text}"`;
-          if (target.classList?.contains("ww-letter")) {
-            msg += ` (Letter: "${target.textContent.trim()}")`;
-          }
-          logToConsole(msg);
-        }, { passive: true });
-      });
-    });
 
     const container = document.getElementById("gameContainer");
     const game = new WordWheel(container, ["A", "B", "C", "D", "E", "F", "G"], {
@@ -474,5 +330,4 @@
     });
   </script>
 </body>
-
 </html>
