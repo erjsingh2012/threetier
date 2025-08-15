@@ -3,15 +3,20 @@ import ScrabbleBoard from './ui/ScrabbleBoard.js';
 
 // Main initialization
 function initApp() {
-  // Initialize Letter Wheel
+  const currentWordEl = document.getElementById("CurrentWord");
+
+  function setCurrentWord(word) {
+    currentWordEl.textContent = word || "—";
+  }
+
   let letterWheel = new LetterWheel(
     document.getElementById("LetterWheel"),
     ["A", "B", "C", "D", "E", "F", "G"],
     {
       size: 180,
       letterSize: 36,
-      onWordSubmit: words => alert("Submitted: " + words.join(", ")),
-      onSelectionChange: letters => console.log("Current:", letters.join(""))
+      onWordSubmit: words => console.log("App Submitted: " + words),
+      onSelectionChange: letters => setCurrentWord(letters.join(""))
     }
   );
 
@@ -41,7 +46,7 @@ function initApp() {
       }
     }
   );
-  
+
 }
 
 // Start app

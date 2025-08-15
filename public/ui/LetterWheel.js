@@ -7,7 +7,6 @@ export default class LetterWheel {
     this.letters = letters;
     this.onWordSubmit = options.onWordSubmit || (() => {});
     this.onSelectionChange = options.onSelectionChange || (() => {});
-    this.wordList = [];
     this.selectedLetters = [];
     this.selectedPositions = [];
     this.selectedElements = [];
@@ -212,7 +211,8 @@ export default class LetterWheel {
 
   _addToList() {
     if (this.selectedLetters.length) {
-      this.wordList.push(this.selectedLetters.join(""));
+      console.log("Word submitted:", this.selectedLetters.join(""));
+      this.onWordSubmit(this.selectedLetters.join(""));
       this._clearSelection();
     }
   }
