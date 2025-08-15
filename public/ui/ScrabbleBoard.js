@@ -25,6 +25,16 @@ export default class ScrabbleBoard {
   _injectStyles() {
     const style = document.createElement("style");
     style.textContent = `
+    #ScrabbleBoard {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      padding-top: 80px; 
+      justify-content: center; /* center horizontally */
+      align-items:flex-start;     /* center vertically */
+     box-sizing: border-box;  /* include padding in total size */
+      }
       .board {
         display: grid;
         grid-template-columns: repeat(${this.boardData[0]?.length || 11}, 1fr);

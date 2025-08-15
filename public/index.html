@@ -22,53 +22,56 @@
   <div id="app">
     <div class="pages" id="pages">
 
-    <!-- Scrabble & Letter Wheel Page -->
-    <div class="page" style="background: #f3f4e3;">
-      <div id="ScrabbleBoard"></div>
-      <div id="LetterWheel"></div>
-    </div>
+      <!-- Scrabble & Letter Wheel Page -->
+      <div class="page" style="background: #f3f4e3;">
+        <div class="board-wrapper">
+          <div id="ScrabbleBoard"></div>
+          <div id="LetterWheel"></div>
+        </div>
+      </div>
 
-    <!-- Word Wheel Page -->
-    <div class="page" style="background: #f3e5f5;">
-      <div class="columnlayout">
-        <h2>Word Wheel</h2>
-        <!-- Add word wheel content here -->
+      <!-- Word Wheel Page -->
+      <div class="page" style="background: #f3e5f5;">
+        <div class="columnlayout">
+          <h2>Word Wheel</h2>
+          <!-- Add word wheel content here -->
+        </div>
+      </div>
+
+      <!-- Home Page -->
+      <div class="page" style="background: #e8f5e9;">
+        <div class="columnlayout">
+          <h2>Home Page</h2>
+          <!-- Home content here -->
+        </div>
+      </div>
+
+      <!-- Notifications Page -->
+      <div class="page" style="background: #fff3e0;">
+        <div class="columnlayout">
+          <h2>Notifications</h2>
+          <!-- Notifications content here -->
+        </div>
+      </div>
+
+      <!-- Profile Section (visible inside pages or separate as needed) -->
+      <div id="profile">
+        <img class="avatar-img" src="" alt="Avatar" />
+        <div class="user-info">
+          <div id="user-name" class="name">Player Name</div>
+          <div id="user-level" class="level">Level 1</div>
+        </div>
       </div>
     </div>
 
-    <!-- Home Page -->
-    <div class="page" style="background: #e8f5e9;">
-      <div class="columnlayout">
-        <h2>Home Page</h2>
-        <!-- Home content here -->
-      </div>
+    <div class="nav" id="nav">
+      <button data-index="0" class="active">Leaderboard</button>
+      <button data-index="1">Word Wheel</button>
+      <button data-index="2">Home</button>
+      <button data-index="3">scrabble</button>
+      <button data-index="4">Profile</button>
     </div>
-
-    <!-- Notifications Page -->
-    <div class="page" style="background: #fff3e0;">
-      <div class="columnlayout">
-        <h2>Notifications</h2>
-        <!-- Notifications content here -->
-      </div>
-    </div>
-
-    <!-- Profile Section (visible inside pages or separate as needed) -->
-    <div id="profile">
-      <img class="avatar-img" src="" alt="Avatar" />
-      <div class="user-info">
-        <div id="user-name" class="name">Player Name</div>
-        <div id="user-level" class="level">Level 1</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="nav" id="nav">
-    <button data-index="0" class="active">Leaderboard</button>
-    <button data-index="1" >Word Wheel</button>
-    <button data-index="2" >Home</button>
-    <button data-index="3">scrabble</button>
-    <button data-index="4">Profile</button>
-  </div>
-  <script type="module" src="./app.js"></script>
+    <script type="module" src="./app.js"></script>
 </body>
+
 </html>

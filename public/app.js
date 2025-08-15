@@ -84,7 +84,7 @@ async function startApp() {
     ["TW", "", "", "DL", "", "", "", "DL", "", "", "TW"]
   ],
   {
-    boardWidth: 600,  // Max board width in px
+    boardWidth: 440,  // Max board width in px
     tileWidth: "95%", // Tile width relative to cell
     boardBg: "#9fa2a7ff", // Board background color
     tileBg: "linear-gradient(to bottom, #e8f4d0, #b5f9f467)", // Default tile background
