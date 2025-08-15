@@ -7,6 +7,7 @@ class WordWheel {
     this.wordList = [];
     this.selectedLetters = [];
     this.selectedPositions = [];
+    this.selectedElements = [];
     this.isDragging = false;
     this.lastMousePos = null;
 
@@ -224,16 +225,36 @@ class WordWheel {
     this._selectLetter(letter, element, px, py);
   }
 
-  _selectLetter(letter, element, px, py) {
-    if (!element.classList.contains("selected")) {
-      this.selectedLetters.push(letter);
-      this.selectedPositions.push([px, py]);
-      element.classList.add("selected");
-      this._updateCurrentWord();
-      this._updatePath();
-      this.onSelectionChange(this.selectedLetters);
-    }
+ _selectLetter(letter, element, px, py) {
+  const isSelected = element.classList.contains("selected");
+  const idx = this.selectedLetters.indexOf(letter);
+
+  // Case 1: Selecting a new letter
+  if (!isSelected) {
+    this.selectedLetters.push(letter);
+    this.selectedPositions.push([px, py]);
+    element.classList.add("selected");
+    this.selectedElements.push(element);
   }
+
+  // Case 2: Deselecting the second-last selected letter (backtracking)
+  else if (idx >= 0 && idx === this.selectedLetters.length - 2) {
+    this.selectedPositions.pop();
+    this.selectedLetters.pop();
+    const removedElement = this.selectedElements.pop();
+    console.log('Jsingh Removing removedLetterElement:', removedElement.classList);
+    removedElement.classList.remove("selected");
+  }
+
+  // Update UI & callbacks if anything changed
+  if (!isSelected || (idx >= 0 && idx === this.selectedLetters.length - 1)) {
+    this._updateCurrentWord();
+    this._updatePath();
+    this.onSelectionChange(this.selectedLetters);
+    console.log(`Selected letters: ${this.selectedLetters.join(", ")}`);
+  }
+}
+
 
   _updateLiveDrag(clientX, clientY) {
     if (!this.isDragging || this.selectedPositions.length === 0) return;
