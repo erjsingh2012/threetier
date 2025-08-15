@@ -32,7 +32,7 @@ export default class ScrabbleBoard {
         width: 100%;
         max-width: ${this.boardWidth}px;
         aspect-ratio: 1/1;
-        border-radius: 14px;
+        border-radius: 10px;
         margin: 0 auto;
         background-color: ${this.boardBg};
       }

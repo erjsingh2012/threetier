@@ -1,26 +1,45 @@
 /* ================================
-   ✅ Base Styles
+   ✅ CSS Variables
    ================================ */
+:root {
+  --bg-light: #c1e0ff;
+  --bg-loading: rgb(185, 238, 246);
+  --bg-board: #1e4d9b;
+  --profile-bg: #e0f7ff;
+  --primary-color: #0077cc;
+  --text-color: #333;
+  --text-muted: #555;
+  --nav-gradient: linear-gradient(to right, #0050ac, #3399ff, #66ccff);
+}
+
+/* ================================
+   ✅ Global Styles
+   ================================ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  margin: 0; /* Remove default browser margin for clean layout */
-  font-family: system-ui, sans-serif; /* System font for fast loading and clean UI */
-  background: #c1e0ff; /* Light blue background */
-  color: #333; /* Default text color */
+  font-family: system-ui, sans-serif;
+  background: var(--bg-light);
+  color: var(--text-color);
 }
 
 /* ================================
    ✅ Loading Overlay
    ================================ */
 #loading {
-  position: fixed; /* Stay on screen regardless of scroll */
-  inset: 0; /* Cover full screen (top, right, bottom, left = 0) */
-  display: flex; /* Center content with flex */
+  position: fixed;
+  inset: 0;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgb(185, 238, 246); /* Light background for loading state */
+  background: var(--bg-loading);
   font-size: 1.5rem;
-  z-index: 9999; /* Show above everything else */
+  z-index: 9999;
   text-align: center;
 }
 
@@ -28,15 +47,53 @@ body {
    ✅ App Container
    ================================ */
 #app {
-  display: flex; /* Main vertical layout */
-  flex-direction: column;
-  height: 100svh; /* Fill entire small viewport height (better for mobile) */
+  width: 100vw;
+  height: 100vh;
   max-width: 100%;
-  background: white;
-  margin: 0rem auto;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: none; /* Hidden until JS shows it */
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-board);
+}
+
+/* ================================
+   ✅ Pages
+   ================================ */
+.pages {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.page {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
+
+.page.active {
+  display: flex;
+}
+
+/* ================================
+   ✅ Scrabble Board
+   ================================ */
+#ScrabbleBoard {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* ================================
@@ -45,7 +102,7 @@ body {
 h1 {
   font-size: 2rem;
   margin-bottom: 1rem;
-  color: #333;
+  color: var(--text-color);
 }
 
 p {
@@ -59,26 +116,23 @@ p {
   display: flex;
   align-items: center;
   gap: 1rem;
-  background: #e0f7ff;
+  background: var(--profile-bg);
   padding: 0.75rem 1rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
 }
 
-/* Avatar Styling */
 .avatar-img,
 #profile img {
   width: 48px;
   height: 48px;
-  max-width: 100%;
   object-fit: cover;
   border-radius: 50%;
-  border: 2px solid #0077cc;
+  border: 2px solid var(--primary-color);
   display: block;
   flex-shrink: 0;
 }
 
-/* User info (Name and Level) */
 .user-info {
   display: flex;
   flex-direction: column;
@@ -86,70 +140,43 @@ p {
 
 #user-name {
   font-weight: bold;
-  color: #0077cc;
+  color: var(--primary-color);
   font-size: 1rem;
 }
 
 #user-level {
   font-size: 0.9rem;
-  color: #555;
+  color: var(--text-muted);
 }
 
 /* ================================
-   ✅ Responsive Styles (Tablet+)
+   ✅ Column Layout Utility
    ================================ */
-@media (min-width: 600px) {
-  #app {
-    max-width: 600px;
-    margin: 0rem auto;
-  }
-
-  h1 {
-    font-size: 2.2rem;
-  }
-
-  p {
-    font-size: 1.1rem;
-  }
-}
-
-/* ================================
-   ✅ Responsive Styles (Small Mobile)
-   ================================ */
-@media (max-width: 400px) {
-  .avatar-img {
-    width: 40px;
-    height: 40px;
-  }
-
-  #user-name {
-    font-size: 0.95rem;
-  }
-
-  #user-level {
-    font-size: 0.85rem;
-  }
-
-  #app {
-    padding: 0rem;
-    margin: 0.0rem;
-  }
+.columnlayout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  max-width: 00px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
 }
 
 /* ================================
    ✅ Bottom Navigation Bar
    ================================ */
 .nav {
-  display: flex; /* Horizontal layout */
-  height: 60px; /* Fixed height */
+  display: flex;
+  height: 60px;
   max-width: 600px;
   width: 100%;
-  position: fixed; /* Stay at bottom */
+  position: fixed;
   bottom: 0;
   left: 50%;
-  transform: translateX(-50%); /* Center horizontally */
-  justify-content: space-around; /* Even spacing between buttons */
-  background: linear-gradient(to right, #0050ac, #3399ff, #66ccff);
+  transform: translateX(-50%);
+  justify-content: space-around;
+  background: var(--nav-gradient);
   padding: 10px 0;
   color: white;
   z-index: 10;
@@ -170,102 +197,44 @@ p {
 }
 
 /* ================================
-   ✅ Page System for Navigation
+   ✅ Page Slide Animations
    ================================ */
-.pages {
-  position: relative; /* Needed for absolutely-positioned .page children */
-  flex: 1; /* Fills available space in flex layout */
-  overflow: hidden; /* Hide overflow from animated sliding */
-}
+.slide-in-left { animation: slideInLeft 0.3s forwards; }
+.slide-out-left { animation: slideOutLeft 0.3s forwards; }
+.slide-in-right { animation: slideInRight 0.3s forwards; }
+.slide-out-right { animation: slideOutRight 0.3s forwards; }
 
-/* Each page */
-.page {
-  position: absolute; /* All pages overlap each other */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: none; /* Hidden by default */
-  align-items: center; /* Center content vertically */
-  justify-content: center; /* Center content horizontally */
-  font-size: 2rem;
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
-
-/* Active page is visible and centered */
-.page.active {
-  display: flex;
+@keyframes slideOutLeft {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100%); opacity: 0; }
 }
-.columnlayout {
-  display: flex;
-  flex-direction: column;
-  align-items: center;      /* center horizontally */
-  gap: 12px;                /* vertical spacing between elements */
-  padding: 20px;
-  max-width: 400px;         /* optional, limits width */
-  margin: 0 auto;           /* centers container horizontally */
-  font-family: Arial, sans-serif;
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOutRight {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
 }
 
 /* ================================
-   ✅ Page Slide Animations
+   ✅ Responsive Styles
    ================================ */
-.slide-in-left {
-  animation: slideInLeft 0.3s forwards;
+/* Tablet+ */
+@media (min-width: 600px) {
+  #app { max-width: 600px; margin: 0 auto; }
+  h1 { font-size: 2.2rem; }
+  p { font-size: 1.1rem; }
 }
 
-.slide-out-left {
-  animation: slideOutLeft 0.3s forwards;
-}
-
-.slide-in-right {
-  animation: slideInRight 0.3s forwards;
-}
-
-.slide-out-right {
-  animation: slideOutRight 0.3s forwards;
-}
-
-/* Slide animations for transitions */
-@keyframes slideInLeft {
-  from {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideOutLeft {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideOutRight {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
+/* Small Mobile */
+@media (max-width: 400px) {
+  .avatar-img { width: 40px; height: 40px; }
+  #user-name { font-size: 0.95rem; }
+  #user-level { font-size: 0.85rem; }
+  #app { padding: 0; margin: 0; }
 }
