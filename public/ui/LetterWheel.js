@@ -5,8 +5,8 @@ export default class LetterWheel {
   constructor(container, letters, options = {}) {
     this.container = container;
     this.letters = letters;
-    this.onWordSubmit = options.onWordSubmit || (() => {});
-    this.onSelectionChange = options.onSelectionChange || (() => {});
+    this.onWordSubmit = options.onWordSubmit || (() => { });
+    this.onSelectionChange = options.onSelectionChange || (() => { });
     this.wordList = [];
     this.selectedLetters = [];
     this.selectedPositions = [];
@@ -39,6 +39,7 @@ export default class LetterWheel {
         margin: auto;
       }
       .ww-list {
+        display: none;
         min-height: 40px;
         width: 100%;
         background: rgba(255, 255, 255, 0.8);
@@ -47,7 +48,15 @@ export default class LetterWheel {
         font-size: 16px;
         word-break: break-word;
       }
-      .ww-wheel-wrapper { position: relative; width: 250px; height: 250px; }
+      .ww-wheel-wrapper {  
+        position: fixed;          /* So it stays above the nav */
+        bottom: 120px;              /* Height of your .nav */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 250px;
+        height: 250px;
+        z-index: 9;                /* Just below .nav’s z-index */
+      }
       .ww-wheel {
         position: relative; width: 250px; height: 250px;
         border-radius: 50%;
@@ -74,11 +83,12 @@ export default class LetterWheel {
       }
       .ww-letter:hover { transform: scale(1.15); }
       .ww-letter.selected { background: linear-gradient(145deg, #2C5A8A, #1f3f63); transform: scale(1.1); }
-      .ww-current { font-size: 20px; font-weight: bold; min-height: 24px; }
+      .ww-current {display: none; font-size: 20px; font-weight: bold; min-height: 24px; }
       .ww-buttons {
-        display: flex; flex-direction: row; gap: 10px; width: 100%; justify-content: center;
+        display: none; flex-direction: row; gap: 10px; width: 100%; justify-content: center;
       }
       .ww-btn {
+        display: none; 
         flex: 1; padding: 8px 0; font-size: 15px; border: none; border-radius: 8px;
         background: linear-gradient(145deg, #4a90e2, #357ABD);
         color: white; font-weight: bold; cursor: pointer;
@@ -129,9 +139,9 @@ export default class LetterWheel {
       div.style.top = `${y}px`;
       this.letterPositions.set(letter, [x + 25, y + 25]);
 
-      div.addEventListener("mousedown", (e) => { this._startSelection(letter, div, x+25, y+25); e.preventDefault(); });
-      div.addEventListener("mouseenter", () => { if (this.isDragging) this._selectLetter(letter, div, x+25, y+25); });
-      div.addEventListener("touchstart", (e) => { this._startSelection(letter, div, x+25, y+25); e.preventDefault(); });
+      div.addEventListener("mousedown", (e) => { this._startSelection(letter, div, x + 25, y + 25); e.preventDefault(); });
+      div.addEventListener("mouseenter", () => { if (this.isDragging) this._selectLetter(letter, div, x + 25, y + 25); });
+      div.addEventListener("touchstart", (e) => { this._startSelection(letter, div, x + 25, y + 25); e.preventDefault(); });
       div.addEventListener("touchmove", (e) => {
         const touch = e.touches[0];
         const target = document.elementFromPoint(touch.clientX, touch.clientY);
