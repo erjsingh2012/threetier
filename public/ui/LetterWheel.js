@@ -14,7 +14,8 @@ export default class LetterWheel {
     this.isDragging = false;
     this.lastMousePos = null;
     this.letterPositions = new Map();
-
+    this.size = options.size || 125;         // Wheel size
+    this.letterSize = options.letterSize || 25; // Letter div size
     if (!LetterWheel.injected) {
       this._injectStyles();
       LetterWheel.injected = true;
@@ -53,12 +54,12 @@ export default class LetterWheel {
         bottom: 120px;              /* Height of your .nav */
         left: 50%;
         transform: translateX(-50%);
-        width: 250px;
-        height: 250px;
+        width: ${this.size}px;
+        height: ${this.size}px;
         z-index: 9;                /* Just below .nav’s z-index */
       }
       .ww-wheel {
-        position: relative; width: 250px; height: 250px;
+        position: relative; width: ${this.size}px; height: ${this.size}px;
         border-radius: 50%;
         background: radial-gradient(circle at 50% 50%,
             rgba(255, 255, 255, 0.95) 0%,
@@ -72,14 +73,16 @@ export default class LetterWheel {
       .ww-svg { position: absolute; top: 0; left: 0; pointer-events: none; }
       .ww-path { stroke: #ff9800; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 6px rgba(255, 152, 0, 0.8)); }
       .ww-letter {
-        position: absolute; width: 50px; height: 50px; color: white;
+        position: absolute;  color: white;
         display: flex; align-items: center; justify-content: center;
         border-radius: 12px; cursor: pointer;
         border: 2px solid rgba(0, 0, 0, 0.2);
-        font-size: 24px; font-weight: bold;
         box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
         background: linear-gradient(145deg, #4a90e2, #357ABD);
         transition: transform 0.15s ease;
+        width: ${this.letterSize}px;
+        height: ${this.letterSize}px;
+        font-size: ${Math.floor(this.letterSize * 0.48)}px;
       }
       .ww-letter:hover { transform: scale(1.15); }
       .ww-letter.selected { background: linear-gradient(145deg, #2C5A8A, #1f3f63); transform: scale(1.1); }
@@ -125,23 +128,25 @@ export default class LetterWheel {
     wheel.innerHTML = "";
     this.letterPositions.clear();
     const total = this.letters.length;
-    const radius = 90, centerX = 125, centerY = 125;
+    const radius = this.size * 0.36;
+    const centerX = this.size / 2;
+    const centerY = this.size / 2;
 
     this.letters.forEach((letter, index) => {
       const angle = (index / total) * (2 * Math.PI);
-      const x = Math.cos(angle) * radius + centerX - 25;
-      const y = Math.sin(angle) * radius + centerY - 25;
+      const x = Math.cos(angle) * radius + centerX - this.letterSize / 2;
+      const y = Math.sin(angle) * radius + centerY - this.letterSize / 2;
 
       const div = document.createElement("div");
       div.className = "ww-letter";
       div.textContent = letter;
       div.style.left = `${x}px`;
       div.style.top = `${y}px`;
-      this.letterPositions.set(letter, [x + 25, y + 25]);
+      this.letterPositions.set(letter, [x + this.letterSize / 2, y + this.letterSize / 2]);
 
-      div.addEventListener("mousedown", (e) => { this._startSelection(letter, div, x + 25, y + 25); e.preventDefault(); });
-      div.addEventListener("mouseenter", () => { if (this.isDragging) this._selectLetter(letter, div, x + 25, y + 25); });
-      div.addEventListener("touchstart", (e) => { this._startSelection(letter, div, x + 25, y + 25); e.preventDefault(); });
+      div.addEventListener("mousedown", (e) => { this._startSelection(letter, div, x + this.letterSize / 2, y + this.letterSize / 2); e.preventDefault(); });
+      div.addEventListener("mouseenter", () => { if (this.isDragging) this._selectLetter(letter, div, x + this.letterSize / 2, y + this.letterSize / 2); });
+      div.addEventListener("touchstart", (e) => { this._startSelection(letter, div, x + this.letterSize / 2, y + this.letterSize / 2); e.preventDefault(); });
       div.addEventListener("touchmove", (e) => {
         const touch = e.touches[0];
         const target = document.elementFromPoint(touch.clientX, touch.clientY);

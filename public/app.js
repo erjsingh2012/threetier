@@ -61,6 +61,8 @@ async function startApp() {
   // Initialize page navigation
   initPageScroll();
     new LetterWheel(document.getElementById("LetterWheel"), ["A", "B", "C", "D", "E", "F", "G"], {
+    size: 200,
+    letterSize: 36,
     onWordSubmit: words => alert("Game1 submitted: " + words.join(", ")),
     onSelectionChange: letters => console.log("Game1 current:", letters.join(""))
   });
