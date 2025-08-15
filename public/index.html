@@ -2,18 +2,18 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Game Board & Wheel</title>
   <link rel="icon" href="data:,">
   <style>
     /* 🎨 Mobile-first portrait styling */
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden; /* ✅ Prevent scroll */
+      overflow: hidden;
     }
 
     body {
@@ -29,12 +29,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.75rem;
       width: 100%;
       height: 100%;
       max-width: 100%;
       box-sizing: border-box;
-      padding: 0.5rem;
     }
 
     h2 {
@@ -49,15 +47,13 @@
     /* 📦 Board & Wheel Containers */
     #ScrabbleBoard,
     #LetterWheel {
-      flex: 1; /* ✅ Take available height */
+      flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
       width: 100%;
       background: #fff7e6;
-      border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      padding: 0.5rem;
       box-sizing: border-box;
     }
 
@@ -65,29 +61,51 @@
     #LetterWheel canvas {
       max-width: 100%;
       max-height: 100%;
-      object-fit: contain; /* ✅ Scale down content */
+      object-fit: contain;
     }
 
     /* 💻 Tablet & desktop adjustments */
     @media (min-width: 768px) {
       .container {
         max-width: 800px;
-        padding: 1rem;
       }
 
       h2 {
         font-size: 1.6rem;
       }
     }
+
+
+    /* 📝 Current Word Display */
+    #CurrentWord {
+      width: 100%;
+      height: 60px;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      color: #333;
+      flex-shrink: 0;
+      box-sizing: border-box;
+
+      /* ✅ Vertical align center */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   </style>
 </head>
 
 <body>
   <div class="container">
-    <h2>Scrabble Board v3</h2>
+    <h2>Scrabble Board v2</h2>
     <div id="ScrabbleBoard"></div>
+    <div id="CurrentWord">WORD</div>
     <div id="LetterWheel"></div>
   </div>
+
   <script type="module" src="./app.js"></script>
 </body>
 
