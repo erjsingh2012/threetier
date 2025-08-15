@@ -31,7 +31,6 @@ export default class ScrabbleBoard {
       width: 100%;
       height: 100%;
       display: flex;
-      padding-top: 80px; 
       justify-content: center; /* center horizontally */
       align-items:flex-start;     /* center vertically */
       box-sizing: border-box;  /* include padding in total size */
