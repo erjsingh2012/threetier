@@ -4,75 +4,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game App</title>
+  <title>Game Board & Wheel</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
-  <div id="loading">Loading App...</div>
-
-  <!-- Signup Panel -->
-  <div id="authPanel" style="display: none; padding: 2rem;">
-    <h2>Sign Up</h2>
-    <input id="usernameInput" type="text" placeholder="Enter your name" />
-    <button id="signupBtn">Sign Up</button>
+<body style="margin:0; font-family:sans-serif; background:#f3f4e3; display:flex; flex-direction:column; align-items:center; padding:1rem;">
+  
+  <div style="display:flex; flex-direction:column; align-items:center; gap:1.5rem;">
+    <h2 style="margin:0; font-size:1.5rem; color:#333;">Scrabble Board & Letter Wheel</h2>
+    
+    <div id="ScrabbleBoard" style="margin:auto;"></div>
+    <div id="LetterWheel" style="margin:auto;"></div>
   </div>
 
-  <div id="app">
-    <div class="pages" id="pages">
-
-      <!-- Scrabble & Letter Wheel Page -->
-      <div class="page" style="background: #f3f4e3;">
-        <div class="board-wrapper">
-          <div><p>Version: 1</p></div>
-          <div id="ScrabbleBoard"></div>
-          <div id="LetterWheel"></div>
-        </div>
-      </div>
-
-      <!-- Word Wheel Page -->
-      <div class="page" style="background: #f3e5f5;">
-        <div class="columnlayout">
-          <h2>Word Wheel</h2>
-          <!-- Add word wheel content here -->
-        </div>
-      </div>
-
-      <!-- Home Page -->
-      <div class="page" style="background: #e8f5e9;">
-        <div class="columnlayout">
-          <h2>Home Page</h2>
-          <!-- Home content here -->
-        </div>
-      </div>
-
-      <!-- Notifications Page -->
-      <div class="page" style="background: #fff3e0;">
-        <div class="columnlayout">
-          <h2>Notifications</h2>
-          <!-- Notifications content here -->
-        </div>
-      </div>
-
-      <!-- Profile Section (visible inside pages or separate as needed) -->
-      <div id="profile">
-        <img class="avatar-img" src="" alt="Avatar" />
-        <div class="user-info">
-          <div id="user-name" class="name">Player Name</div>
-          <div id="user-level" class="level">Level 1</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="nav" id="nav">
-      <button data-index="0" class="active">Leaderboard</button>
-      <button data-index="1">Word Wheel</button>
-      <button data-index="2">Home</button>
-      <button data-index="3">scrabble</button>
-      <button data-index="4">Profile</button>
-    </div>
-    <script type="module" src="./app.js"></script>
+  <script type="module" src="./app.js"></script>
 </body>
-
 </html>
