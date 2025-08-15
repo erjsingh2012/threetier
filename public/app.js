@@ -2,7 +2,7 @@ import { StorageManager } from "./resources/managers/StorageManager.js";
 import { ApiManager } from "./resources/managers/ApiManager.js";
 import { AuthService } from "./service/AuthService.js";
 import { LevelManager } from "./service/LevelManager.js";
-import { WordWheel } from './ui/WordWheel.js';
+import LetterWheel from './ui/LetterWheel.js';
 
 // Instantiate core managers
 const storageManager = new StorageManager();
@@ -60,19 +60,11 @@ async function startApp() {
 
   // Initialize page navigation
   initPageScroll();
+    new LetterWheel(document.getElementById("LetterWheel"), ["A", "B", "C", "D", "E", "F", "G"], {
+    onWordSubmit: words => alert("Game1 submitted: " + words.join(", ")),
+    onSelectionChange: letters => console.log("Game1 current:", letters.join(""))
+  });
 
-  // Example usage:
-  const container = document.getElementById("gameContainer");
-const game = new WordWheel(
-  container,
-  ["A", "B", "C", "D", "E", "F", "G"],
-  {
-    onWordSubmit: (words) => alert("Submitted: " + words.join(", ")),
-    onSelectionChange: (letters) =>
-      console.log("Current: ", letters.join("")),
-    size: 200 // optional initial size, default is 250 if omitted
-  }
-);
 }
 
 // Page scroll / swipe logic
