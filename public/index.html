@@ -3,58 +3,82 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Game Board & Wheel</title>
   <link rel="icon" href="data:,">
   <style>
+    /* 🎨 Mobile-first portrait styling */
     body {
       margin: 0;
-      font-family: sans-serif;
-      background: #f3f4e3;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(180deg, #fceabb, #f8b500);
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 1rem;
+      padding: env(safe-area-inset-top) 1rem env(safe-area-inset-bottom);
+      min-height: 100vh;
     }
 
     .container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
-      /* Reduced gap for tighter alignment */
+      gap: 0.75rem;
+      width: 100%;
+      max-width: 100%;
     }
 
     h2 {
-      margin: 0;
-      font-size: 1.5rem;
-      color: #333;
+      margin: 0.5rem 0;
+      font-size: 1.4rem;
+      color: #3b3b3b;
       text-align: center;
+      font-weight: 600;
+      text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.4);
     }
 
+    /* 📦 Board & Wheel Containers */
     #ScrabbleBoard,
     #LetterWheel {
       display: flex;
-      flex-direction: row;
       justify-content: center;
       align-items: center;
+      width: 100%;
+      background: #fff7e6;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      padding: 0.5rem;
     }
 
     #ScrabbleBoard {
-      max-width: 600px;
+      max-width: 100%;
+      overflow-x: auto;
     }
 
     #LetterWheel {
-      max-width: 400px;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    /* 💻 Tablet & desktop adjustments */
+    @media (min-width: 768px) {
+      body {
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 800px;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+      }
     }
   </style>
-
-
-
 </head>
 
 <body>
-
   <div class="container">
     <h2>Scrabble Board v1</h2>
     <div id="ScrabbleBoard"></div>
