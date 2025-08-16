@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tile Rack (Configurable Size)</title>
+  <style>
+    :root {
+      --tile-size: 70px;
+      /* ✅ Tile size */
+      --tile-gap: calc(var(--tile-size) * 0.12);
+
+      --rack-width: 600px;
+      /* ✅ Rack width */
+      --rack-height: 120px;
+      /* ✅ Rack height */
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: sans-serif;
+    }
+
+    #rack {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: var(--tile-gap);
+      width: var(--rack-width);
+      height: var(--rack-height);
+      padding: calc(var(--tile-size) * 0.25);
+      background: #ffe082;
+      border-radius: calc(var(--tile-size) * 0.25);
+      box-shadow: 0 calc(var(--tile-size) * 0.08) calc(var(--tile-size) * 0.2) rgba(0, 0, 0, 0.3);
+    }
+
+    #rack span {
+      width: var(--tile-size);
+      height: var(--tile-size);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: calc(var(--tile-size) * 0.5);
+      background: #f4d03f;
+      border: calc(var(--tile-size) * 0.05) solid #9e7e38;
+      border-radius: calc(var(--tile-size) * 0.2);
+      font-weight: bold;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .rack-placeholder {
+      background: #ccc;
+      color: #888;
+      font-style: italic;
+      cursor: default;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="rack"></div>
+
+  <script>
+    // ✅ Hard-coded 7 letters
+    const rackTiles = ["A", "B", "C", "D", "E", "F", "G"];
+
+    const populateRack = (tiles) => {
+      const rack = document.getElementById("rack");
+      rack.innerHTML = "";
+      tiles.forEach((letter) => {
+        const tile = document.createElement("span");
+        tile.textContent = letter;
+        rack.appendChild(tile);
+      });
+    };
+
+    // Drag logic
+    let draggedTile = null;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+
+    const initDraggableRackTiles = () => {
+      const rack = document.getElementById("rack");
+
+      rack.addEventListener("pointerdown", (e) => {
+        const target = e.target;
+        if (target.tagName !== "SPAN") return;
+
+        draggedTile = target.cloneNode(true);
+        // ✅ Minimal base styles for dragging
+        draggedTile.style.position = "fixed";
+        draggedTile.style.zIndex = "1000";
+        draggedTile.style.pointerEvents = "none";
+        draggedTile.style.opacity = "0.9";
+
+        // ✅ Only copy "visual feel" styles
+        const computed = getComputedStyle(target);
+        const visualProps = [
+          "width",
+          "height",
+          "justify-content",
+          "align-items",
+          "display",
+          "background",
+          "border",
+          "border-radius",
+          "color",
+          "font-size",
+          "font-weight",
+          "boxShadow"
+        ];
+
+        visualProps.forEach((prop) => {
+          draggedTile.style[prop] = computed.getPropertyValue(prop);
+        });
+        // ✅ scale relative to tile size
+        const tileSize = parseInt(getComputedStyle(target).width);
+        const scaleFactor = 2 * (tileSize / 60); // same as before
+
+        draggedTile.style.transform = `scale(${scaleFactor})`;
+
+
+
+        document.body.appendChild(draggedTile);
+
+        dragOffsetX = tileSize / 2;
+        dragOffsetY = tileSize / 2;
+        moveDraggedTile(e);
+      });
+
+      document.addEventListener("pointermove", (e) => {
+        if (!draggedTile) return;
+        moveDraggedTile(e);
+      });
+
+      document.addEventListener("pointerup", () => {
+        if (draggedTile) {
+          draggedTile.remove();
+          draggedTile = null;
+        }
+      });
+
+      const moveDraggedTile = (e) => {
+        if (!draggedTile) return;
+        draggedTile.style.left = `${e.clientX - dragOffsetX}px`;
+        draggedTile.style.top = `${e.clientY - dragOffsetY}px`;
+      };
+    };
+
+    // Init
+    populateRack(rackTiles);
+    initDraggableRackTiles();
+  </script>
+</body>
+
+</html>
