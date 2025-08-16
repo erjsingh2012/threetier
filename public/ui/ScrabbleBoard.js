@@ -69,6 +69,10 @@ export default class ScrabbleBoard {
         color: #fff;
         text-shadow: 0 1px 2px rgba(0,0,0,0.3);
       }
+      .tile.occupied {
+        background: #34ed06ff !important; /* glow color */
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      }
     `;
     document.head.appendChild(style);
   }
@@ -98,9 +102,21 @@ export default class ScrabbleBoard {
     const index = y * this.boardData[0].length + x;
     const tile = this.tiles[index];
     if (!tile) return;
+
     tile.textContent = letter.toUpperCase();
+
+    // Remove all existing classes and re-add base tile + bonus
     tile.className = "tile" + (bonus ? ` ${bonus}` : "");
+
+    // Add occupied class if tile has a letter
+    if (letter) {
+      tile.classList.add("occupied"); // ✅ correct, no dot
+    } else {
+      tile.classList.remove("occupied");
+    }
   }
+
+
 
   resetBoard() {
     this.boardData.forEach((row, y) => {
@@ -111,30 +127,29 @@ export default class ScrabbleBoard {
   _addTileHoverListeners() {
     const highlightColor = "#ffd54f"; // hovered tile color
     this.tiles.forEach(tile => {
-      const originalBg = tile.style.background || this.tileBg;
-
       tile.addEventListener("mouseenter", () => {
         tile.style.background = highlightColor;
       });
       tile.addEventListener("mouseleave", () => {
-        tile.style.background = originalBg;
+        tile.style.background = ""; // restore class-based background
       });
 
       tile.addEventListener("touchstart", () => {
         tile.style.background = highlightColor;
       });
       tile.addEventListener("touchend", () => {
-        tile.style.background = originalBg;
+        tile.style.background = ""; // restore class-based background
       });
     });
   }
+
 
   placeTileFromRack(letter, clientX, clientY) {
     // Find tile under pointer
     const boardTile = this.tiles.find(t => {
       const rect = t.getBoundingClientRect();
       return clientX >= rect.left && clientX <= rect.right &&
-             clientY >= rect.top && clientY <= rect.bottom;
+        clientY >= rect.top && clientY <= rect.bottom;
     });
 
     if (!boardTile) return false;
@@ -143,11 +158,11 @@ export default class ScrabbleBoard {
     const x = idx % this.boardData[0].length;
     const y = Math.floor(idx / this.boardData[0].length);
 
-    if (!boardTile.textContent.trim()) {
+    // Check if tile is already occupied
+    if (!boardTile.classList.contains("occupied")) {
       this.setTile(x, y, letter);
       return true;
     }
-
     return false;
   }
 }

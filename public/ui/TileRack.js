@@ -91,7 +91,7 @@ export default class TileRack {
     const visualProps = [
       "width", "height", "justify-content", "align-items",
       "display", "background", "border", "border-radius",
-      "color", "font-size", "font-weight", "boxShadow"
+      "color", "font-size", "font-weight", "box-shadow"
     ];
 
     // --- Use class properties instead of local variables ---
