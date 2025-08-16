@@ -1,5 +1,5 @@
 import LetterWheel from './ui/LetterWheel.js';
-import ScrabbleBoard from './ui/ScrabbleBoard.js';
+import WheelScrabbleBoard from './ui/WheelScrabbleBoard.js';
 
 // Main initialization
 function initApp() {
@@ -21,8 +21,8 @@ function initApp() {
   );
 
   // Initialize Scrabble Board
-  let scrabbleBoard = new ScrabbleBoard(
-    document.getElementById("ScrabbleBoard"),
+  let wheelScrabbleBoard = new WheelScrabbleBoard(
+    document.getElementById("wheelScrabbleBoard"),
     [
       ["TW", "", "", "DL", "", "", "", "DL", "", "", "TW"],
       ["", "DW", "", "", "", "TL", "", "", "", "DW", ""],
