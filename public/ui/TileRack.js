@@ -1,4 +1,4 @@
-// tile-rack.js
+// TileRack.js
 export default class TileRack {
   static injected = false;
 
@@ -9,7 +9,7 @@ export default class TileRack {
     this.tileClick = options.tileClick || (() => {});
 
     // Configurable options
-    this.tileSize = options.tileSize || 70;           // in px
+    this.tileSize = options.tileSize || 36;           // in px
     this.rackBg = options.rackBg || "#ffe082";
     this.tileBg = options.tileBg || "#f4d03f";
     this.tileBorder = options.tileBorder || "5px solid #9e7e38";
@@ -35,6 +35,7 @@ export default class TileRack {
         background: ${this.rackBg};
         border-radius: calc(${this.tileSize}px * 0.25);
         box-shadow: 0 calc(${this.tileSize}px * 0.08) calc(${this.tileSize}px * 0.2) rgba(0, 0, 0, 0.3);
+        touch-action: none;
       }
       .tile-rack .tile {
         width: ${this.tileSize}px;
@@ -49,6 +50,7 @@ export default class TileRack {
         border-radius: calc(${this.tileSize}px * 0.2);
         cursor: grab;
         user-select: none;
+        touch-action: none;
       }
       .tile-rack .rack-placeholder {
         background: #ccc !important;
@@ -70,7 +72,16 @@ export default class TileRack {
       const tile = document.createElement("span");
       tile.className = "tile";
       tile.textContent = letter;
+
+      // click event
       tile.addEventListener("click", () => this.tileClick(tile, letter));
+
+      // touchstart for mobile
+      tile.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        this._startTouchDrag(tile, e.touches[0]);
+      });
+
       this.container.appendChild(tile);
       this.tiles.push(tile);
     });
@@ -83,6 +94,7 @@ export default class TileRack {
       "color","font-size","font-weight","boxShadow"
     ];
 
+    // --- Pointer events for desktop ---
     let draggedTile = null;
     let placeholder = null;
 
@@ -126,6 +138,51 @@ export default class TileRack {
         placeholder = null;
       }
     });
+
+    // --- Touch events for mobile ---
+    this.draggedTileTouch = null;
+    this.placeholderTouch = null;
+
+    const moveDraggedTileTouch = (e) => {
+      if (!this.draggedTileTouch) return;
+      const touch = e.touches[0];
+      this.draggedTileTouch.style.left = `${touch.clientX - this.draggedTileTouch.offsetWidth / 2}px`;
+      this.draggedTileTouch.style.top = `${touch.clientY - this.draggedTileTouch.offsetHeight / 2}px`;
+    };
+
+    document.addEventListener("touchmove", moveDraggedTileTouch);
+
+    document.addEventListener("touchend", () => {
+      if (!this.draggedTileTouch) return;
+      this.draggedTileTouch.remove();
+      this.draggedTileTouch = null;
+
+      if (this.placeholderTouch) {
+        this.placeholderTouch.classList.remove("rack-placeholder");
+        this.placeholderTouch = null;
+      }
+    });
+
+    this._startTouchDrag = (tile, touch) => {
+      this.placeholderTouch = tile;
+      this.draggedTileTouch = tile.cloneNode(true);
+
+      const computed = getComputedStyle(tile);
+      visualProps.forEach(prop => {
+        this.draggedTileTouch.style[prop] = computed.getPropertyValue(prop);
+      });
+
+      this.draggedTileTouch.style.position = "fixed";
+      this.draggedTileTouch.style.zIndex = "1000";
+      this.draggedTileTouch.style.pointerEvents = "none";
+      this.draggedTileTouch.style.opacity = "0.9";
+
+      document.body.appendChild(this.draggedTileTouch);
+      this.placeholderTouch.classList.add("rack-placeholder");
+
+      this.draggedTileTouch.style.left = `${touch.clientX - this.draggedTileTouch.offsetWidth / 2}px`;
+      this.draggedTileTouch.style.top = `${touch.clientY - this.draggedTileTouch.offsetHeight / 2}px`;
+    };
   }
 
   shuffle() {
