@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Game Launcher</title>
 <style>
   html, body {
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* prevent horizontal scroll */
-    font-family: sans-serif;
-    height: 100vh;
     width: 100vw;
+    height: 100vh;
+    overflow-x: hidden; /* only horizontal scroll disabled */
+    font-family: sans-serif;
     background: #f3f4e3;
   }
 
@@ -26,7 +26,6 @@
     justify-content: center;
     align-items: center;
     transition: transform 0.5s ease;
-    background: #f3f4e3;
     z-index: 1;
   }
 
@@ -42,21 +41,24 @@
   }
   button:hover { background: #3a539b; }
 
-  /* Game iframe container */
+  /* Game iframe overlay */
   #game-overlay {
     position: absolute;
-    top: 0; left: 100%; /* start offscreen right */
-    width: 100%;
-    height: 100%;
+    top: 0; left: 100%; /* offscreen right */
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden; /* disable scrolling */
     transition: transform 0.5s ease;
     z-index: 2;
     background: #fff;
   }
 
   #game-overlay iframe {
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     border: none;
+    overflow: hidden; /* disable scroll inside iframe */
+    display: block;
   }
 
   #close-overlay {
@@ -83,7 +85,7 @@
 
 <div id="game-overlay">
   <button id="close-overlay">✖</button>
-  <iframe id="overlay-iframe" src=""></iframe>
+  <iframe id="overlay-iframe" src="" scrolling="no"></iframe>
 </div>
 
 <script>
@@ -96,7 +98,6 @@ const closeBtn = document.getElementById("close-overlay");
 document.querySelectorAll("button[data-game]").forEach(btn => {
   btn.addEventListener("click", () => {
     iframe.src = btn.dataset.game;
-    // Animate: slide home left and overlay in
     home.style.transform = "translateX(-100%)";
     overlay.style.transform = "translateX(-100%)";
   });
@@ -106,11 +107,22 @@ document.querySelectorAll("button[data-game]").forEach(btn => {
 closeBtn.addEventListener("click", () => {
   home.style.transform = "translateX(0)";
   overlay.style.transform = "translateX(0)";
-  // Unload iframe after animation
   setTimeout(() => { iframe.src = ""; }, 500);
 });
 
-// Example: communicate with iframe
+// Disable scroll inside iframe
+iframe.addEventListener("load", () => {
+  try {
+    const doc = iframe.contentWindow.document;
+    doc.documentElement.style.overflow = "hidden";
+    doc.body.style.overflow = "hidden";
+  } catch(e) {
+    // Cross-origin iframe may throw error
+    console.warn("Cannot access iframe styles for cross-origin:", e);
+  }
+});
+
+// Receive messages from iframe
 window.addEventListener("message", (event) => {
   console.log("Message from iframe:", event.data);
 });
