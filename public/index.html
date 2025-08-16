@@ -1,134 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Game Board & Wheel</title>
-  <link rel="icon" href="data:,">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Home</title>
   <style>
-    /* 🎨 Mobile-first portrait styling */
-    html,
     body {
       margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(180deg, #fceabb, #f8b500);
-    }
-
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    /* 📦 Main container */
-    .container {
-      display: flex;
       flex-direction: column;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-      padding: 0.5rem;
-      gap: 10px;
+      gap: 20px;
     }
 
-    /* 📝 Headings */
-    h2 {
-      margin: 0.5rem 0;
-      font-size: 1.4rem;
+    h1 {
+      margin: 0;
+      font-size: 2rem;
       color: #3b3b3b;
-      text-align: center;
-      font-weight: 600;
-      text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.4);
+      text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
     }
 
-    /* 🎯 Board & Wheel styling */
-    #ScrabbleBoard {
-      width: 100%;
-      max-width: 800px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: fit-content;
-      background: #eeffe6;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      box-sizing: border-box;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      overflow: hidden;
-    }
-
-    #ScrabbleBoard canvas{
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    /* 📝 Current Word Display */
-    #CurrentWordDisplay {
-      width: 100%;
-      max-width: 800px;
-      height: 60px;
-      background: #ffffff;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-      text-align: center;
+    .game-button {
+      padding: 12px 24px;
       font-size: 1.2rem;
-      font-weight: bold;
-      letter-spacing: 2px;
-      color: #333;
-      flex-shrink: 0;
-      box-sizing: border-box;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 10px;
+      color: #fff;
+      background: #3b82f6;
+      border: none;
       border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
     }
 
-    /* 🧩 Tile Rack Container */
-    #rack-container {
-      width: 100%;
-      max-width: 800px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    /* 💻 Tablet & Desktop adjustments */
-    @media (min-width: 768px) {
-      .container {
-        max-width: 800px;
-        gap: 15px;
-      }
-
-      h2 {
-        font-size: 1.6rem;
-      }
-
-      #CurrentWordDisplay {
-        height: 70px;
-        font-size: 1.4rem;
-      }
+    .game-button:hover {
+      background: #2563eb;
+      transform: scale(1.05);
     }
   </style>
 </head>
-
 <body>
-  <div class="container">
-    <h2>Scrabble Board v3</h2>
-    <div id="ScrabbleBoard"></div>
-    <div id="CurrentWord">WORD</div>
-    <div id="rack-container"></div>
-    <div id="CurrentWord"></div>
-  </div>
+  <h1>Welcome to Game Hub</h1>
 
-  <script type="module" src="./ScrabbleGame.js"></script>
+  <a href="ScrabbleGame.html" class="game-button">Play Scrabble</a>
+  <a href="WheelGame.html" class="game-button">Play Wheel Game</a>
+  <!-- Add more game links as needed -->
+
 </body>
-
 </html>
