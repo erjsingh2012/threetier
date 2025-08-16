@@ -24,45 +24,61 @@ export default class TileRack {
     this.onTileDrop = options.onTileDrop || (() => { });
   }
 
-  _injectStyles() {
-    const style = document.createElement("style");
-    style.textContent = `
-      .tile-rack {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: calc(${this.tileSize}px * 0.12);
-        padding: calc(${this.tileSize}px * 0.25);
-        background: ${this.rackBg};
-        border-radius: calc(${this.tileSize}px * 0.25);
-        box-shadow: 0 calc(${this.tileSize}px * 0.08) calc(${this.tileSize}px * 0.2) rgba(0, 0, 0, 0.3);
-        touch-action: none;
-      }
-      .tile-rack .tile {
-        width: ${this.tileSize}px;
-        height: ${this.tileSize}px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: calc(${this.tileSize}px * 0.5);
-        font-weight: bold;
-        background: ${this.tileBg};
-        border: ${this.tileBorder};
-        border-radius: calc(${this.tileSize}px * 0.2);
-        cursor: grab;
-        user-select: none;
-        touch-action: none;
-      }
-      .tile-rack .rack-placeholder {
-        background: #ccc !important;
-        color: #888 !important;
-        cursor: default;
-        opacity: 0.6;
-        border: ${this.tileBorder}; dashed #999;
-      }
-    `;
-    document.head.appendChild(style);
-  }
+_injectStyles() {
+  const style = document.createElement("style");
+  style.textContent = `
+    .tile-rack {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: calc(${this.tileSize}px * 0.12);
+      padding: calc(${this.tileSize}px * 0.25);
+      background: #f3e6d6; /* same as boardBg: soft cream-beige */
+      border-radius: calc(${this.tileSize}px * 0.25);
+      box-shadow: 0 calc(${this.tileSize}px * 0.08) calc(${this.tileSize}px * 0.2) rgba(0, 0, 0, 0.3);
+      touch-action: none;
+    }
+
+    .tile-rack .tile {
+      width: ${this.tileSize}px;
+      height: ${this.tileSize}px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: calc(${this.tileSize}px * 0.5);
+      font-weight: bold;
+      color: #222; /* darker letters for readability */
+      background: linear-gradient(to bottom, #fff9f0, #f0e0d6); /* warm tile gradient */
+      border: 1px solid #d1bfa7; /* subtle border */
+      border-radius: calc(${this.tileSize}px * 0.2);
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      box-shadow: inset 0 1px 2px rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.2);
+      transition: transform 0.1s ease, background 0.2s ease;
+    }
+
+    .tile-rack .tile:hover {
+      background: rgba(255, 213, 79, 0.4); /* subtle hover, matches board hover */
+    }
+
+    .tile-rack .tile.occupied {
+      background: #fff3b0; /* same as board occupied tile */
+      box-shadow: 0 0 8px rgba(255, 235, 130, 0.7);
+      color: #222;
+    }
+
+    .tile-rack .rack-placeholder {
+      background: #ccc !important;
+      color: #888 !important;
+      cursor: default;
+      opacity: 0.6;
+      border: 1px dashed #999;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 
   _render() {
     this.container.innerHTML = "";
