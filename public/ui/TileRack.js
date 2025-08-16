@@ -6,7 +6,7 @@ export default class TileRack {
     this.container = container;
     this.tilesData = tiles; // Array of letters
     this.tiles = [];
-    this.tileClick = options.tileClick || (() => {});
+    this.tileClick = options.tileClick || (() => { });
 
     // Configurable options
     this.tileSize = options.tileSize || 36;           // in px
@@ -21,6 +21,7 @@ export default class TileRack {
 
     this._render();
     this._initDragAndDrop();
+    this.onTileDrop = options.onTileDrop || (() => { });
   }
 
   _injectStyles() {
@@ -73,7 +74,6 @@ export default class TileRack {
       tile.className = "tile";
       tile.textContent = letter;
 
-      // click event
       tile.addEventListener("click", () => this.tileClick(tile, letter));
 
       // touchstart for mobile
@@ -89,60 +89,58 @@ export default class TileRack {
 
   _initDragAndDrop() {
     const visualProps = [
-      "width","height","justify-content","align-items",
-      "display","background","border","border-radius",
-      "color","font-size","font-weight","boxShadow"
+      "width", "height", "justify-content", "align-items",
+      "display", "background", "border", "border-radius",
+      "color", "font-size", "font-weight", "boxShadow"
     ];
 
-    // --- Pointer events for desktop ---
-    let draggedTile = null;
-    let placeholder = null;
+    // --- Use class properties instead of local variables ---
+    this.draggedTile = null;
+    this.placeholder = null;
+    this.draggedTileTouch = null;
+    this.placeholderTouch = null;
 
     const moveDraggedTile = (e) => {
-      if (!draggedTile) return;
-      draggedTile.style.left = `${e.clientX - draggedTile.offsetWidth / 2}px`;
-      draggedTile.style.top = `${e.clientY - draggedTile.offsetHeight / 2}px`;
+      if (!this.draggedTile) return;
+      this.draggedTile.style.left = `${e.clientX - this.draggedTile.offsetWidth / 2}px`;
+      this.draggedTile.style.top = `${e.clientY - this.draggedTile.offsetHeight / 2}px`;
     };
 
     this.container.addEventListener("pointerdown", (e) => {
       if (!e.target.classList.contains("tile")) return;
 
-      placeholder = e.target;
-      draggedTile = e.target.cloneNode(true);
+      this.placeholder = e.target;
+      this.draggedTile = e.target.cloneNode(true);
 
       const computed = getComputedStyle(e.target);
       visualProps.forEach(prop => {
-        draggedTile.style[prop] = computed.getPropertyValue(prop);
+        this.draggedTile.style[prop] = computed.getPropertyValue(prop);
       });
 
-      draggedTile.style.position = "fixed";
-      draggedTile.style.zIndex = "1000";
-      draggedTile.style.pointerEvents = "none";
-      draggedTile.style.opacity = "0.9";
+      this.draggedTile.style.position = "fixed";
+      this.draggedTile.style.zIndex = "1000";
+      this.draggedTile.style.pointerEvents = "none";
+      this.draggedTile.style.opacity = "0.9";
 
-      document.body.appendChild(draggedTile);
-      placeholder.classList.add("rack-placeholder");
+      document.body.appendChild(this.draggedTile);
+      this.placeholder.classList.add("rack-placeholder");
 
       moveDraggedTile(e);
     });
 
     document.addEventListener("pointermove", moveDraggedTile);
 
-    document.addEventListener("pointerup", () => {
-      if (!draggedTile) return;
-      draggedTile.remove();
-      draggedTile = null;
-
-      if (placeholder) {
-        placeholder.classList.remove("rack-placeholder");
-        placeholder = null;
+    document.addEventListener("pointerup", (e) => {
+      if (this.draggedTile && this.placeholder) {
+        this._handleDrop(this.draggedTile.textContent, e.clientX, e.clientY, this.placeholder);
+        this.draggedTile.remove();
+        this.draggedTile = null;
+        this.placeholder.classList.remove("rack-placeholder");
+        this.placeholder = null;
       }
     });
 
-    // --- Touch events for mobile ---
-    this.draggedTileTouch = null;
-    this.placeholderTouch = null;
-
+    // --- Touch events ---
     const moveDraggedTileTouch = (e) => {
       if (!this.draggedTileTouch) return;
       const touch = e.touches[0];
@@ -152,12 +150,12 @@ export default class TileRack {
 
     document.addEventListener("touchmove", moveDraggedTileTouch);
 
-    document.addEventListener("touchend", () => {
-      if (!this.draggedTileTouch) return;
-      this.draggedTileTouch.remove();
-      this.draggedTileTouch = null;
-
-      if (this.placeholderTouch) {
+    document.addEventListener("touchend", (e) => {
+      if (this.draggedTileTouch && this.placeholderTouch) {
+        const touch = e.changedTouches[0];
+        this._handleDrop(this.draggedTileTouch.textContent, touch.clientX, touch.clientY, this.placeholderTouch);
+        this.draggedTileTouch.remove();
+        this.draggedTileTouch = null;
         this.placeholderTouch.classList.remove("rack-placeholder");
         this.placeholderTouch = null;
       }
@@ -185,6 +183,11 @@ export default class TileRack {
     };
   }
 
+  // Helper to trigger drop callback
+  _handleDrop(letter, clientX, clientY, placeholderTile) {
+    if (this.onTileDrop) this.onTileDrop(letter, clientX, clientY);
+  }
+
   shuffle() {
     for (let i = this.tilesData.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -204,5 +207,34 @@ export default class TileRack {
     this.tilesData = letters;
     this._render();
     this._initDragAndDrop();
+  }
+
+  enableBoardDrop(boardInstance) {
+    if (!boardInstance) return;
+
+    const handleDrop = (letter, clientX, clientY, placeholderTile) => {
+      // Trigger external callback
+      this.onTileDrop(letter, clientX, clientY);
+
+      const placed = boardInstance.placeTileFromRack(letter, clientX, clientY);
+
+      if (placed) {
+        const idx = this.tiles.indexOf(placeholderTile);
+        if (idx >= 0) this.setTile(idx, "");
+      }
+    };
+
+    document.addEventListener("pointerup", (e) => {
+      if (this.draggedTile && this.placeholder) {
+        handleDrop(this.draggedTile.textContent, e.clientX, e.clientY, this.placeholder);
+      }
+    });
+
+    document.addEventListener("touchend", (e) => {
+      if (this.draggedTileTouch && this.placeholderTouch) {
+        const touch = e.changedTouches[0];
+        handleDrop(this.draggedTileTouch.textContent, touch.clientX, touch.clientY, this.placeholderTouch);
+      }
+    });
   }
 }

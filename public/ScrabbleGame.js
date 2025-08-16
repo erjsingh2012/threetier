@@ -36,16 +36,22 @@ function initApp() {
     }
   );
 
-    const rackContainer = document.getElementById("rack-container");
-
-    const myRack = new TileRack(rackContainer, ["A","B","C","D","E","F","G"], {
-      tileClick: (tile, letter) => console.log("tileleClicked", tile,letter)
-    });
-
-    document.getElementById("shuffle-btn").addEventListener("click", () => {
-      myRack.shuffle();
-    });
-
+  const rackContainer = document.getElementById("rack-container");
+  const myRack = new TileRack(rackContainer, ["A", "B", "C", "D", "E", "F", "G"], {
+    tileClick: (tile, letter) => console.log("tileleClicked", tile, letter),
+    onTileDrop: (letter, clientX, clientY) => {
+      console.log("tileDropped", letter, clientX, clientY);
+      const placed = scrabbleBoard.placeTileFromRack(letter, clientX, clientY);
+      if (placed) {
+        // remove from rack
+        const idx = myRack.tilesData.indexOf(letter);
+        if (idx >= 0) myRack.setTile(idx, "");
+      }
+      // else tile stays on rack automatically
+    }
+  });
+  // Enable dropping tiles onto board
+  myRack.enableBoardDrop(scrabbleBoard);
 }
 
 // Start app

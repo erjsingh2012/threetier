@@ -1,4 +1,4 @@
-// scrabble-board.js
+// ScrabbleBoard.js
 export default class ScrabbleBoard {
   static injected = false;
 
@@ -6,7 +6,7 @@ export default class ScrabbleBoard {
     this.container = container;
     this.boardData = boardData;
     this.tiles = [];
-    this.tileClick = options.tileClick || (() => {});
+    this.tileClick = options.tileClick || (() => { });
 
     // Configurable options
     this.boardWidth = options.boardWidth || 500;           // Board max-width in px
@@ -25,15 +25,12 @@ export default class ScrabbleBoard {
   _injectStyles() {
     const style = document.createElement("style");
     style.textContent = `
-    #ScrabbleBoard {
-      display: none;
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center; /* center horizontally */
-      align-items:flex-start;     /* center vertically */
-      box-sizing: border-box;  /* include padding in total size */
+      #ScrabbleBoard {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        width: 100%;
+        box-sizing: border-box;
       }
       .board {
         display: grid;
@@ -59,7 +56,7 @@ export default class ScrabbleBoard {
         user-select: none;
         text-transform: uppercase;
         border-radius: 10px;
-        box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2), 0 2px 4px rgba(0, 0, 0, 0.2);
+        box-shadow: inset 0 1px 2px rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.2);
         border: 1px solid #ccc;
         transition: transform 0.1s ease;
       }
@@ -70,7 +67,7 @@ export default class ScrabbleBoard {
       .TW, .DW, .TL, .DL {
         font-weight: bold;
         color: #fff;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        text-shadow: 0 1px 2px rgba(0,0,0,0.3);
       }
     `;
     document.head.appendChild(style);
@@ -81,18 +78,20 @@ export default class ScrabbleBoard {
     const board = document.createElement("div");
     board.className = "board";
 
+    this.tiles = [];
     this.boardData.forEach(row => {
       row.forEach(cell => {
         const tile = document.createElement("div");
         tile.className = "tile" + (cell ? ` ${cell}` : "");
         tile.textContent = cell || "";
         tile.addEventListener("click", () => this.tileClick(tile, cell));
-        this.tiles.push(tile);
         board.appendChild(tile);
+        this.tiles.push(tile);
       });
     });
 
     this.container.appendChild(board);
+    this._addTileHoverListeners();
   }
 
   setTile(x, y, letter = "", bonus = "") {
@@ -107,5 +106,48 @@ export default class ScrabbleBoard {
     this.boardData.forEach((row, y) => {
       row.forEach((cell, x) => this.setTile(x, y, "", cell));
     });
+  }
+
+  _addTileHoverListeners() {
+    const highlightColor = "#ffd54f"; // hovered tile color
+    this.tiles.forEach(tile => {
+      const originalBg = tile.style.background || this.tileBg;
+
+      tile.addEventListener("mouseenter", () => {
+        tile.style.background = highlightColor;
+      });
+      tile.addEventListener("mouseleave", () => {
+        tile.style.background = originalBg;
+      });
+
+      tile.addEventListener("touchstart", () => {
+        tile.style.background = highlightColor;
+      });
+      tile.addEventListener("touchend", () => {
+        tile.style.background = originalBg;
+      });
+    });
+  }
+
+  placeTileFromRack(letter, clientX, clientY) {
+    // Find tile under pointer
+    const boardTile = this.tiles.find(t => {
+      const rect = t.getBoundingClientRect();
+      return clientX >= rect.left && clientX <= rect.right &&
+             clientY >= rect.top && clientY <= rect.bottom;
+    });
+
+    if (!boardTile) return false;
+
+    const idx = this.tiles.indexOf(boardTile);
+    const x = idx % this.boardData[0].length;
+    const y = Math.floor(idx / this.boardData[0].length);
+
+    if (!boardTile.textContent.trim()) {
+      this.setTile(x, y, letter);
+      return true;
+    }
+
+    return false;
   }
 }
