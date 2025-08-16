@@ -1,101 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game Launcher</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: #f3f4e3;
-      margin: 0;
-    }
-    button {
-      margin: 1rem;
-      padding: 1rem 2rem;
-      font-size: 1.2rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background: #4b6cb7;
-      color: white;
-    }
-    button:hover {
-      background: #3a539b;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Launcher</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* prevent horizontal scroll */
+    font-family: sans-serif;
+    height: 100vh;
+    width: 100vw;
+    background: #f3f4e3;
+  }
 
-    /* Full-screen overlay */
-    #game-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 9999;
-      background: #fff;
-    }
-    #game-overlay iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-    #close-overlay {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 10000;
-      font-size: 1.5rem;
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #ff5c5c;
-      color: #fff;
-    }
-    #close-overlay:hover {
-      background: #e04b4b;
-    }
-  </style>
+  /* Home page container */
+  #home-content {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.5s ease;
+    background: #f3f4e3;
+    z-index: 1;
+  }
+
+  button {
+    margin: 1rem;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #4b6cb7;
+    color: white;
+  }
+  button:hover { background: #3a539b; }
+
+  /* Game iframe container */
+  #game-overlay {
+    position: absolute;
+    top: 0; left: 100%; /* start offscreen right */
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s ease;
+    z-index: 2;
+    background: #fff;
+  }
+
+  #game-overlay iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  #close-overlay {
+    position: absolute;
+    top: 10px; right: 10px;
+    z-index: 10000;
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #ff5c5c; color: #fff;
+  }
+  #close-overlay:hover { background: #e04b4b; }
+</style>
 </head>
 <body>
 
+<div id="home-content">
   <h1>Choose a Game</h1>
-
   <button data-game="WheelGame.html">Play Wheel Game</button>
   <button data-game="ScrabbleGame.html">Play Scribble Game</button>
+</div>
 
-  <!-- Full-screen overlay -->
-  <div id="game-overlay">
-    <button id="close-overlay">✖</button>
-    <iframe id="overlay-iframe" src=""></iframe>
-  </div>
+<div id="game-overlay">
+  <button id="close-overlay">✖</button>
+  <iframe id="overlay-iframe" src=""></iframe>
+</div>
 
-  <script>
-    const overlay = document.getElementById("game-overlay");
-    const iframe = document.getElementById("overlay-iframe");
-    const closeBtn = document.getElementById("close-overlay");
+<script>
+const home = document.getElementById("home-content");
+const overlay = document.getElementById("game-overlay");
+const iframe = document.getElementById("overlay-iframe");
+const closeBtn = document.getElementById("close-overlay");
 
-    // Open game in overlay
-    document.querySelectorAll("button[data-game]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const game = btn.getAttribute("data-game");
-        iframe.src = game;
-        overlay.style.display = "block";
-      });
-    });
+// Open game with slide animation
+document.querySelectorAll("button[data-game]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    iframe.src = btn.dataset.game;
+    // Animate: slide home left and overlay in
+    home.style.transform = "translateX(-100%)";
+    overlay.style.transform = "translateX(-100%)";
+  });
+});
 
-    // Close overlay
-    closeBtn.addEventListener("click", () => {
-      overlay.style.display = "none";
-      iframe.src = ""; // unload game
-    });
-  </script>
+// Close overlay and return to home
+closeBtn.addEventListener("click", () => {
+  home.style.transform = "translateX(0)";
+  overlay.style.transform = "translateX(0)";
+  // Unload iframe after animation
+  setTimeout(() => { iframe.src = ""; }, 500);
+});
+
+// Example: communicate with iframe
+window.addEventListener("message", (event) => {
+  console.log("Message from iframe:", event.data);
+});
+</script>
 
 </body>
 </html>
