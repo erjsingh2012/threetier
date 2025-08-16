@@ -1,6 +1,5 @@
 import LetterWheel from './ui/LetterWheel.js';
 import ScrabbleBoard from './ui/ScrabbleBoard.js';
-import TileRack from './ui/TileRack.js';
 
 // Main initialization
 function initApp() {

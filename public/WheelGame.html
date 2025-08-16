@@ -14,17 +14,17 @@
       padding: 0;
       height: 100%;
       overflow: hidden;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(180deg, #fceabb, #f8b500);
     }
 
     body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(180deg, #fceabb, #f8b500);
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
     }
 
-    /* 📦 Main container */
     .container {
       display: flex;
       flex-direction: column;
@@ -33,48 +33,54 @@
       height: 100%;
       max-width: 100%;
       box-sizing: border-box;
-      padding: 0.5rem;
-      gap: 10px;
     }
 
-    /* 📝 Headings */
     h2 {
       margin: 0.5rem 0;
       font-size: 1.4rem;
       color: #3b3b3b;
       text-align: center;
       font-weight: 600;
-      text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.4);
+      text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.4);
     }
 
-    /* 🎯 Board & Wheel styling */
-    #ScrabbleBoard {
-      width: 100%;
-      max-width: 800px;
+    /* 📦 Board & Wheel Containers */
+    #ScrabbleBoard,
+    #LetterWheel {
+      flex: 1;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      height: fit-content;
-      background: #eeffe6;
+      width: 100%;
+      background: #fff7e6;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       box-sizing: border-box;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      overflow: hidden;
     }
 
-    #ScrabbleBoard canvas{
-      width: 100%;
-      height: 100%;
+    #ScrabbleBoard canvas,
+    #LetterWheel canvas {
+      max-width: 100%;
+      max-height: 100%;
       object-fit: contain;
     }
 
+    /* 💻 Tablet & desktop adjustments */
+    @media (min-width: 768px) {
+      .container {
+        max-width: 800px;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+      }
+    }
+
+
     /* 📝 Current Word Display */
-    #CurrentWordDisplay {
+    #CurrentWord {
       width: 100%;
-      max-width: 800px;
       height: 60px;
-      background: #ffffff;
+      background: #fff;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
       text-align: center;
       font-size: 1.2rem;
@@ -83,38 +89,11 @@
       color: #333;
       flex-shrink: 0;
       box-sizing: border-box;
+
+      /* ✅ Vertical align center */
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 10px;
-      border-radius: 8px;
-    }
-
-    /* 🧩 Tile Rack Container */
-    #rack-container {
-      width: 100%;
-      max-width: 800px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    /* 💻 Tablet & Desktop adjustments */
-    @media (min-width: 768px) {
-      .container {
-        max-width: 800px;
-        gap: 15px;
-      }
-
-      h2 {
-        font-size: 1.6rem;
-      }
-
-      #CurrentWordDisplay {
-        height: 70px;
-        font-size: 1.4rem;
-      }
     }
   </style>
 </head>
@@ -124,11 +103,10 @@
     <h2>Scrabble Board v3</h2>
     <div id="ScrabbleBoard"></div>
     <div id="CurrentWord">WORD</div>
-    <div id="rack-container"></div>
-    <div id="CurrentWord"></div>
+    <div id="LetterWheel"></div>
   </div>
 
-  <script type="module" src="./ScrabbleGame.js"></script>
+  <script type="module" src="./app.js"></script>
 </body>
 
 </html>
