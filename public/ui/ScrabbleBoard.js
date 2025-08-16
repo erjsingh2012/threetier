@@ -11,8 +11,8 @@ export default class ScrabbleBoard {
     // Configurable options
     this.boardWidth = options.boardWidth || 500;           // Board max-width in px
     this.tileWidth = options.tileWidth || "90%";           // Tile width relative to cell
-    this.boardBg = options.boardBg || "#92ceecff";         // Board background color
-    this.tileBg = options.tileBg || "linear-gradient(to bottom, #e8f4d0, #b5f9f467)"; // Tile background
+    this.boardBg = options.boardBg || "#f3e6d6";         // Board background color
+    this.tileBg = options.tileBg || "linear-gradient(to bottom, #f0f0f0, #e0e0e0);"; // Tile background
 
     if (!ScrabbleBoard.injected) {
       this._injectStyles();
@@ -46,24 +46,24 @@ export default class ScrabbleBoard {
       .tile {
         width: ${this.tileWidth};
         aspect-ratio: 1/1;
-        font-size: 0.7rem;
-        font-weight: bold;
-        color: #fff;
+        font-size: 1.2rem;
+        font-weight: bold; 
+        color: #222; /* darker letters for readability */
         background: ${this.tileBg};
         display: flex;
         justify-content: center;
         align-items: center;
         user-select: none;
         text-transform: uppercase;
-        border-radius: 10px;
-        box-shadow: inset 0 1px 2px rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.2);
+        border-radius: 5px;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2);
         border: 1px solid #ccc;
         transition: transform 0.1s ease;
       }
-      .TW { background: #c62828; }
-      .DW { background: #f9a825; }
-      .TL { background: #1565c0; }
-      .DL { background: #6a1b9a; }
+      .TW { background: linear-gradient(to bottom, #e57373, #e53935); color: #fff; }
+      .DW { background: linear-gradient(to bottom, #ffcc80, #ffb74d); color: #fff; }
+      .TL { background: linear-gradient(to bottom, #64b5f6, #42a5f5); color: #fff; }
+      .DL { background: linear-gradient(to bottom, #ce93d8, #ab47bc); color: #fff; }  
       .TW, .DW, .TL, .DL {
         font-weight: bold;
         color: #fff;
@@ -71,6 +71,8 @@ export default class ScrabbleBoard {
       }
       .tile.occupied {
         background: #34ed06ff !important; /* glow color */
+        color: #222; /* darker letters */
+        font-weight: bold;
         box-shadow: 0 2px 6px rgba(0,0,0,0.3);
       }
     `;
