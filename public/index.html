@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +22,7 @@
       margin: 0;
       font-size: 2rem;
       color: #3b3b3b;
-      text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
+      text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.4);
     }
 
     .game-button {
@@ -42,12 +43,31 @@
     }
   </style>
 </head>
+
 <body>
   <h1>Welcome to Game Hub</h1>
 
-  <a href="ScrabbleGame.html" class="game-button">Play Scrabble</a>
-  <a href="WheelGame.html" class="game-button">Play Wheel Game</a>
-  <!-- Add more game links as needed -->
+  <button class="game-button" id="scrabbleBtn">Play Scrabble</button>
+  <button class="game-button" id="wheelBtn">Play Wheel Game</button>
+
+  <script>
+    // Example racks (can be different for each game)
+    const scrabbleRack = ["J", "P", "I", "O", "U", "L", "N"];
+    const wheelRack = ["J", "P", "Z", "A", "B", "C", "D"];
+
+    // Scrabble
+    document.getElementById('scrabbleBtn').addEventListener('click', () => {
+      localStorage.setItem('scrabbletileRack', JSON.stringify(scrabbleRack));
+      window.location.href = "ScrabbleGame.html"; // navigate after save
+    });
+
+    // Wheel
+    document.getElementById('wheelBtn').addEventListener('click', () => {
+      localStorage.setItem('wheeltileRack', JSON.stringify(wheelRack));
+      window.location.href = "WheelGame.html"; // navigate after save
+    });
+  </script>
 
 </body>
+
 </html>

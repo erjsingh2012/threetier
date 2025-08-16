@@ -37,7 +37,9 @@ function initApp() {
   );
 
   const rackContainer = document.getElementById("rack-container");
-  const myRack = new TileRack(rackContainer, ["A", "B", "C", "D", "E", "F", "G"], {
+  const storedRack = JSON.parse(localStorage.getItem('scrabbletileRack') || '["A","B","C","D","E","F","G"]');
+  console.log("Loaded rack from storage:", storedRack);
+  const myRack = new TileRack(rackContainer, storedRack, {
     tileClick: (tile, letter) => console.log("tileleClicked", tile, letter),
     onTileDrop: (letter, clientX, clientY) => {
       console.log("tileDropped", letter, clientX, clientY);

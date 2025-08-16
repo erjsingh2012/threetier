@@ -9,9 +9,12 @@ function initApp() {
     currentWordEl.textContent = word || "—";
   }
 
+  // ✅ Load rack from storage (fallback to default if not found)
+  const storedRack = JSON.parse(localStorage.getItem('wheeltileRack') || '["A","B","C","D","E","F","G"]');
+  console.log("Loaded rack from storage:", storedRack);
   let letterWheel = new LetterWheel(
     document.getElementById("LetterWheel"),
-    ["A", "B", "C", "D", "E", "F", "G"],
+    storedRack,
     {
       size: 180,
       letterSize: 36,
