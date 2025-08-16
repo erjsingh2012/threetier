@@ -8,19 +8,19 @@
   <style>
     :root {
       --tile-size: 70px;
-      /* ✅ Tile size */
       --tile-gap: calc(var(--tile-size) * 0.12);
-
       --rack-width: 600px;
-      /* ✅ Rack width */
       --rack-height: 120px;
-      /* ✅ Rack height */
     }
 
     body {
       margin: 0;
       height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       font-family: sans-serif;
+      background: #f5f5f5;
     }
 
     #rack {
@@ -53,15 +53,10 @@
 
     .rack-placeholder {
       background: #ccc !important;
-      /* greyed out */
       color: #888 !important;
       cursor: default;
       opacity: 0.6;
       border: 3px dashed #999;
-      /* dashed border to show it’s empty */
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
   </style>
 </head>
@@ -70,106 +65,82 @@
   <div id="rack"></div>
 
   <script>
-    // ✅ Hard-coded 7 letters
     const rackTiles = ["A", "B", "C", "D", "E", "F", "G"];
+
+    const visualProps = [
+      "width",
+      "height",
+      "justify-content",
+      "align-items",
+      "display",
+      "background",
+      "border",
+      "border-radius",
+      "color",
+      "font-size",
+      "font-weight",
+      "boxShadow"
+    ];
 
     const populateRack = (tiles) => {
       const rack = document.getElementById("rack");
       rack.innerHTML = "";
-      tiles.forEach((letter) => {
+      tiles.forEach(letter => {
         const tile = document.createElement("span");
         tile.textContent = letter;
         rack.appendChild(tile);
       });
     };
 
-    // Drag logic
     let draggedTile = null;
-    let dragOffsetX = 0;
-    let dragOffsetY = 0;
-
     let placeholder = null;
 
     const initDraggableRackTiles = () => {
       const rack = document.getElementById("rack");
 
+      const moveDraggedTile = (e) => {
+        if (!draggedTile) return;
+        draggedTile.style.left = `${e.clientX - draggedTile.offsetWidth / 2}px`;
+        draggedTile.style.top = `${e.clientY - draggedTile.offsetHeight / 2}px`;
+      };
+
       rack.addEventListener("pointerdown", (e) => {
-        const target = e.target;
-        if (target.tagName !== "SPAN") return;
-        placeholder = target;
-        draggedTile = target.cloneNode(true);
-        // ✅ Minimal base styles for dragging
+        if (e.target.tagName !== "SPAN") return;
+
+        placeholder = e.target;
+        draggedTile = e.target.cloneNode(true);
+
+        // Copy only visual styles
+        const computed = getComputedStyle(e.target);
+        visualProps.forEach(prop => {
+          draggedTile.style[prop] = computed.getPropertyValue(prop);
+        });
+
         draggedTile.style.position = "fixed";
         draggedTile.style.zIndex = "1000";
         draggedTile.style.pointerEvents = "none";
         draggedTile.style.opacity = "0.9";
 
-        // ✅ Only copy "visual feel" styles
-        const computed = getComputedStyle(target);
-        const visualProps = [
-          "width",
-          "height",
-          "justify-content",
-          "align-items",
-          "display",
-          "background",
-          "border",
-          "border-radius",
-          "color",
-          "font-size",
-          "font-weight",
-          "boxShadow"
-        ];
-
-        visualProps.forEach((prop) => {
-          draggedTile.style[prop] = computed.getPropertyValue(prop);
-        });
-        // ✅ scale relative to tile size
-        const tileSize = parseInt(getComputedStyle(target).width);
-        const scaleFactor = 2 * (tileSize / 60); // same as before
-
-        draggedTile.style.transform = `scale(${scaleFactor})`;
-
-        // ✅ Use CSS class placeholder
-        placeholder = target;
+        document.body.appendChild(draggedTile);
         placeholder.classList.add("rack-placeholder");
 
-        document.body.appendChild(draggedTile);
-
-        dragOffsetX = tileSize / 2;
-        dragOffsetY = tileSize / 2;
         moveDraggedTile(e);
       });
 
-      document.addEventListener("pointermove", (e) => {
-        if (!draggedTile) return;
-        moveDraggedTile(e);
-      });
-
-
-      const moveDraggedTile = (e) => {
-        if (!draggedTile) return;
-        draggedTile.style.left = `${e.clientX - dragOffsetX}px`;
-        draggedTile.style.top = `${e.clientY - dragOffsetY}px`;
-      };
+      document.addEventListener("pointermove", moveDraggedTile);
 
       document.addEventListener("pointerup", () => {
-        console.log("pointerup");
-        if (draggedTile) {
-          // ✅ Remove the cloned dragged tile
-          draggedTile.remove();
-          draggedTile = null;
+        if (!draggedTile) return;
+        draggedTile.remove();
+        draggedTile = null;
 
-          // Restore placeholder
-          if (placeholder) {
-            placeholder.classList.remove("rack-placeholder");
-            placeholder = null;
-          }
+        if (placeholder) {
+          placeholder.classList.remove("rack-placeholder");
+          placeholder = null;
         }
       });
     };
 
-    // Init
     populateRack(rackTiles);
     initDraggableRackTiles();
   </script>
