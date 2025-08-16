@@ -1,4 +1,3 @@
-import LetterWheel from './ui/LetterWheel.js';
 import ScrabbleBoard from './ui/ScrabbleBoard.js';
 import TileRack from './ui/TileRack.js';
 
@@ -9,17 +8,6 @@ function initApp() {
   function setCurrentWord(word) {
     currentWordEl.textContent = word || "—";
   }
-
-  let letterWheel = new LetterWheel(
-    document.getElementById("LetterWheel"),
-    ["A", "B", "C", "D", "E", "F", "G"],
-    {
-      size: 180,
-      letterSize: 36,
-      onWordSubmit: words => console.log("App Submitted: " + words),
-      onSelectionChange: letters => setCurrentWord(letters.join(""))
-    }
-  );
 
   // Initialize Scrabble Board
   let scrabbleBoard = new ScrabbleBoard(
@@ -47,6 +35,16 @@ function initApp() {
       }
     }
   );
+
+    const rackContainer = document.getElementById("rack-container");
+
+    const myRack = new TileRack(rackContainer, ["A","B","C","D","E","F","G"], {
+      tileClick: (tile, letter) => console.log("tileleClicked", tile,letter)
+    });
+
+    document.getElementById("shuffle-btn").addEventListener("click", () => {
+      myRack.shuffle();
+    });
 
 }
 
