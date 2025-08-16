@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tile Rack Demo</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: sans-serif;
+      background: #f5f5f5;
+      gap: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="rack-container"></div>
+  <button id="shuffle-btn">Shuffle</button>
+
+  <script type="module">
+    import TileRack from '../TileRack.js';
+
+    const rackContainer = document.getElementById("rack-container");
+
+    const myRack = new TileRack(rackContainer, ["A","B","C","D","E","F","G"], {
+      tileClick: (tile, letter) => console.log("tileleClicked", tile,letter)
+    });
+
+    document.getElementById("shuffle-btn").addEventListener("click", () => {
+      myRack.shuffle();
+    });
+  </script>
+</body>
+</html>
