@@ -50,6 +50,7 @@
       cursor: grab;
       user-select: none;
     }
+
     .rack-placeholder {
       background: #ccc !important;
       /* greyed out */
@@ -87,13 +88,15 @@
     let dragOffsetX = 0;
     let dragOffsetY = 0;
 
+    let placeholder = null;
+
     const initDraggableRackTiles = () => {
       const rack = document.getElementById("rack");
 
       rack.addEventListener("pointerdown", (e) => {
         const target = e.target;
         if (target.tagName !== "SPAN") return;
-
+        placeholder = target;
         draggedTile = target.cloneNode(true);
         // ✅ Minimal base styles for dragging
         draggedTile.style.position = "fixed";
@@ -143,18 +146,27 @@
         moveDraggedTile(e);
       });
 
-      document.addEventListener("pointerup", () => {
-        if (draggedTile) {
-          draggedTile.remove();
-          draggedTile = null;
-        }
-      });
 
       const moveDraggedTile = (e) => {
         if (!draggedTile) return;
         draggedTile.style.left = `${e.clientX - dragOffsetX}px`;
         draggedTile.style.top = `${e.clientY - dragOffsetY}px`;
       };
+
+      document.addEventListener("pointerup", () => {
+        console.log("pointerup");
+        if (draggedTile) {
+          // ✅ Remove the cloned dragged tile
+          draggedTile.remove();
+          draggedTile = null;
+
+          // Restore placeholder
+          if (placeholder) {
+            placeholder.classList.remove("rack-placeholder");
+            placeholder = null;
+          }
+        }
+      });
     };
 
     // Init
