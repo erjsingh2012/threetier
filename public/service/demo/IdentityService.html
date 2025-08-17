@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IdentityService Demo</title>
+  <style>
+    body { 
+      font-family: sans-serif; 
+      margin: 10px; 
+      background: #f4f4f4; 
+      max-width: 600px;
+      margin: auto;
+    }
+    h1, h2 { color: #333; font-size: 1.2rem; }
+    .card { 
+      background: #fff; 
+      padding: 10px; 
+      border-radius: 6px; 
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+      margin-bottom: 15px;
+    }
+    button { 
+      margin: 5px; 
+      padding: 10px 15px; 
+      font-size: 1rem; 
+      border: none; 
+      border-radius: 5px;
+      background: #007bff; 
+      color: white; 
+      cursor: pointer;
+    }
+    button:hover { background: #0056b3; }
+    pre { 
+      white-space: pre-wrap; 
+      word-break: break-word; 
+      font-size: 0.9rem; 
+      line-height: 1.4em;
+    }
+    .key { color: #222; font-weight: bold; }
+    .string { color: #d14; }
+    .number { color: #1c00cf; }
+    .boolean { color: #aa0d91; }
+    .null { color: #777; }
+  </style>
+</head>
+<body>
+  <h1>Identity Service Demo</h1>
+
+  <div class="card">
+    <button id="initBtn">Initialize Identity</button>
+    <button id="deleteBtn">Delete Identity</button>
+    <button id="clearStorageBtn" style="background:#dc3545;">Clear Local Storage</button>
+  </div>
+
+  <div class="card">
+    <h2>📱 Device Fingerprint</h2>
+    <pre id="fingerprint">Not generated yet</pre>
+  </div>
+
+  <div class="card">
+    <h2>📡 Server Response</h2>
+    <pre id="serverResponse">No response yet</pre>
+  </div>
+
+  <div class="card">
+    <h2>💾 Stored Data</h2>
+    <pre id="storageData">Nothing saved yet</pre>
+  </div>
+
+  <script type="module">
+    import { StorageManager } from "../../resources/managers/StorageManager.js";
+    import { ApiManager } from "../../resources/managers/ApiManager.js";
+    import { IdentityService } from "../IdentityService.js";
+
+    // Mock server response for demo (replace with your backend)
+    const mockServer = async (fingerprint) => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve({
+            user: {
+              id: "user_" + Math.random().toString(36).slice(2, 8),
+              username: "demoUser",
+              password: "securePass123",
+              fingerprintReceived: fingerprint
+            }
+          });
+        }, 1000);
+      });
+    };
+
+    // Patch ApiManager.post to use mock server (demo only)
+    ApiManager.prototype.post = async function(endpoint, data) {
+      if (endpoint === "/identity/register") {
+        return mockServer(data.fingerprint);
+      }
+      return { error: "Unknown endpoint" };
+    };
+
+    // Setup Managers
+    const storageManager = new StorageManager();
+    const apiManager = new ApiManager();
+    const identityService = new IdentityService(storageManager, apiManager);
+
+    await storageManager.init();
+    await apiManager.init();
+    await identityService.init();
+
+    // UI Elements
+    const fpEl = document.getElementById("fingerprint");
+    const srvEl = document.getElementById("serverResponse");
+    const storeEl = document.getElementById("storageData");
+    const initBtn = document.getElementById("initBtn");
+    const delBtn = document.getElementById("deleteBtn");
+    const clearBtn = document.getElementById("clearStorageBtn");
+
+    // ✅ Pretty print JSON with colors
+    function prettyJSON(obj) {
+      if (!obj) return "—";
+      const json = JSON.stringify(obj, null, 2);
+      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\\s*:)?|\b(true|false|null)\b|\b\d+(\.\d+)?\b)/g, match => {
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) return `<span class="key">${match}</span>`;
+          return `<span class="string">${match}</span>`;
+        } else if (/true|false/.test(match)) {
+          return `<span class="boolean">${match}</span>`;
+        } else if (/null/.test(match)) {
+          return `<span class="null">${match}</span>`;
+        }
+        return `<span class="number">${match}</span>`;
+      });
+    }
+
+    function refreshUI() {
+      fpEl.innerHTML = prettyJSON(identityService.getIdentity());
+      srvEl.innerHTML = prettyJSON(identityService.getUser());
+      storeEl.innerHTML = localStorage.length 
+        ? prettyJSON({ ...localStorage }) 
+        : "Nothing saved yet";
+    }
+
+    initBtn.addEventListener("click", async () => {
+      await identityService.init();
+      refreshUI();
+    });
+
+    delBtn.addEventListener("click", () => {
+      identityService.deleteIdentity();
+      identityService.deleteUser();
+      refreshUI();
+    });
+
+    clearBtn.addEventListener("click", () => {
+      localStorage.clear();
+      refreshUI();
+    });
+
+    // Show stored data on load
+    refreshUI();
+  </script>
+</body>
+</html>
