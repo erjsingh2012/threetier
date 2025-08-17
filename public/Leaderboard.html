@@ -1,0 +1,126 @@
+<!DOCTYPE html> <!-- Tells the browser this is HTML5 -->
+<html lang="en"> <!-- Root HTML element, language set to English -->
+
+<head>
+  <meta charset="UTF-8"> <!-- Character encoding: UTF-8 (supports emojis & most scripts) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Makes page responsive on mobile -->
+  <title>Leaderboard</title> <!-- Title shown in browser tab -->
+
+  <style>
+    body { /* Whole page styling */
+      font-family: Arial, sans-serif; /* Clean readable font */
+      background: #f0f4f8; /* Light bluish-gray background */
+      display: flex; /* Use flexbox layout */
+      justify-content: center; /* Center content horizontally */
+      align-items: center; /* Center content vertically */
+      height: 100vh; /* Take full height of screen */
+      margin: 0; /* Remove default margin */
+    }
+
+    .leaderboard { /* Outer leaderboard box */
+      width: 320px; /* Fixed width */
+      background: #fff; /* White background */
+      border-radius: 15px; /* Rounded corners */
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1); /* Drop shadow effect */
+      display: flex; /* Flex container */
+      flex-direction: column; /* Stack children vertically */
+      overflow: hidden; /* Hide overflow (like scrollbars outside box) */
+    }
+
+    .leaderboard h1 { /* Heading style */
+      text-align: center; /* Center text */
+      padding: 10px; /* Inner spacing */
+      margin: 0; /* Remove default margin */
+      background: #2196f3; /* Blue background */
+      color: white; /* White text */
+      font-size: 20px; /* Text size */
+      position: sticky; /* Stays visible when scrolling */
+      top: 0; /* Stick to top */
+      z-index: 3; /* Stay above list items */
+    }
+
+    ul { /* The list of players */
+      list-style: none; /* Remove bullets */
+      margin: 0; /* Remove margin */
+      padding: 0; /* Remove padding */
+      max-height: 400px; /* Limit height */
+      overflow-y: auto; /* Scroll vertically if too long */
+      position: relative; /* Reference point for sticky items */
+    }
+
+    li { /* Each player row */
+      display: flex; /* Horizontal layout */
+      align-items: center; /* Center vertically */
+      justify-content: space-between; /* Spread content */
+      padding: 12px; /* Inner spacing */
+      border-bottom: 1px solid #eee; /* Divider line */
+      background: #fdfdfd; /* Light background */
+    }
+
+    li:hover { /* Hover effect */
+      background: #e0f7fa; /* Light blue highlight */
+    }
+
+    li.me { /* Special styling for "You" */
+      background: #ffe082; /* Yellow background */
+      font-weight: bold; /* Bold text */
+      position: sticky; /* Stays fixed while scrolling */
+      top: 0; /* Stick to top if scrolling up */
+      bottom: 0; /* Stick to bottom if scrolling down */
+      z-index: 2; /* On top of other rows */
+    }
+
+    .rank { /* Rank number */
+      font-weight: bold; /* Bold text */
+      margin-right: 10px; /* Spacing */
+      color: #ff9800; /* Orange color */
+    }
+
+    .profile { /* Profile emoji */
+      font-size: 24px; /* Larger size */
+      margin-right: 10px; /* Space before name */
+    }
+
+    .name-score { /* Layout for name + score */
+      flex: 1; /* Take available space */
+      display: flex; /* Horizontal layout */
+      justify-content: space-between; /* Push name left, score right */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="leaderboard"> <!-- Leaderboard container -->
+    <h1>🏆 Leaderboard 🏆</h1> <!-- Title -->
+
+    <ul> <!-- Scrollable list -->
+      <li><span class="rank">1</span><span class="profile">🐱</span><span class="name-score"><span>Simran</span><span>1490</span></span></li> <!-- Entry -->
+      <li><span class="rank">2</span><span class="profile">🦄</span><span class="name-score"><span>Aman</span><span>1400</span></span></li>
+      <li><span class="rank">3</span><span class="profile">🐵</span><span class="name-score"><span>Priya</span><span>1350</span></span></li>
+      <li><span class="rank">4</span><span class="profile">🐼</span><span class="name-score"><span>Karan</span><span>1300</span></span></li>
+      <li><span class="rank">5</span><span class="profile">🐶</span><span class="name-score"><span>Ravi</span><span>1250</span></span></li>
+
+      <!-- Duplicate entries just for scrolling effect -->
+      <li><span class="rank">1</span><span class="profile">🐱</span><span class="name-score"><span>Simran</span><span>1490</span></span></li>
+      <li><span class="rank">2</span><span class="profile">🦄</span><span class="name-score"><span>Aman</span><span>1400</span></span></li>
+      <li><span class="rank">3</span><span class="profile">🐵</span><span class="name-score"><span>Priya</span><span>1350</span></span></li>
+      <li><span class="rank">4</span><span class="profile">🐼</span><span class="name-score"><span>Karan</span><span>1300</span></span></li>
+      <li><span class="rank">5</span><span class="profile">🐶</span><span class="name-score"><span>Ravi</span><span>1250</span></span></li>
+
+      <!-- Highlighted YOUR entry -->
+      <li class="me"><span class="rank">6</span><span class="profile">👑</span><span class="name-score"><span>YOU</span><span>1230</span></span></li>
+
+      <!-- More players -->
+      <li><span class="rank">7</span><span class="profile">🐧</span><span class="name-score"><span>Arjun</span><span>1150</span></span></li>
+      <li><span class="rank">8</span><span class="profile">🐸</span><span class="name-score"><span>Meera</span><span>1100</span></span></li>
+      <li><span class="rank">9</span><span class="profile">🐙</span><span class="name-score"><span>Sahil</span><span>1050</span></span></li>
+      <li><span class="rank">10</span><span class="profile">🐝</span><span class="name-score"><span>Anita</span><span>1000</span></span></li>
+      <li><span class="rank">11</span><span class="profile">🐻</span><span class="name-score"><span>Rahul</span><span>950</span></span></li>
+      <li><span class="rank">12</span><span class="profile">🐌</span><span class="name-score"><span>Deepa</span><span>900</span></span></li>
+      <li><span class="rank">13</span><span class="profile">🦊</span><span class="name-score"><span>Kavita</span><span>850</span></span></li>
+      <li><span class="rank">14</span><span class="profile">🦋</span><span class="name-score"><span>Vivek</span><span>800</span></span></li>
+      <li><span class="rank">15</span><span class="profile">🦁</span><span class="name-score"><span>Manoj</span><span>750</span></span></li>
+    </ul>
+  </div>
+</body>
+</html>
