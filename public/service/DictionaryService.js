@@ -8,7 +8,9 @@ export class DictionaryService extends BaseResourceManager {
     this.fileManager = fileManager;
     this.fileName = "/public/assets/Data/google-10000-english-no-swears.txt"; // file for persistence
     console.log("Dictionary Service " + this.fileName);
-    this.cache = []; // in-memory cache
+    this.words = []; // in-memory cache
+    this.cache = {};
+    this.lengthMap = {};
   }
 
   async init() {
@@ -20,15 +22,18 @@ export class DictionaryService extends BaseResourceManager {
       if (!response.ok) throw new Error("HTTP error " + response.status);
 
       const text = await response.text();
-      const words = text.split(/\r?\n/).filter(Boolean);
+      this.words = text.split(/\r?\n/).filter(Boolean);
 
-      console.log(`✅ Loaded ${words.length} words`);
-      this.cache = words;
+      console.log(`✅ Loaded ${this.words.length} words`);
+
     } catch (err) {
       console.error("❌ Failed to load dictionary:", err);
-      this.cache = [];
-    }
 
+    }
+    this.words.forEach((word) => {
+      this.cache[word.toLowerCase().trim()] = word;
+      this.lengthMap[word.length] = [...(this.lengthMap[word.length] || []), word];
+    });
   }
 
   async lookup(word) {
@@ -65,12 +70,21 @@ export class DictionaryService extends BaseResourceManager {
     }
   }
 
-   // ✅ New function: get first N cached words
+  // ✅ New function: get first N cached words
   getCachedWords(n = 10) {
     if (!this.isReady()) {
       console.error("DictionaryService not ready.");
       return [];
     }
-    return this.cache.slice(0, n);
+    return this.words.slice(0, n);
+  }
+
+  // ✅ New function: get first N cached words
+  getCachedWordsOfLenth(n = 10, length = 1) {
+    if (!this.isReady()) {
+      console.error("DictionaryService not ready.");
+      return [];
+    }
+    return this.lengthMap[length].slice(0, n);
   }
 }

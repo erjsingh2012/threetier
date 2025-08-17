@@ -50,7 +50,6 @@
   <h1>📖 Dictionary Service Demo</h1>
   <input id="wordInput" type="text" placeholder="Enter a word..." />
   <button id="lookupBtn">Lookup</button>
-  <button id="clearCacheBtn">Clear Cache</button>
 
   <h2>Result</h2>
   <div id="result">No lookup yet.</div>
@@ -60,9 +59,23 @@
 
   <h2>Browse by Word Length</h2>
   <select id="wordLengthSelect">
-    <option value="">-- Select Length --</option>
-    ${[...Array(15).keys()].map(i => `<option value="${i+1}">${i+1} Letter Words</option>`).join("")}
-  </select>
+  <option value="">-- Select Length --</option>
+  <option value="1">1 Letter Words</option>
+  <option value="2">2 Letter Words</option>
+  <option value="3">3 Letter Words</option>
+  <option value="4">4 Letter Words</option>
+  <option value="5">5 Letter Words</option>
+  <option value="6">6 Letter Words</option>
+  <option value="7">7 Letter Words</option>
+  <option value="8">8 Letter Words</option>
+  <option value="9">9 Letter Words</option>
+  <option value="10">10 Letter Words</option>
+  <option value="11">11 Letter Words</option>
+  <option value="12">12 Letter Words</option>
+  <option value="13">13 Letter Words</option>
+  <option value="14">14 Letter Words</option>
+  <option value="15">15 Letter Words</option>
+</select>
   <div id="wordGroups">Choose a word length to view words.</div>
 
   <script type="module">
@@ -82,7 +95,6 @@
     const cacheDiv = document.getElementById("cache");
     const wordGroupsDiv = document.getElementById("wordGroups");
     const lookupBtn = document.getElementById("lookupBtn");
-    const clearCacheBtn = document.getElementById("clearCacheBtn");
     const wordInput = document.getElementById("wordInput");
     const wordLengthSelect = document.getElementById("wordLengthSelect");
 
@@ -91,7 +103,7 @@
     }
 
     function updateCacheDisplay() {
-      const words = dictionaryService.getCachedWords(1000);
+      const words = dictionaryService.getCachedWords(30);
       cacheDiv.textContent = words.length ? words.join(", ") : "No cached words yet.";
     }
 
@@ -104,19 +116,15 @@
       updateCacheDisplay();
     });
 
-    clearCacheBtn.addEventListener("click", () => {
-      dictionaryService.clearCache();
-      updateCacheDisplay();
-      wordGroupsDiv.textContent = "Cache cleared.";
-    });
 
     wordLengthSelect.addEventListener("change", () => {
       const length = parseInt(wordLengthSelect.value, 10);
+      console.log("wordLengthSelect "+length + " wordLengthSelect.value "+ wordLengthSelect.value);
       if (!length) {
         wordGroupsDiv.textContent = "Choose a word length to view words.";
         return;
       }
-      const words = dictionaryService.getCachedWords().filter(w => w.length === length);
+      const words = dictionaryService.getCachedWordsOfLenth(30, length);
       wordGroupsDiv.textContent = words.length 
         ? `${length}-letter words:\n${words.join(", ")}`
         : `No ${length}-letter words in cache yet.`;
