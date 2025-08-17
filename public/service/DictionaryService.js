@@ -6,7 +6,7 @@ export class DictionaryService extends BaseResourceManager {
     this.storageManager = storageManager; // ✅ kept reference (not used now)
     this.apiManager = apiManager;
     this.fileManager = fileManager;
-    this.fileName = "/public/assets/Data/google-10000-english-no-swears.txt"; // file for persistence
+    this.fileName = "https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english-no-swears.txt"; // file for persistence
     console.log("Dictionary Service " + this.fileName);
     this.words = []; // in-memory cache
     this.cache = {};
@@ -19,7 +19,7 @@ export class DictionaryService extends BaseResourceManager {
 
     try {
       // ✅ Public files are served at /assets/...
-      const response = await fetch("/public/assets/Data/google-10000-english-no-swears.txt");
+      const response = await fetch("https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english-no-swears.txt");
       if (!response.ok) throw new Error("HTTP error " + response.status);
 
       const text = await response.text();
