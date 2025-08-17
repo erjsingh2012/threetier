@@ -10,6 +10,7 @@ export class DictionaryService extends BaseResourceManager {
     console.log("Dictionary Service " + this.fileName);
     this.words = []; // in-memory cache
     this.cache = {};
+    this.lookupCache = {};
     this.lengthMap = {};
   }
 
@@ -36,39 +37,50 @@ export class DictionaryService extends BaseResourceManager {
     });
   }
 
-  async lookup(word) {
-    if (!this.isReady()) {
-      console.error("DictionaryService not ready.");
-      return null;
-    }
-
-    const normalized = word.toLowerCase().trim();
-
-    // ✅ Step 1: Check in-memory cache
-    if (this.cache[normalized]) {
-      console.log(`✅ Found '${normalized}' in memory cache`);
-      return this.cache[normalized];
-    }
-
-    // ✅ Step 2: Fetch from API if not cached
-    try {
-      const response = await this.apiManager.get(`/dictionary/${encodeURIComponent(normalized)}`);
-      if (response) {
-        // Save in memory + file
-        this.cache[normalized] = response;
-        await this.fileManager.writeFile(this.fileName, JSON.stringify(this.cache, null, 2));
-
-        console.log(`📥 Word '${normalized}' fetched from API & saved to file`);
-        return response;
-      } else {
-        console.warn(`⚠️ No definition found for '${normalized}'`);
-        return null;
-      }
-    } catch (err) {
-      console.error(`❌ Dictionary lookup error for '${normalized}':`, err);
-      return null;
-    }
+ async lookup(word) {
+  if (!this.isReady()) {
+    console.error("DictionaryService not ready.");
+    return null;
   }
+
+  const normalized = word.toLowerCase().trim();
+
+  // ✅ Step 1: Check in-memory cache
+  if (this.lookupCache[normalized]) {
+    console.log(`✅ Found '${normalized}' in memory cache`);
+    return this.lookupCache[normalized];
+  }
+
+  // ✅ Step 2: Fetch from public API if not cached
+  try {
+    const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(normalized)}`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`API HTTP ${response.status}`);
+
+    const data = await response.json();
+
+    // ✅ Extract useful info
+    const entry = {
+      word: data[0]?.word || normalized,
+      phonetic: data[0]?.phonetic || "",
+      meanings: data[0]?.meanings?.map(m => ({
+        partOfSpeech: m.partOfSpeech,
+        definition: m.definitions[0]?.definition || "",
+        example: m.definitions[0]?.example || ""
+      })) || []
+    };
+
+    // Save in cache + file
+    this.cache[normalized] = entry;
+    console.log(`📥 Word '${normalized}' fetched from Dictionary API & cached`);
+    return entry;
+
+  } catch (err) {
+    console.error(`❌ Dictionary lookup error for '${normalized}':`, err);
+    return null;
+  }
+}
+
 
   // ✅ New function: get first N cached words
   getCachedWords(n = 10) {
