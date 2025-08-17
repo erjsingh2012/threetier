@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Master App Demo – Init, Dependencies, UI, SDKs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- 3rd-party fonts (non-blocking visual enhancement) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <!-- Chart.js (will be used AFTER core app is ready) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --text:#1e2330;
+      --muted:#6b7280;
+      --brand:#2563eb;
+      --ok:#10b981;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --ring:rgba(37,99,235,.15);
+      --mono:#0f172a;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+      color:var(--text);
+      background:linear-gradient(180deg,#e9eef9 0%, var(--bg) 20%, var(--bg) 100%);
+      display:flex;flex-direction:column;
+    }
+    header{
+      position:sticky;top:0;z-index:50;
+      background:rgba(255,255,255,.85);backdrop-filter:saturate(1.5) blur(8px);
+      border-bottom:1px solid #e5e7eb;
+    }
+    .bar{
+      display:flex;align-items:center;gap:12px;justify-content:space-between;
+      padding:10px 16px;max-width:1100px;margin:0 auto;
+    }
+    .brand{font-weight:800;letter-spacing:.2px}
+    .pill{display:flex;align-items:center;gap:8px}
+    .pill small{color:var(--muted)}
+    .btn{
+      border:1px solid #e5e7eb;background:#fff;border-radius:10px;padding:8px 12px;
+      cursor:pointer;font-weight:600;transition:.15s;
+      box-shadow:0 1px 0 #e5e7eb;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--brand);color:#fff;border-color:transparent;box-shadow:0 8px 20px var(--ring)}
+    .main{
+      max-width:1100px;margin:16px auto;padding:0 16px;display:grid;gap:16px;
+      grid-template-columns: 1.2fr .8fr;
+    }
+    .card{
+      background:var(--card);border:1px solid #e5e7eb;border-radius:14px;padding:14px 14px;
+      box-shadow: 0 5px 20px rgba(2,6,23,.04);
+    }
+    .card h3{margin:6px 6px 10px 6px}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .muted{color:var(--muted)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;color:var(--mono)}
+    /* Progress */
+    .progress{height:8px;background:#eef2ff;border-radius:999px;overflow:hidden}
+    .progress > span{display:block;height:100%;width:0;background:linear-gradient(90deg,#60a5fa,#2563eb);transition:width .25s}
+    /* Log */
+    .log{
+      height:240px;overflow:auto;border:1px dashed #e5e7eb;border-radius:12px;padding:10px;background:#fafcff;
+      font-size:13px;line-height:1.45;
+      /* hide scrollbar but keep scrollable */
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .log::-webkit-scrollbar{display:none}
+    .log .line{margin:4px 0;display:flex;gap:8px;align-items:flex-start}
+    .badge{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;color:var(--muted)}
+    .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+    /* Dependency Graph */
+    .graph{display:grid;grid-template-columns: repeat(6, 1fr); gap:10px;font-size:12px}
+    .box{
+      border:1px solid #e5e7eb;border-radius:12px;padding:8px;background:#fff;position:relative
+    }
+    .box h4{margin:0 0 6px 0;font-size:12px}
+    .box .tiny{color:var(--muted);font-size:11px}
+    .arrow{
+      position:absolute;right:-6px;top:50%;width:12px;height:12px;background:var(--brand);
+      border-radius:50%;
+      box-shadow:0 0 0 3px var(--ring);
+    }
+    /* Router sections */
+    .views{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .panel h4{margin:0 0 10px}
+    /* Leaderboard */
+    .lb-wrap{display:flex;flex-direction:column;gap:8px}
+    .lb{
+      max-height:340px;overflow:auto;border:1px solid #e5e7eb;border-radius:12px;
+      /* hide scrollbar but keep scrollable */
+      scrollbar-width:none;-ms-overflow-style:none;background:#fff;
+    }
+    .lb::-webkit-scrollbar{display:none}
+    .lb ul{list-style:none;margin:0;padding:0}
+    .lb li{
+      display:flex;align-items:center;gap:10px;justify-content:space-between;
+      padding:10px 12px;border-bottom:1px solid #f1f5f9;background:#fff;
+    }
+    .lb li:hover{background:#f8fbff}
+    .rank{min-width:24px;text-align:right;font-weight:700;color:#fb923c}
+    .me{position:sticky;top:0;z-index:3;background:#fff7cc;font-weight:800;border-bottom:1px solid #fde68a}
+    .name{flex:1}
+    .score{font-weight:700}
+    .sentinel{padding:12px;text-align:center;color:var(--muted)}
+    /* Forms */
+    input[type="text"]{
+      width:100%;padding:10px;border-radius:10px;border:1px solid #d1d5db;outline:none
+    }
+    .kv{display:grid;grid-template-columns:120px 1fr;gap:8px;align-items:center}
+    .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#f1f5f9;border:1px solid #e2e8f0}
+    /* Theme toggle */
+    .theme-dark{
+      --bg:#0b1220;--card:#0f172a;--text:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--ring:rgba(96,165,250,.18);--mono:#e2e8f0;
+      background:linear-gradient(180deg,#0b1220 0%, #0b1220 100%);
+    }
+    .theme-dark header{background:rgba(15,23,42,.7);border-color:#172037}
+    .theme-dark .card{background:#0f172a;border-color:#172037}
+    .theme-dark .btn{background:#0b1220;border-color:#172037;color:#e5e7eb}
+    .theme-dark .lb{background:#0b1220;border-color:#172037}
+    .theme-dark .lb li{background:#0f172a;border-bottom-color:#172037}
+    .theme-dark .log{background:#0b1220;border-color:#172037}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <div class="pill">
+        <div class="brand">Master App Demo</div>
+        <small class="muted">Init • Dependencies • UI • SDKs</small>
+      </div>
+      <div class="row">
+        <button class="btn" id="btn-toggle-theme">🌗 Theme</button>
+        <button class="btn" id="btn-reinit">♻️ Re-Init</button>
+        <button class="btn btn-primary" id="btn-run-tests">🧪 Run Checks</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <!-- LEFT: Boot + Graph -->
+    <section class="card">
+      <h3>⚡ Boot Sequence</h3>
+      <div class="progress" aria-label="Initialization progress"><span id="progress-bar"></span></div>
+      <div style="height:8px"></div>
+      <div class="log mono" id="log"></div>
+      <div style="height:12px"></div>
+      <div class="row">
+        <span class="chip" id="chip-online">🟢 Online</span>
+        <span class="chip" id="chip-sdk-fonts">… Fonts</span>
+        <span class="chip" id="chip-sdk-chart">… Chart.js</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>🧩 Dependency Graph (Generated)</h3>
+      <div id="graph" class="graph"></div>
+    </section>
+
+    <!-- RIGHT: Views -->
+    <section class="card" style="grid-column:1 / span 2">
+      <h3>🖱️ App Views (Router)</h3>
+      <div class="row" style="gap:8px;margin-bottom:8px">
+        <button class="btn" data-route="home">Home</button>
+        <button class="btn" data-route="leaderboard">Leaderboard</button>
+        <button class="btn" data-route="profile">Profile</button>
+        <button class="btn" data-route="stats">Stats</button>
+        <button class="btn" data-route="settings">Settings</button>
+      </div>
+
+      <div class="views">
+        <!-- HOME -->
+        <div id="view-home" class="panel card">
+          <h4>🏠 Home</h4>
+          <p class="muted">This page demonstrates a clean boot, dependency organization, and progressive enhancement.</p>
+          <div style="height:8px"></div>
+          <div class="kv">
+            <div class="muted">User:</div><div id="home-username">Guest</div>
+            <div class="muted">Feature Flags:</div><div id="home-flags" class="mono"></div>
+          </div>
+        </div>
+
+        <!-- LEADERBOARD -->
+        <div id="view-leaderboard" class="panel card">
+          <h4>🏆 Leaderboard (Infinite Scroll, “Me” sticky)</h4>
+          <div class="lb-wrap">
+            <div class="lb" id="lb">
+              <ul id="lb-list"></ul>
+              <div class="sentinel" id="lb-sentinel">Loading more…</div>
+            </div>
+            <small class="muted">Native scrollbar hidden, but list is fully scrollable. Wheel/touch works.</small>
+          </div>
+        </div>
+
+        <!-- PROFILE -->
+        <div id="view-profile" class="panel card">
+          <h4>👤 Profile</h4>
+          <div class="kv">
+            <div>Name</div><div><input id="inp-name" type="text" placeholder="Your name" /></div>
+            <div></div><div><button class="btn btn-primary" id="btn-save-name">Save</button></div>
+            <div class="muted">Stored:</div><div id="profile-stored" class="mono">—</div>
+          </div>
+        </div>
+
+        <!-- STATS -->
+        <div id="view-stats" class="panel card">
+          <h4>📊 Stats (Chart.js)</h4>
+          <canvas id="chart" height="130"></canvas>
+          <small class="muted">Chart library loads after core init (progressive enhancement).</small>
+        </div>
+
+        <!-- SETTINGS -->
+        <div id="view-settings" class="panel card">
+          <h4>⚙️ Settings</h4>
+          <div class="row">
+            <button class="btn" id="btn-sim-error">Simulate API Error</button>
+            <button class="btn" id="btn-clear-storage">Clear Storage</button>
+          </div>
+          <div style="height:10px"></div>
+          <div class="kv">
+            <div class="muted">Env:</div><div id="settings-env" class="mono"></div>
+            <div class="muted">Platform:</div><div id="settings-platform" class="mono"></div>
+            <div class="muted">Network:</div><div id="settings-net" class="mono"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ---------------------------
+    // Utilities
+    // ---------------------------
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => document.querySelectorAll(sel);
+    const sleep = (ms=500)=> new Promise(r=>setTimeout(r, ms));
+
+    const Logger = {
+      el: null,
+      init(){ this.el = $("#log"); },
+      line(icon, msg, cls=""){ 
+        const div = document.createElement("div");
+        div.className = `line ${cls}`;
+        div.innerHTML = `<span class="badge">${icon}</span><span>${msg}</span>`;
+        this.el.appendChild(div);
+        this.el.scrollTop = this.el.scrollHeight;
+      }
+    };
+
+    // Simple event bus
+    const Events = (()=> {
+      const map = new Map();
+      return {
+        on(type, cb){ if(!map.has(type)) map.set(type, new Set()); map.get(type).add(cb); },
+        off(type, cb){ map.get(type)?.delete(cb); },
+        emit(type, data){ map.get(type)?.forEach(cb => cb(data)); }
+      };
+    })();
+
+    // Feature Flags / Config
+    const Config = {
+      env: "dev",
+      features: { charts:true, ads:false, debug:true },
+      urls: { api:"/fake-api", cdn:"/fake-cdn" },
+    };
+
+    // Storage Manager
+    const Storage = {
+      get(key, fallback=null){
+        try{ const v = localStorage.getItem(key); return v? JSON.parse(v) : fallback; }
+        catch(e){ return fallback; }
+      },
+      set(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
+    };
+
+    // Fake API
+    const API = {
+      failOnce:false,
+      async fetchPlayers(offset=0, limit=20){
+        await sleep(300);
+        if(this.failOnce){ this.failOnce=false; throw new Error("503 Service Unavailable (simulated)"); }
+        // generate deterministic data
+        const out = [];
+        for(let i=offset;i<offset+limit;i++){
+          out.push({ id:i+1, name:`Player ${i+1}`, score: 1000 - i*3 + Math.floor(Math.random()*20) });
+        }
+        return out;
+      }
+    };
+
+    // Router (simple hashless)
+    const Router = {
+      current:"home",
+      init(){
+        $$(".btn[data-route]").forEach(b=> b.addEventListener("click", ()=> this.go(b.dataset.route)));
+        this.go("home");
+      },
+      go(id){
+        this.current=id;
+        [ "home","leaderboard","profile","stats","settings" ].forEach(v=>{
+          $("#view-"+v).style.display = (v===id) ? "block" : "none";
+        });
+        Events.emit("route", id);
+      }
+    };
+
+    // Online/offline indicator
+    function updateOnlineChip(){
+      const el = $("#chip-online");
+      const on = navigator.onLine;
+      el.textContent = on ? "🟢 Online" : "🔴 Offline";
+      el.style.background = on ? "#ecfdf5" : "#fef2f2";
+      el.style.borderColor = on ? "#d1fae5" : "#fee2e2";
+    }
+    window.addEventListener("online", updateOnlineChip);
+    window.addEventListener("offline", updateOnlineChip);
+
+    // ---------------------------
+    // Dependency Graph (generated from a pseudo folder plan)
+    // ---------------------------
+    const Graph = {
+      plan: [
+        { col:1, title:"Player Resources", items:["Input","Attention","Device Constraints"] },
+        { col:2, title:"UI", items:["Pages","Components","Layouts"] },
+        { col:3, title:"State/Managers", items:["Auth","Leaderboard","Profile","Settings"] },
+        { col:4, title:"Core Services", items:["API","Storage","EventBus","Logger","Config"] },
+        { col:5, title:"Runtime", items:["DOM","Canvas/WebGL","Network"] },
+        { col:6, title:"OS/Hardware", items:["CPU/GPU","Memory","FS","Network Stack"] },
+      ],
+      render(){
+        const host = $("#graph");
+        host.innerHTML = "";
+        this.plan.forEach(col => {
+          const box = document.createElement("div");
+          box.className = "box";
+          box.style.gridColumn = col.col;
+          box.innerHTML = `<h4>${col.title}</h4><div class="tiny">${col.items.join(" • ")}</div>`;
+          host.appendChild(box);
+        });
+      }
+    };
+
+    // ---------------------------
+    // Managers
+    // ---------------------------
+    const Auth = {
+      user(){ return Storage.get("user") || { name:"Guest" }; },
+      setUser(name){ Storage.set("user", { name }); Events.emit("user:changed", name); }
+    };
+
+    const Leaderboard = {
+      listEl:null, wrapEl:null, sentinel:null,
+      meId: 7,
+      offset:0, page:20, loading:false, done:false,
+      async init(){
+        this.listEl = $("#lb-list");
+        this.wrapEl = $("#lb");
+        this.sentinel = $("#lb-sentinel");
+        // Observer for infinite scroll
+        const io = new IntersectionObserver(async entries=>{
+          if(entries.some(e=> e.isIntersecting)) await this.loadMore();
+        }, { root:this.wrapEl, threshold:.5 });
+        io.observe(this.sentinel);
+        await this.loadMore();
+      },
+      async loadMore(){
+        if(this.loading || this.done) return;
+        this.loading = true;
+        Logger.line("LB","Loading more rows…","warn");
+        try{
+          const rows = await API.fetchPlayers(this.offset, this.page);
+          this.offset += rows.length;
+          if(rows.length===0){ this.done=true; this.sentinel.textContent="No more"; return; }
+          // Render
+          rows.forEach((p, i)=>{
+            const li = document.createElement("li");
+            const rank = p.id;
+            const isMe = rank === this.meId;
+            li.className = isMe ? "me" : "";
+            li.innerHTML = `
+              <span class="rank">${rank}</span>
+              <span class="name">${isMe?"👑 YOU":p.name}</span>
+              <span class="score">${p.score}</span>
+            `;
+            this.listEl.appendChild(li);
+          });
+          Logger.line("LB","Rendered "+rows.length+" rows","ok");
+        }catch(err){
+          Logger.line("LB ERR", err.message, "bad");
+        }finally{
+          this.loading=false;
+        }
+      }
+    };
+
+    const Profile = {
+      init(){
+        const u = Auth.user();
+        $("#home-username").textContent = u.name;
+        $("#profile-stored").textContent = JSON.stringify(u);
+        $("#inp-name").value = u.name === "Guest" ? "" : u.name;
+        $("#btn-save-name").addEventListener("click",()=>{
+          const v = $("#inp-name").value.trim() || "Guest";
+          Auth.setUser(v);
+          $("#home-username").textContent = v;
+          $("#profile-stored").textContent = JSON.stringify({name:v});
+          Logger.line("AUTH",`User set to "${v}"`,"ok");
+        });
+      }
+    };
+
+    const SettingsPanel = {
+      init(){
+        $("#btn-clear-storage").addEventListener("click", ()=>{
+          localStorage.clear();
+          Logger.line("SET","Cleared storage","warn");
+          Profile.init();
+        });
+        $("#btn-sim-error").addEventListener("click", ()=>{
+          API.failOnce = true;
+          Router.go("leaderboard");
+          Logger.line("SIM","Next API call will fail once","warn");
+        });
+        $("#settings-env").textContent = JSON.stringify({ env:Config.env, features:Config.features }, null, 2);
+        $("#settings-platform").textContent = `${navigator.platform} – ${navigator.userAgent}`;
+        $("#settings-net").textContent = navigator.onLine ? "Online" : "Offline";
+      }
+    };
+
+    const Stats = {
+      chart:null,
+      render(){
+        if(!window.Chart){ Logger.line("CHART","Chart.js not yet ready","warn"); return; }
+        const ctx = $("#chart").getContext("2d");
+        this.chart = new Chart(ctx, {
+          type:"bar",
+          data:{
+            labels:["Boot","UI","Managers","SDKs"],
+            datasets:[{label:"ms", data:[220,140,180,300], borderWidth:1}]
+          },
+          options:{ responsive:true, plugins:{ legend:{ display:false } } }
+        });
+        Logger.line("CHART","Rendered chart","ok");
+      }
+    };
+
+    // ---------------------------
+    // App (Boot Orchestrator)
+    // ---------------------------
+    const App = {
+      progressEl:null,
+      async boot(){
+        Logger.init();
+        this.progressEl = $("#progress-bar");
+        $("#home-flags").textContent = JSON.stringify(Config.features);
+        updateOnlineChip();
+        this.progress(0);
+
+        // 1. Environment checks
+        Logger.line("ENV","Checking OS/Browser…","warn");
+        await sleep(250);
+        Logger.line("ENV","OK","ok"); this.progress(10);
+
+        // 2. Init core services
+        Logger.line("CORE","Logger/EventBus/Config ready","ok"); this.progress(20);
+
+        // 3. Storage
+        Logger.line("STOR","localStorage ready","ok"); this.progress(30);
+
+        // 4. Router + UI skeleton
+        Router.init();
+        Logger.line("UI","Router + base views ready","ok"); this.progress(40);
+
+        // 5. Managers (Auth/Profile)
+        Profile.init();
+        Logger.line("AUTH","Profile loaded","ok"); this.progress(50);
+
+        // 6. Leaderboard (infinite scroll)
+        await Leaderboard.init();
+        Logger.line("LB","Leaderboard started","ok"); this.progress(65);
+
+        // 7. Render dependency graph
+        Graph.render();
+        Logger.line("GRAPH","Dependency graph rendered","ok"); this.progress(72);
+
+        // 8. Load “3rd-party extras” (non-blocking)
+        this.loadThirdParty();
+
+        // 9. Stats view (may need Chart.js)
+        Stats.render(); // will warn if Chart.js not yet loaded
+        this.progress(80);
+
+        // Finish
+        await sleep(250);
+        Logger.line("APP","Ready ✅","ok"); this.progress(100);
+      },
+      progress(pct){ this.progressEl.style.width = pct+"%"; },
+      async loadThirdParty(){
+        $("#chip-sdk-fonts").textContent = "✅ Fonts";
+        // Chart.js may already be downloading via defer; poll until ready
+        const chip = $("#chip-sdk-chart");
+        chip.textContent = "… Chart.js";
+        const waitChart = async () => {
+          for(let i=0;i<20;i++){
+            if(window.Chart){ chip.textContent="✅ Chart.js"; return true; }
+            await sleep(150);
+          }
+          chip.textContent="⚠️ Chart.js timeout";
+          return false;
+        };
+        const ok = await waitChart();
+        if(ok){ Stats.render(); }
+      }
+    };
+
+    // ---------------------------
+    // Global UI controls
+    // ---------------------------
+    $("#btn-toggle-theme").addEventListener("click", ()=>{
+      document.body.classList.toggle("theme-dark");
+    });
+    $("#btn-reinit").addEventListener("click", ()=> location.reload());
+    $("#btn-run-tests").addEventListener("click", async ()=>{
+      Logger.line("TEST","Running quick checks…","warn");
+      // quick profile write
+      const rnd = "User"+Math.floor(Math.random()*999);
+      Auth.setUser(rnd);
+      Profile.init();
+      // leaderboard quick page
+      await Leaderboard.loadMore();
+      Logger.line("TEST","Checks done","ok");
+    });
+
+    // ---------------------------
+    // Boot now
+    // ---------------------------
+    (async function start(){
+      await App.boot();
+    })();
+  </script>
+</body>
+</html>
