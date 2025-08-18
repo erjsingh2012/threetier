@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern Portfolio</title>
+
+  <style>
+    /* ===== Global Reset ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #0f2027;  /* fallback for old browsers */
+      background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+      color: #fff;
+    }
+
+    a { text-decoration: none; }
+
+    /* ===== Navbar ===== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 50px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      z-index: 10;
+    }
+
+    .navbar h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .navbar nav a {
+      margin-left: 20px;
+      color: #fff;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .navbar nav a:hover {
+      color: #00eaff;
+    }
+
+    /* ===== Hero Section ===== */
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 10%;
+    }
+
+    .hero h2 {
+      font-size: 60px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 20px;
+      max-width: 600px;
+      margin-bottom: 30px;
+    }
+
+    .hero a {
+      padding: 12px 30px;
+      border: 2px solid #00eaff;
+      border-radius: 30px;
+      color: #00eaff;
+      font-size: 18px;
+      transition: all 0.3s;
+    }
+
+    .hero a:hover {
+      background: #00eaff;
+      color: #000;
+    }
+
+    /* ===== About Section ===== */
+    .about {
+      padding: 80px 10%;
+      text-align: center;
+    }
+
+    .about img {
+      width: 150px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      border: 4px solid #00eaff;
+    }
+
+    .about h2 {
+      font-size: 36px;
+      margin-bottom: 15px;
+    }
+
+    .about p {
+      font-size: 18px;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    /* ===== Projects Section ===== */
+    .projects {
+      padding: 80px 10%;
+      text-align: center;
+    }
+
+    .projects h2 {
+      font-size: 36px;
+      margin-bottom: 40px;
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.1);
+      padding: 30px;
+      border-radius: 15px;
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+    }
+
+    .card h3 {
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+
+    /* ===== Contact Section ===== */
+    .contact {
+      padding: 60px 10%;
+      text-align: center;
+      background: rgba(0,0,0,0.3);
+    }
+
+    .contact h2 {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    .contact p {
+      margin-bottom: 20px;
+    }
+
+    .contact a {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 25px;
+      border-radius: 30px;
+      border: 2px solid #00eaff;
+      color: #00eaff;
+      transition: all 0.3s;
+    }
+
+    .contact a:hover {
+      background: #00eaff;
+      color: #000;
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      padding: 20px;
+      text-align: center;
+      font-size: 14px;
+      background: #111;
+    }
+
+    /* ===== Responsive ===== */
+    @media(max-width: 768px) {
+      .hero h2 { font-size: 40px; }
+      .about h2, .projects h2, .contact h2 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <h1>MyPortfolio</h1>
+    <nav>
+      <a href="#hero">Home</a>
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero" id="hero">
+    <h2>Hello, I'm Alex 👋</h2>
+    <p>I am a front-end developer passionate about creating modern, responsive, and user-friendly web applications.</p>
+    <a href="#projects">View My Work</a>
+  </section>
+
+  <!-- About Section -->
+  <section class="about" id="about">
+    <img src="https://via.placeholder.com/150" alt="Profile Picture">
+    <h2>About Me</h2>
+    <p>
+      I specialize in crafting clean and minimalistic web designs. 
+      With experience in HTML, CSS, JavaScript, and modern frameworks, 
+      I focus on building websites that are not only visually appealing 
+      but also highly functional.
+    </p>
+  </section>
+
+  <!-- Projects Section -->
+  <section class="projects" id="projects">
+    <h2>My Projects</h2>
+    <div class="project-grid">
+      <div class="card">
+        <h3>🌐 Portfolio Site</h3>
+        <p>A personal portfolio showcasing skills and projects.</p>
+      </div>
+      <div class="card">
+        <h3>📱 Mobile App UI</h3>
+        <p>Designed a responsive mobile app interface with React Native.</p>
+      </div>
+      <div class="card">
+        <h3>🛒 E-Commerce Store</h3>
+        <p>Developed a modern e-commerce store with shopping cart features.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="contact" id="contact">
+    <h2>Get In Touch</h2>
+    <p>I'd love to collaborate on exciting projects!</p>
+    <a href="mailto:alex@example.com">📧 Email Me</a>
+    <a href="https://www.linkedin.com" target="_blank">🔗 LinkedIn</a>
+    <a href="https://github.com" target="_blank">💻 GitHub</a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Alex | Built with ❤️ using HTML & CSS</p>
+  </footer>
+</body>
+</html>
