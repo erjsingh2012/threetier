@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test failedWords Array</title>
+</head>
+<body>
+    <h2>Test failedWords Array</h2>
+
+    <button onclick="runTests()">Run Tests</button>
+    <pre id="output"></pre>
+
+    <script>
+        function testFailedWords(failedWords) {
+            const output = [];
+            if (!Array.isArray(failedWords)) {
+                output.push("failedWords is NOT an array. Initializing as an empty array.");
+                failedWords = [];
+            } else {
+                output.push("failedWords is already an array: " + JSON.stringify(failedWords));
+            }
+            return { failedWords, output };
+        }
+
+        function runTests() {
+            const results = [];
+            let testCases = [
+                { name: "Case 1", value: undefined },
+                { name: "Case 2", value: { word: "hello" } },
+                { name: "Case 3", value: ["hello", "world"] }
+            ];
+
+            testCases.forEach(tc => {
+                const { failedWords, output } = testFailedWords(tc.value);
+                results.push(tc.name + " result: " + JSON.stringify(tc.value));
+                results.push(...output);
+                results.push(""); // blank line for separation
+            });
+
+            document.getElementById("output").textContent = results.join("\n");
+        }
+    </script>
+</body>
+</html>

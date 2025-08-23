@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"> <!-- Sets the character encoding of the page -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Makes the page responsive for mobile devices -->
+  <title>Progress Bars with Rewards</title> <!-- Page title shown in browser tab -->
+
+  <style>
+    /* --- BODY STYLES --- */
+    body {
+      font-family: Arial, sans-serif; /* Sets default font */
+      display: flex; /* Enables flexbox layout */
+      justify-content: center; /* Centers content horizontally */
+      align-items: flex-start; /* Aligns content to top */
+      gap: 30px; /* Space between multiple buttons */
+      padding: 40px 20px; /* Space around body edges */
+      background: #f0f4f8; /* Light gray-blue background */
+      flex-wrap: wrap; /* Allows multiple buttons to wrap on smaller screens */
+    }
+
+    /* --- BUTTON CONTAINER --- */
+    .button-wrap {
+      width: 300px; /* Width of the card */
+      background: #ddd; /* Light gray background */
+      padding: 15px; /* Inner spacing */
+      border-radius: 12px; /* Rounded corners */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Slight shadow */
+      text-align: center; /* Center text inside */
+      position: relative; /* Needed for absolute-positioned overlays */
+    }
+
+    /* --- BUTTON STYLE --- */
+    .btn {
+      position: relative; /* Allows inner elements to position relative to button */
+      width: 100%; /* Full width of container */
+      height: 46px; /* Button height */
+      border: none; /* Removes default border */
+      border-radius: 8px; /* Rounded corners */
+      background: #4facfe; /* Blue gradient color */
+      color: white; /* Button text color */
+      font-size: 16px; /* Font size */
+      font-weight: bold; /* Makes text bold */
+      cursor: pointer; /* Shows pointer on hover */
+      transition: background 0.3s; /* Smooth color change on hover */
+    }
+
+    .btn:hover {
+      background: #00c6ff; /* Changes button color on hover */
+    }
+
+    /* --- SMALL TAG ON BUTTON --- */
+    .btn-tag {
+      position: absolute; /* Positioned relative to button */
+      top: -8px; /* Moves above button */
+      right: -8px; /* Moves to the right corner */
+      color: white; /* Text color */
+      font-size: 11px; /* Small font */
+      font-weight: bold;
+      padding: 3px 6px; /* Space inside tag */
+      border-radius: 10px; /* Rounded corners */
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Small shadow */
+    }
+
+    /* Green tag for alternative button */
+    .alternative .btn-tag {
+      background: #4caf50; /* Green background */
+    }
+
+    /* --- PROGRESS SECTION --- */
+    .progress-section {
+      display: flex; /* Align items in a row */
+      align-items: center; /* Vertically center items */
+      margin-top: 12px; /* Space above progress section */
+      gap: 8px; /* Space between elements */
+    }
+
+    /* Circle showing progress step number */
+    .status-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%; /* Makes circle */
+      background: #fff; /* White background */
+      border: 2px solid #4facfe; /* Blue border */
+      display: flex;
+      align-items: center;
+      justify-content: center; /* Centers text inside circle */
+      font-size: 12px;
+      font-weight: bold;
+      color: #4facfe; /* Text color */
+    }
+
+    /* Container for progress bar */
+    .progress-container {
+      flex: 1; /* Takes remaining horizontal space */
+      position: relative; /* For ticks inside */
+      height: 8px; /* Thickness of bar */
+      background: #bbb; /* Gray background */
+      border-radius: 5px; /* Rounded ends */
+      overflow: hidden; /* Hides anything overflowing */
+    }
+
+    /* Filled portion of progress */
+    .progress-fill {
+      height: 100%; /* Full height */
+      width: 0; /* Starts empty */
+      background: linear-gradient(90deg, #4facfe, #00f2fe); /* Gradient fill */
+      border-radius: 5px; /* Rounded ends */
+      transition: width 0.5s ease; /* Smooth animation when width changes */
+    }
+
+    /* Tick marks on progress bar */
+    .tick {
+      position: absolute; /* Position relative to container */
+      top: 50%; /* Center vertically */
+      transform: translate(-50%, -50%); /* Adjust exact center */
+      width: 18px;
+      height: 18px;
+      border-radius: 50%; /* Circle */
+      background: #fff; /* White */
+      border: 2px solid #bbb; /* Gray border */
+      display: flex;
+      align-items: center;
+      justify-content: center; /* Center checkmark */
+      font-size: 11px;
+      color: #bbb; /* Gray text */
+    }
+
+    /* Active tick styling */
+    .tick.active {
+      background: #4caf50; /* Green background */
+      border: 2px solid #4caf50; /* Green border */
+      color: #fff; /* White checkmark */
+    }
+
+    /* Reward box style */
+    .reward-box {
+      width: 50px;
+      height: 34px;
+      border-radius: 6px;
+      background: #fff3cd; /* Light yellow */
+      border: 2px solid goldenrod;
+      display: flex;
+      align-items: center;
+      justify-content: center; /* Center emoji */
+      font-size: 20px;
+      font-weight: bold;
+      color: goldenrod;
+      opacity: 0.5; /* Semi-transparent initially */
+      transition: opacity 0.3s, background 0.3s, color 0.3s; /* Smooth change */
+    }
+
+    .reward-box.active {
+      opacity: 1; /* Fully visible when active */
+      background: #4caf50; /* Green background when active */
+      color: white; /* White text */
+    }
+
+    /* Bottom status text */
+    .status-text {
+      margin-top: 10px; /* Space above text */
+      font-size: 13px;
+      color: #333; /* Dark text */
+      background: #fff; /* White box */
+      padding: 5px 8px; /* Inner spacing */
+      border-radius: 6px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); /* Inner shadow */
+    }
+
+    /* Extra Reward tag (overlay) */
+    .extra-reward-tag {
+      display: flex; /* Flex for emoji alignment */
+      align-items: center;
+      gap: 4px; /* Space between text and emoji */
+      padding: 3px 8px; /* Inner spacing */
+      border-radius: 10px; /* Rounded corners */
+      color: white; /* Text color */
+      font-size: 11px;
+      font-weight: bold;
+      background: #4caf50; /* Green background */
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Shadow for pop effect */
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Design 1: Match Me -->
+  <div class="button-wrap">
+    <button class="btn" onclick="nextStep1()">
+      Match Me
+      <span class="btn-tag">Fixed</span> <!-- Small tag on top-right -->
+    </button>
+
+    <div class="progress-section">
+      <div class="status-circle" id="statusCircle1">0/3</div> <!-- Step number circle -->
+      <div class="progress-container">
+        <div class="progress-fill" id="progressFill1"></div> <!-- Fills as progress grows -->
+        <div class="tick" style="left:0%" id="tick1-1">1</div>
+        <div class="tick" style="left:50%" id="tick1-2">2</div>
+        <div class="tick" style="left:100%" id="tick1-3">3</div>
+      </div>
+      <div class="reward-box" id="rewardBox1">🎁</div> <!-- Reward box for completion -->
+    </div>
+    <div class="status-text" id="playerStatus1">
+      In the last hour, 100 players found a match 🎮
+    </div>
+  </div>
+
+  <!-- Design 2: Create a Match & Extra Reward (Overlay Tag) -->
+  <div class="button-wrap alternative" style="position: relative;">
+    <button class="btn" onclick="activateReward()">
+      Create a Match
+    </button>
+
+    <!-- Extra Reward tag overlaying the button -->
+    <span class="extra-reward-tag" id="extraRewardTag" 
+          style="position: absolute; top: -10px; right: -10px;">
+      Extra Reward 🎁
+    </span>
+  </div>
+
+  <script>
+    // -------------------- DESIGN 1 JS --------------------
+    let step1 = 0; // Current step of progress
+    function nextStep1() {
+      if (step1 < 3) { // Only allow up to 3 steps
+        step1++;
+        // Update progress bar width
+        document.getElementById("progressFill1").style.width = (step1 / 3) * 100 + "%";
+        // Update status circle number
+        document.getElementById("statusCircle1").textContent = step1 + "/3";
+        // Activate tick mark
+        let tick = document.getElementById("tick1-" + step1);
+        tick.classList.add("active");
+        tick.textContent = "✓"; // Change number to check
+        // Show reward box if step 3 is complete
+        if (step1 === 3) document.getElementById("rewardBox1").classList.add("active");
+      }
+    }
+
+    // Rotate bottom status messages
+    const messages1 = [
+      "In the last hour, 100 players found a match 🎮",
+      "Players played 3000 words ✍️"
+    ];
+    let msgIndex1 = 0;
+    setInterval(() => {
+      msgIndex1 = (msgIndex1 + 1) % messages1.length;
+      document.getElementById("playerStatus1").textContent = messages1[msgIndex1];
+    }, 4000); // Change message every 4 seconds
+
+    // -------------------- DESIGN 2 JS --------------------
+    function activateReward() {
+      const tag = document.getElementById("extraRewardTag");
+      // Simple click animation: enlarge and shrink
+      tag.style.transform = "scale(1.2)";
+      setTimeout(() => { tag.style.transform = "scale(1)"; }, 200);
+    }
+  </script>
+
+</body>
+</html>
