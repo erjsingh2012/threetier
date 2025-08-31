@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Draw SVG on Canvas & Export as PNG (Single-file Demo)</title>
+  <style>
+    :root { --bg:#0f172a; --panel:#111827; --ink:#e5e7eb; --accent:#22d3ee; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif; background: linear-gradient(180deg,#0b1020,#0f172a); color: var(--ink); }
+    header { padding: 24px; text-align: center; }
+    h1 { margin: 0 0 8px; font-weight: 700; font-size: clamp(20px, 3vw, 28px); }
+    p.sub { margin: 0; opacity: .8; }
+
+    .wrap { max-width: 1100px; margin: 24px auto 40px; padding: 16px; }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+
+    .card { background: rgba(17,24,39,.6); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 16px; backdrop-filter: blur(6px); box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+    .card h2 { margin: 0 0 12px; font-size: 16px; letter-spacing: .2px; opacity: .9; }
+
+    svg { width: 100%; height: auto; display: block; border-radius: 12px; background: #0b1225; }
+    canvas { width: 100%; height: auto; display: block; border-radius: 12px; background: #0b1225; }
+
+    .toolbar { display:flex; gap:12px; flex-wrap:wrap; align-items:center; padding: 12px 0 0; }
+    button, a.button { appearance: none; border: 1px solid rgba(255,255,255,.18); background: linear-gradient(180deg, rgba(34,211,238,.18), rgba(34,211,238,.12)); color: var(--ink); padding: 10px 14px; border-radius: 12px; cursor: pointer; text-decoration:none; font-weight:600; }
+    button:hover, a.button:hover { border-color: rgba(255,255,255,.28); transform: translateY(-1px); }
+    a.button[disabled] { pointer-events: none; opacity:.5; }
+    .hint { font-size: 12px; opacity: .7; margin-top: 8px; }
+    code { background: rgba(255,255,255,.08); padding: 2px 6px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SVG → Canvas → PNG</h1>
+    <p class="sub">Serialize inline SVG, draw on <code>&lt;canvas&gt;</code>, then export with <code>toDataURL()</code>.</p>
+  </header>
+
+  <div class="wrap">
+    <div class="grid">
+      <div class="card">
+        <h2>1) Source SVG (editable)</h2>
+        <!-- Inline SVG is safest for cross-origin security -->
+        <svg id="sourceSvg" xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#22d3ee"/>
+              <stop offset="100%" stop-color="#8b5cf6"/>
+            </linearGradient>
+            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="6" stdDeviation="8" flood-opacity="0.3"/>
+            </filter>
+          </defs>
+          <rect x="0" y="0" width="640" height="360" fill="#0b1225"/>
+          <circle cx="140" cy="120" r="80" fill="url(#g)" filter="url(#shadow)"/>
+          <rect x="280" y="60" rx="16" ry="16" width="280" height="140" fill="none" stroke="url(#g)" stroke-width="6"/>
+          <g transform="translate(0,12)">
+            <text x="40" y="250" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial" font-weight="700" font-size="44" fill="#e5e7eb">SVG → Canvas → PNG</text>
+            <text x="40" y="292" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial" font-size="18" fill="#9ca3af">gradients, filters, text, shapes ✅</text>
+          </g>
+        </svg>
+        <div class="toolbar">
+          <button id="btnDraw">Draw SVG on Canvas</button>
+          <a id="btnDownload" class="button" href="#" download="export.png" disabled>Download PNG</a>
+        </div>
+        <p class="hint">Tip: This works best with <em>inline</em> SVG. External images/fonts may taint the canvas unless they are same-origin and CORS-enabled.</p>
+      </div>
+
+      <div class="card">
+        <h2>2) Canvas (result)</h2>
+        <canvas id="resultCanvas" width="640" height="360"></canvas>
+        <div class="hint">Canvas size auto-matches the SVG's <code>viewBox</code> / <code>width</code>/<code>height</code>.</div>
+      </div>
+
+      <div class="card">
+        <h2>How it works (core snippet)</h2>
+        <pre style="white-space:pre-wrap"><code>// 1) Serialize SVG → Blob URL
+const svg = document.getElementById('sourceSvg');
+const xml  = new XMLSerializer().serializeToString(svg);
+const blob = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' });
+const url  = URL.createObjectURL(blob);
+
+// 2) Draw on canvas via Image()
+const img = new Image();
+img.onload = () => {
+  const c = document.getElementById('resultCanvas');
+  c.width  = svg.viewBox.baseVal.width  || svg.width.baseVal.value;
+  c.height = svg.viewBox.baseVal.height || svg.height.baseVal.value;
+  c.getContext('2d').drawImage(img, 0, 0);
+  URL.revokeObjectURL(url);
+
+  // 3) Export to PNG
+  document.getElementById('btnDownload').href = c.toDataURL('image/png');
+  document.getElementById('btnDownload').removeAttribute('disabled');
+};
+img.src = url;</code></pre>
+        <div class="hint">You can scale for HiDPI by drawing to a larger offscreen canvas and downsampling when saving.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+
+    function getSvgPixelSize(svgEl) {
+      // Prefer viewBox; fall back to width/height attributes
+      const vb = svgEl.viewBox && svgEl.viewBox.baseVal;
+      const w = vb && vb.width ? vb.width : (svgEl.width && svgEl.width.baseVal.value) || 640;
+      const h = vb && vb.height ? vb.height : (svgEl.height && svgEl.height.baseVal.value) || 360;
+      return { w, h };
+    }
+
+    async function drawSvgToCanvas() {
+      const svg = $('#sourceSvg');
+
+      // Ensure xmlns is present for correct serialization
+      if (!svg.getAttribute('xmlns')) svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      if (!svg.getAttribute('xmlns:xlink')) svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+
+      // Serialize SVG to a Blob URL
+      const xml = new XMLSerializer().serializeToString(svg);
+      const svgBlob = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(svgBlob);
+
+      // Optional: upscale for HiDPI exports
+      const scale = parseFloat($('#scaleInput')?.value) || 1;
+
+      const img = new Image();
+      // If your SVG references external images with proper CORS headers, you may need: img.crossOrigin = 'anonymous';
+
+      img.onload = () => {
+        const { w, h } = getSvgPixelSize(svg);
+        const canvas = $('#resultCanvas');
+
+        // Size canvas (physical pixels)
+        canvas.width = Math.max(1, Math.floor(w * scale));
+        canvas.height = Math.max(1, Math.floor(h * scale));
+
+        const ctx = canvas.getContext('2d');
+        ctx.setTransform(scale, 0, 0, scale, 0, 0); // scale drawing for crisp output
+        ctx.clearRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0);
+
+        URL.revokeObjectURL(url);
+
+        // Enable download button
+        const a = $('#btnDownload');
+        a.href = canvas.toDataURL('image/png');
+        a.download = 'export.png';
+        a.removeAttribute('disabled');
+      };
+
+      img.onerror = (e) => {
+        console.error('Image load error', e);
+        URL.revokeObjectURL(url);
+        alert('Failed to draw SVG. If your SVG uses external images or fonts, ensure they are same-origin or CORS-enabled.');
+      };
+
+      img.src = url;
+    }
+
+    $('#btnDraw').addEventListener('click', drawSvgToCanvas);
+  </script>
+</body>
+</html>

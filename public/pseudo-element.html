@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pseudo-Element Examples</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    h2 {
+      margin-top: 40px;
+      color: darkblue;
+    }
+
+    /* 1. ::before and ::after */
+    a::before {
+      content: "🔗 ";
+      color: green;
+    }
+    a::after {
+      content: " ↗";
+      color: red;
+    }
+
+    /* 2. ::first-letter */
+    .intro::first-letter {
+      font-size: 200%;
+      font-weight: bold;
+      color: darkred;
+    }
+
+    /* 3. ::first-line */
+    .highlight::first-line {
+      background-color: yellow;
+      font-weight: bold;
+    }
+
+    /* 4. ::selection */
+    p::selection {
+      background: black;
+      color: white;
+    }
+
+    /* 5. ::marker */
+    ul li::marker {
+      color: blue;
+      font-size: 1.2em;
+      content: "👉 ";
+    }
+
+    /* Decorative block using empty content */
+    .box::before {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(to right, orange, red);
+      margin-bottom: 10px;
+    }
+    .box::after {
+      content: " — Decorative line below";
+      color: gray;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pseudo-Element Demo</h1>
+
+  <h2>1. ::before and ::after</h2>
+  <p>
+    Example link: <a href="https://example.com">Visit Example</a>
+  </p>
+
+  <h2>2. ::first-letter</h2>
+  <p class="intro">
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. This paragraph’s first letter is styled larger and in red.
+  </p>
+
+  <h2>3. ::first-line</h2>
+  <p class="highlight">
+    This is a long paragraph where only the first line will be highlighted with yellow background and bold text. Resize the browser window to see how the highlighting changes as the text wraps to the next line.
+  </p>
+
+  <h2>4. ::selection</h2>
+  <p>
+    Try selecting this text with your mouse — the background will turn black and the text white.
+  </p>
+
+  <h2>5. ::marker</h2>
+  <ul>
+    <li>First item</li>
+    <li>Second item</li>
+    <li>Third item</li>
+  </ul>
+
+  <h2>6. Decorative box with before/after</h2>
+  <div class="box">
+    This box has a gradient line above (via ::before) and a gray note below (via ::after).
+  </div>
+
+</body>
+</html>
