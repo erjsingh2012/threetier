@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Animation Basics</title>
+  <style>
+    /* --- General Styles --- */
+    body {
+      font-family: sans-serif;
+      background: #0f172a;
+      color: white;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    h1, h2, h3 {
+      color: #38bdf8;
+    }
+    section {
+      background: rgba(255,255,255,0.05);
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+    }
+    .demo-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .box {
+      width: 100px;
+      height: 100px;
+      background: #38bdf8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f172a;
+      font-weight: bold;
+      border-radius: 8px;
+    }
+
+    /* --- CSS Transition Example --- */
+    .transition-box {
+      transition: transform 0.5s ease, background-color 0.5s ease;
+    }
+    .transition-box:hover {
+      transform: scale(1.3) rotate(15deg);
+      background-color: #facc15;
+    }
+
+    /* --- CSS Keyframes Example --- */
+    .keyframe-box {
+      opacity: 0;
+      animation: slideFade 2s ease forwards;
+    }
+    @keyframes slideFade {
+      0% { transform: translateX(0); opacity: 0; background-color: #38bdf8; }
+      50% { transform: translateX(50px); opacity: 0.5; background-color: #f87171; }
+      100% { transform: translateX(100px); opacity: 1; background-color: #34d399; }
+    }
+
+    /* --- JS Animation Box --- */
+    .js-box {
+      opacity: 0;
+      background-color: #f472b6;
+    }
+
+    /* --- Explanation Panels --- */
+    .info {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      background: rgba(255,255,255,0.1);
+      padding: 1rem;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>HTML Animation Basics</h1>
+  <p>This page demonstrates **core animation techniques in HTML**, including CSS Transitions, CSS Keyframes, and JavaScript animations.</p>
+
+  <!-- Section 1: CSS Transition -->
+  <section>
+    <h2>1. CSS Transition</h2>
+    <p>Transitions allow smooth changes of CSS properties when an element changes state (like hover).</p>
+    <div class="demo-container">
+      <div class="box transition-box">Hover Me</div>
+    </div>
+    <div class="info">
+      <strong>Code Example:</strong><br>
+      <code>
+        .transition-box {<br>
+        &nbsp;&nbsp;transition: transform 0.5s ease, background-color 0.5s ease;<br>
+        }<br>
+        .transition-box:hover {<br>
+        &nbsp;&nbsp;transform: scale(1.3) rotate(15deg);<br>
+        &nbsp;&nbsp;background-color: #facc15;<br>
+        }
+      </code><br>
+      <strong>Explanation:</strong> Hovering over the box smoothly scales and rotates it while changing color.
+    </div>
+  </section>
+
+  <!-- Section 2: CSS Keyframes -->
+  <section>
+    <h2>2. CSS Keyframes Animation</h2>
+    <p>Keyframes allow defining multiple steps over time for more complex animations.</p>
+    <div class="demo-container">
+      <div class="box keyframe-box">Animate</div>
+    </div>
+    <div class="info">
+      <strong>Code Example:</strong><br>
+      <code>
+        @keyframes slideFade {<br>
+        &nbsp;&nbsp;0% { transform: translateX(0); opacity:0; background-color:#38bdf8; }<br>
+        &nbsp;&nbsp;50% { transform: translateX(50px); opacity:0.5; background-color:#f87171; }<br>
+        &nbsp;&nbsp;100% { transform: translateX(100px); opacity:1; background-color:#34d399; }<br>
+        }<br>
+        .keyframe-box {<br>
+        &nbsp;&nbsp;animation: slideFade 2s ease forwards;<br>
+        }
+      </code><br>
+      <strong>Explanation:</strong> The box moves, fades in, and changes color over 2 seconds.
+    </div>
+  </section>
+
+  <!-- Section 3: JavaScript Animation -->
+  <section>
+    <h2>3. JavaScript Animation</h2>
+    <p>JS animations allow full dynamic control over properties, timing, and interaction.</p>
+    <div class="demo-container">
+      <div class="box js-box" id="jsBox">JS</div>
+    </div>
+    <button id="animateBtn">Animate with JS</button>
+    <div class="info">
+      <strong>Code Example:</strong><br>
+      <code>
+        const box = document.getElementById('jsBox');<br>
+        let pos = 0;<br>
+        const interval = setInterval(() => {<br>
+        &nbsp;&nbsp;if(pos &gt;= 100){ clearInterval(interval); return; }<br>
+        &nbsp;&nbsp;pos += 2;<br>
+        &nbsp;&nbsp;box.style.transform = `translateX(${pos}px)`;<br>
+        &nbsp;&nbsp;box.style.opacity = pos/100;<br>
+        }, 20);
+      </code><br>
+      <strong>Explanation:</strong> JS changes CSS properties over time using `setInterval`. You can add interactivity, loops, or triggers.
+    </div>
+  </section>
+
+  <!-- JavaScript Logic -->
+  <script>
+    const box = document.getElementById('jsBox');
+    document.getElementById('animateBtn').addEventListener('click', () => {
+      box.style.opacity = 0;
+      let pos = 0;
+      const interval = setInterval(() => {
+        if(pos >= 100){ clearInterval(interval); return; }
+        pos += 2;
+        box.style.transform = `translateX(${pos}px)`;
+        box.style.opacity = pos / 100;
+      }, 20);
+    });
+  </script>
+
+  <!-- Section 4: Summary -->
+  <section>
+    <h2>4. Summary of HTML Animation Methods</h2>
+    <ul>
+      <li><strong>CSS Transitions:</strong> Best for simple hover/focus effects, lightweight, easy to use.</li>
+      <li><strong>CSS Keyframes:</strong> More complex, timeline-based animations. Good for repeating, looping, or sequential steps.</li>
+      <li><strong>JavaScript Animations:</strong> Most flexible. Can animate dynamically, respond to user input, and control sequences.</li>
+    </ul>
+    <div class="info">
+      <strong>Tip:</strong> For professional interactive websites, JS libraries like <code>GSAP</code> or <code>Anime.js</code> provide advanced animation tools.
+    </div>
+  </section>
+</body>
+</html>

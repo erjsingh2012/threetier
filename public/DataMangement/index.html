@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Blob Manager - Full CRUD Demo</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f0f2f5;
+    color: #333;
+}
+h1, h2 {
+    color: #2c3e50;
+}
+button {
+    margin: 5px 5px 5px 0;
+    padding: 8px 12px;
+    cursor: pointer;
+    background-color: #3498db;
+    border: none;
+    color: white;
+    border-radius: 4px;
+}
+button:hover {
+    background-color: #2980b9;
+}
+input, textarea {
+    width: 300px;
+    padding: 5px;
+    margin: 5px 0;
+}
+#log {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    margin-bottom: 20px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th, td {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+}
+th {
+    background-color: #3498db;
+    color: white;
+}
+td button {
+    background-color: #e74c3c;
+}
+td button:hover {
+    background-color: #c0392b;
+}
+</style>
+</head>
+<body>
+
+<h1>Game Blob Manager - Full CRUD Demo</h1>
+<p>This demo simulates a server, manages game blobs locally, and provides full CRUD functionality.</p>
+
+<h2>Create / Update Game</h2>
+<input type="text" id="gameId" placeholder="Game ID" />
+<textarea id="gameData" placeholder="Game Data"></textarea><br>
+<button id="createUpdateGame">Create / Update Game</button>
+
+<h2>Game List</h2>
+<table id="gameTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Data</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<h2>Logs</h2>
+<pre id="log"></pre>
+
+<script>
+// =========================
+// Simulated Server
+// =========================
+const server = {
+    storage: {},
+    saveGame(id, data) {
+        this.storage[id] = data;
+        return Promise.resolve({ success: true });
+    },
+    deleteGame(id) {
+        delete this.storage[id];
+        return Promise.resolve({ success: true });
+    },
+    fetchAll() {
+        return Promise.resolve({ ...this.storage });
+    },
+    fetchGame(id) {
+        return Promise.resolve(this.storage[id] || null);
+    }
+};
+
+// =========================
+// Game Blob Manager
+// =========================
+class GameBlobManager {
+    constructor() {
+        this.localKey = 'game_blobs';
+        this.cache = this.loadFromLocal() || {};
+        this.pollInterval = 5000; // poll every 5 seconds
+        this.startPolling();
+        this.updateTable();
+    }
+
+    log(msg) {
+        const logEl = document.getElementById('log');
+        logEl.textContent += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    loadFromLocal() {
+        const data = localStorage.getItem(this.localKey);
+        if (data) {
+            this.log('Loaded cache from localStorage');
+            return JSON.parse(data);
+        }
+        return {};
+    }
+
+    saveToLocal() {
+        localStorage.setItem(this.localKey, JSON.stringify(this.cache));
+        this.log('Saved cache to localStorage');
+        this.updateTable();
+    }
+
+    async createOrUpdate(id, data) {
+        // Update local cache
+        this.cache[id] = data;
+        this.saveToLocal();
+
+        // Push to server
+        await server.saveGame(id, data);
+        this.log(`Game "${id}" saved to server`);
+    }
+
+    async delete(id) {
+        // Remove from local cache
+        delete this.cache[id];
+        this.saveToLocal();
+
+        // Remove from server
+        await server.deleteGame(id);
+        this.log(`Game "${id}" deleted from server`);
+    }
+
+    async getAll() {
+        return this.cache;
+    }
+
+    async get(id) {
+        if (this.cache[id]) {
+            this.log(`Loaded "${id}" from local cache`);
+            return this.cache[id];
+        }
+        const serverData = await server.fetchGame(id);
+        if (serverData) {
+            this.cache[id] = serverData;
+            this.saveToLocal();
+            this.log(`Loaded "${id}" from server`);
+            return serverData;
+        }
+        this.log(`Game "${id}" not found`);
+        return null;
+    }
+
+    // Poll server for updates
+    async startPolling() {
+        setInterval(async () => {
+            const serverGames = await server.fetchAll();
+            let updated = false;
+            for (const id in serverGames) {
+                if (!this.cache[id] || this.cache[id] !== serverGames[id]) {
+                    this.cache[id] = serverGames[id];
+                    updated = true;
+                    this.log(`Updated "${id}" from server`);
+                }
+            }
+            if (updated) this.saveToLocal();
+        }, this.pollInterval);
+    }
+
+    // Update table
+    updateTable() {
+        const tbody = document.querySelector('#gameTable tbody');
+        tbody.innerHTML = '';
+        for (const id in this.cache) {
+            const tr = document.createElement('tr');
+            const tdId = document.createElement('td');
+            tdId.textContent = id;
+            const tdData = document.createElement('td');
+            tdData.textContent = this.cache[id];
+            const tdActions = document.createElement('td');
+            const delBtn = document.createElement('button');
+            delBtn.textContent = 'Delete';
+            delBtn.addEventListener('click', async () => {
+                await this.delete(id);
+            });
+            tdActions.appendChild(delBtn);
+            tr.appendChild(tdId);
+            tr.appendChild(tdData);
+            tr.appendChild(tdActions);
+            tbody.appendChild(tr);
+        }
+    }
+}
+
+// =========================
+// Initialize Manager
+// =========================
+const manager = new GameBlobManager();
+
+// =========================
+// Event Listeners
+// =========================
+document.getElementById('createUpdateGame').addEventListener('click', async () => {
+    const id = document.getElementById('gameId').value.trim();
+    const data = document.getElementById('gameData').value.trim();
+    if (!id || !data) {
+        alert('Please enter Game ID and Data');
+        return;
+    }
+    await manager.createOrUpdate(id, data);
+    document.getElementById('gameId').value = '';
+    document.getElementById('gameData').value = '';
+});
+
+// =========================
+// Dummy Data Initialization
+// =========================
+(async function createDummyData() {
+    for (let i = 1; i <= 5; i++) {
+        const id = `game_${i}`;
+        const data = `Dummy game data ${i} - ${Math.random().toString(36).substr(2, 5)}`;
+        await manager.createOrUpdate(id, data);
+    }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSAP Complete Demo with Documentation</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #0f172a;
+      color: white;
+      line-height: 1.6;
+    }
+    header, section {
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+    header {
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+      color: #0f172a;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    .demo {
+      margin: 2rem auto;
+      max-width: 800px;
+      background: rgba(255,255,255,0.05);
+      padding: 2rem;
+      border-radius: 12px;
+    }
+    .hello {
+      font-size: 2rem;
+      opacity: 0;
+    }
+    .stagger-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .stagger-item {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      background: #38bdf8;
+      opacity: 0;
+    }
+    .panel {
+      height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+    .special {
+      background: #1e293b;
+    }
+    .info {
+      text-align: left;
+      background: rgba(255,255,255,0.1);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>GSAP Demo & Documentation 🚀</header>
+
+  <!-- Basic Hello World -->
+  <section class="demo">
+    <h2>1. Basic Animation</h2>
+    <div class="hello">Hello GSAP 👋</div>
+    <div class="info">
+      <strong>Code:</strong> <br>
+      <code>gsap.to(".hello", {x:200, opacity:1, duration:2, ease:"power2.out"});</code><br>
+      <strong>Explanation:</strong> This moves the text 200px to the right while fading it in.
+    </div>
+  </section>
+
+  <!-- Stagger -->
+  <section class="demo">
+    <h2>2. Stagger Animation</h2>
+    <div class="stagger-container">
+      <div class="stagger-item"></div>
+      <div class="stagger-item"></div>
+      <div class="stagger-item"></div>
+      <div class="stagger-item"></div>
+    </div>
+    <div class="info">
+      <strong>Code:</strong><br>
+      <code>gsap.to(".stagger-item", {y:-50, opacity:1, stagger:0.2});</code><br>
+      <strong>Explanation:</strong> Animates each item one after another with a delay of 0.2s.
+    </div>
+  </section>
+
+  <!-- Timeline -->
+  <section class="demo">
+    <h2>3. Timeline</h2>
+    <div class="hello timeline-text">I will animate in sequence 🎬</div>
+    <div class="info">
+      <strong>Code:</strong><br>
+      <pre>
+const tl = gsap.timeline();
+tl.to(".timeline-text", {x:200, opacity:1, duration:1})
+  .to(".timeline-text", {color:"#38bdf8", duration:1});
+      </pre>
+      <strong>Explanation:</strong> Timelines allow chaining multiple animations one after another.
+    </div>
+  </section>
+
+  <!-- ScrollTrigger -->
+  <section class="demo">
+    <h2>4. ScrollTrigger</h2>
+    <div class="info">
+      <strong>Explanation:</strong> ScrollTrigger links animations to scroll position.
+      As you scroll down, panels will fade and slide into view. One panel will stay pinned.
+    </div>
+  </section>
+
+  <section class="panel" style="background:#0f172a;">Panel 1 — Scroll Down 👇</section>
+  <section class="panel" style="background:#1e3a8a;">Panel 2 — I fade in</section>
+  <section class="panel special">Panel 3 — I get pinned ✨</section>
+  <section class="panel" style="background:#0f172a;">Panel 4 — The End 🎉</section>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // 1. Basic
+    gsap.to(".hello", { 
+      x: 200, 
+      opacity: 1, 
+      duration: 2, 
+      ease: "power2.out" 
+    });
+
+    // 2. Stagger
+    gsap.to(".stagger-item", {
+      y: -50,
+      opacity: 1,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: "power2.out"
+    });
+
+    // 3. Timeline
+    const tl = gsap.timeline({delay:1});
+    tl.to(".timeline-text", {x:200, opacity:1, duration:1})
+      .to(".timeline-text", {color:"#38bdf8", duration:1});
+
+    // 4. ScrollTrigger Panels
+    gsap.utils.toArray(".panel").forEach(panel => {
+      gsap.from(panel, {
+        opacity: 0,
+        y: 100,
+        duration: 1,
+        scrollTrigger: {
+          trigger: panel,
+          start: "top 80%",
+          toggleActions: "play none none reverse"
+        }
+      });
+    });
+
+    ScrollTrigger.create({
+      trigger: ".special",
+      pin: true,
+      start: "top center",
+      end: "+=300"
+    });
+  </script>
+</body>
+</html>
