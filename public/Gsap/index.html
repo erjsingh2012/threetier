@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello World — GSAP vs CSS</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    body {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      height: 100vh;
+      background: #0f172a;
+      color: white;
+      font-family: sans-serif;
+    }
+    .box {
+      font-size: 2rem;
+      padding: 20px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* --- CSS version --- */
+    .css-hello {
+      opacity: 0;
+      animation: slideFade 2s ease-out forwards;
+    }
+    @keyframes slideFade {
+      from {
+        transform: translateX(0);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(200px);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- CSS animation -->
+  <div class="box css-hello">Hello CSS 🚀</div>
+
+  <!-- GSAP animation -->
+  <div class="box gsap-hello">Hello GSAP 🚀</div>
+
+  <script>
+    // GSAP animation
+    gsap.to(".gsap-hello", {
+      duration: 2,
+      x: 200,
+      opacity: 1,
+      ease: "power2.out"
+    });
+  </script>
+</body>
+</html>
