@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello World — Next Level with Explanation</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      padding: 2rem;
+      background: #0f172a;
+      color: white;
+      font-family: sans-serif;
+    }
+
+    .row {
+      display: flex;
+      gap: 4rem;
+    }
+
+    .box {
+      font-size: 2rem;
+      padding: 20px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      opacity: 0;
+    }
+
+    /* --- CSS animation --- */
+    .css-hello {
+      animation: none; /* start disabled */
+    }
+    @keyframes cssSequence {
+      0% { transform: translateX(0); opacity: 0; }
+      50% { transform: translateX(200px); opacity: 1; color: white; }
+      100% { transform: translateX(200px); opacity: 1; color: #38bdf8; }
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      background: #38bdf8;
+      color: #0f172a;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0ea5e9;
+    }
+
+    /* Info section */
+    .info {
+      max-width: 800px;
+      background: rgba(255,255,255,0.1);
+      padding: 1.5rem;
+      border-radius: 12px;
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+    .info h2 {
+      margin-bottom: 0.5rem;
+      color: #38bdf8;
+    }
+    .info ul {
+      margin: 0.5rem 0 0 1.5rem;
+    }
+    .info li {
+      margin: 0.3rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="row">
+    <!-- CSS animation -->
+    <div class="box css-hello">Hello CSS 🚀</div>
+
+    <!-- GSAP animation -->
+    <div class="box gsap-hello">Hello GSAP 🚀</div>
+  </div>
+
+  <div class="row">
+    <button id="play-css">Replay CSS</button>
+    <button id="play-gsap">Replay GSAP</button>
+  </div>
+
+  <!-- Explanation Panel -->
+  <div class="info">
+    <h2>Why GSAP is Better than Pure CSS Animations</h2>
+    <ul>
+      <li><strong>Control:</strong> GSAP gives you pause, resume, reverse, and restart out-of-the-box. CSS requires hacks to restart animations.</li>
+      <li><strong>Sequencing:</strong> GSAP timelines let you chain animations naturally. CSS keyframes can simulate sequences but are harder to manage.</li>
+      <li><strong>Dynamic Values:</strong> With GSAP you can animate to values calculated at runtime (like mouse position). CSS animations are fixed in advance.</li>
+      <li><strong>Cross-browser Smoothness:</strong> GSAP is highly optimized and works consistently across browsers, handling quirks automatically.</li>
+      <li><strong>Easing Options:</strong> GSAP supports advanced easings (elastic, bounce, custom curves) beyond standard CSS options.</li>
+      <li><strong>Plugins:</strong> GSAP has powerful extras like ScrollTrigger, MotionPath, Draggable, which CSS cannot do natively.</li>
+    </ul>
+    <p><em>In short: CSS animations are great for simple one-off effects. GSAP is built for professional-grade, interactive, and complex animation workflows.</em></p>
+  </div>
+
+  <script>
+    // --- GSAP Timeline ---
+    const tl = gsap.timeline({ paused: true });
+    tl.to(".gsap-hello", { duration: 1, x: 200, opacity: 1, ease: "power2.out" })
+      .to(".gsap-hello", { duration: 1, color: "#38bdf8" });
+
+    // Play GSAP on load
+    tl.play();
+
+    // Button: Replay GSAP
+    document.getElementById("play-gsap").addEventListener("click", () => {
+      tl.restart();
+    });
+
+    // Button: Replay CSS
+    document.getElementById("play-css").addEventListener("click", () => {
+      const el = document.querySelector(".css-hello");
+      el.style.animation = "none"; // reset
+      void el.offsetWidth; // reflow to restart
+      el.style.animation = "cssSequence 2s ease-out forwards";
+    });
+  </script>
+</body>
+</html>
